@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>OSINT Graph — Сетевая визуализация</title>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>
+• { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; }
+body {
+font-family: 'Segoe UI', Tahoma, sans-serif;
+background: #000;
+color: #e8e8e8;
+}
+.app { display: flex; height: 100vh; height: 100dvh; }
+
+.sidebar {
+width: 260px;
+background: linear-gradient(180deg, #0a0a0a 0%, #151515 100%);
+border-right: 1px solid #2a2a2a;
+display: flex;
+flex-direction: column;
+padding: 14px 12px;
+overflow-y: auto;
+flex-shrink: 0;
+}
+@media (max-width: 768px) {
+.sidebar {
+position: fixed;
+top: 0; left: 0; bottom: 0;
+z-index: 50;
+transform: translateX(-100%);
+transition: transform 0.25s;
+width: 85%;
+max-width: 320px;
+}
+.sidebar.open { transform: translateX(0); box-shadow: 0 0 40px rgba(0,0,0,0.9); }
+.menu-toggle { display: flex !important; }
+.overlay { display: block !important; }
+.overlay.show { opacity: 1; pointer-events: auto; }
+}
+.sidebar h2 {
+font-size: 12px;
+text-transform: uppercase;
+letter-spacing: 1.5px;
+color: #fff;
+margin: 12px 0 8px;
+padding-bottom: 6px;
+border-bottom: 1px solid #2a2a2a;
+}
+.sidebar h2:first-child { margin-top: 0; }
+.entity-list { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+.entity-item {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 7px 10px;
+background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+border: 1px solid #2a2a2a;
+border-radius: 6px;
+cursor: grab;
+transition: all 0.15s;
+font-size: 13px;
+color: #e8e8e8;
+}
+.entity-item:hover, .entity-item:active {
+background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+border-color: #fff;
+}
+.entity-icon {
+width: 26px; height: 26px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 13px;
+flex-shrink: 0;
+background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+color: #000;
+border: 1px solid #555;
+}
+
+.action-btn {
+padding: 7px 10px;
+background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+border: 1px solid #2a2a2a;
+border-radius: 6px;
+color: #e8e8e8;
+cursor: pointer;
+font-size: 12px;
+margin-bottom: 5px;
+transition: all 0.15s;
+text-align: left;
+width: 100%;
+}
+.action-btn:hover { background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border-color: #fff; color: #fff; }
+.action-btn.danger:hover { border-color: #ff5577; color: #ff5577; }
+
+.net-panel {
+background: linear-gradient(135deg, #151515 0%, #0a0a0a 100%);
+border: 1px solid #2a2a2a;
+border-radius: 6px;
+padding: 10px;
+margin-bottom: 10px;
+}
+.net-status { display: flex; align-items: center; gap: 6px; font-size: 11px; margin-bottom: 8px; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: #555; }
+.status-dot.online { background: #fff; box-shadow: 0 0 8px #fff; }
+.status-dot.connecting { background: #aaa; animation: pulse 1s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.my-id {
+background: #000;
+border: 1px solid #2a2a2a;
+border-radius: 4px;
+padding: 6px 8px;
+font-family: monospace;
+font-size: 11px;
+color: #fff;
+margin-bottom: 8px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 6px;
+word-break: break-all;
+}
+.copy-btn {
+background: #1a1a1a;
+border: 1px solid #3a3a3a;
+color: #e8e8e8;
+padding: 2px 8px;
+border-radius: 3px;
+cursor: pointer;
+font-size: 10px;
+flex-shrink: 0;
+}
+.copy-btn:hover { border-color: #fff; color: #fff; }
+.net-input {
+width: 100%;
+padding: 6px 8px;
+background: #000;
+border: 1px solid #2a2a2a;
+border-radius: 4px;
+color: #e8e8e8;
+font-size: 11px;
+font-family: monospace;
+margin-bottom: 6px;
+outline: none;
+}
+.net-input:focus { border-color: #fff; }
+.net-btn {
+width: 100%;
+padding: 6px;
+background: linear-gradient(135deg, #fff 0%, #bbb 100%);
+color: #000;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+font-size: 11px;
+margin-bottom: 4px;
+font-weight: 600;
+}
+.net-btn:hover { background: linear-gradient(135deg, #eee 0%, #aaa 100%); }
+.net-btn.secondary {
+background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+color: #e8e8e8;
+border: 1px solid #2a2a2a;
+font-weight: normal;
+}
+.net-btn.secondary:hover { border-color: #fff; color: #fff; }
+.peers-list { margin-top: 8px; max-height: 100px; overflow-y: auto; font-size: 11px; }
+.peer-item {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 4px 6px;
+background: #000;
+border: 1px solid #2a2a2a;
+border-radius: 3px;
+margin-bottom: 3px;
+}
+.peer-id { color: #fff; font-family: monospace; font-size: 10px; }
+.peer-disconnect {
+background: transparent;
+border: none;
+color: #ff5577;
+cursor: pointer;
+font-size: 12px;
+padding: 0 4px;
+}
+
+.canvas-wrap {
+flex: 1;
+position: relative;
+overflow: hidden;
+background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000 100%);
+}
+.canvas-wrap::before {
+content: '';
+position: absolute;
+inset: 0;
+background-image:
+linear-gradient(#1f1f1f 1px, transparent 1px),
+linear-gradient(90deg, #1f1f1f 1px, transparent 1px);
+background-size: 40px 40px;
+opacity: 0.5;
+pointer-events: none;
+}
+#graph { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: default; }
+#nodes-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+
+.node {
+position: absolute;
+pointer-events: auto;
+display: flex;
+flex-direction: column;
+align-items: center;
+cursor: move;
+transition: filter 0.15s;
+touch-action: none;
+/* Позиционируется через left/top (центр узла), БЕЗ translate /
+}
+.node:hover { filter: brightness(1.1); }
+.node.selected .node-body {
+box-shadow: 0 0 0 2px #fff, 0 0 20px rgba(255, 255, 255, 0.4);
+}
+.node-body {
+width: 56px; height: 56px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 24px;
+border: 2px solid #555;
+background: linear-gradient(135deg, #fff 0%, #c8c8c8 100%);
+color: #000;
+position: relative;
+transition: all 0.15s;
+box-shadow: 0 4px 12px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.5);
+margin-left: -28px; / сдвиг на половину ширины — центр в (left, top) /
+margin-top: -28px;
+}
+.node-label {
+margin-top: 6px;
+padding: 2px 8px;
+background: rgba(0, 0, 0, 0.85);
+border: 1px solid #3a3a3a;
+border-radius: 4px;
+font-size: 11px;
+color: #fff;
+white-space: nowrap;
+max-width: 140px;
+overflow: hidden;
+text-overflow: ellipsis;
+text-align: center;
+margin-left: -70px; / центрируем подпись под иконкой */
+pointer-events: none;
+}
+.port {
+position: absolute;
+width: 12px; height: 12px;
+border-radius: 50%;
+background: #fff;
+border: 2px solid #000;
+top: 50%;
+right: -6px;
+transform: translateY(-50%);
+opacity: 0;
+transition: opacity 0.15s, transform 0.15s;
+cursor: crosshair;
+box-shadow: 0 0 6px rgba(255,255,255,0.6);
+}
+.node:hover .port, .node:focus-within .port { opacity: 1; }
+.port:hover { transform: translateY(-50%) scale(1.3); }
+
+.menu-toggle {
+display: none;
+position: absolute;
+top: 12px; left: 12px;
+width: 40px; height: 40px;
+background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+border: 1px solid #2a2a2a;
+border-radius: 6px;
+color: #fff;
+cursor: pointer;
+align-items: center;
+justify-content: center;
+font-size: 18px;
+z-index: 40;
+}
+.overlay {
+display: none;
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.6);
+z-index: 45;
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.25s;
+}
+.toolbar {
+position: absolute;
+top: 12px; right: 12px;
+display: flex;
+gap: 6px;
+z-index: 10;
+}
+.tool-btn {
+width: 38px; height: 38px;
+background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+border: 1px solid #2a2a2a;
+border-radius: 6px;
+color: #fff;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 16px;
+}
+.tool-btn:hover { background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border-color: #fff; }
+
+.info-panel {
+position: absolute;
+bottom: 12px; left: 12px;
+background: rgba(0, 0, 0, 0.85);
+border: 1px solid #2a2a2a;
+border-radius: 6px;
+padding: 8px 12px;
+font-size: 11px;
+color: #888;
+z-index: 10;
+max-width: calc(100% - 24px);
+}
+.info-panel span { color: #fff; }
+.info-panel a { color: #fff; text-decoration: none; border-bottom: 1px dotted #555; }
+.info-panel a:hover { color: #fff; border-bottom-color: #fff; }
+
+.ctx-menu {
+position: absolute;
+background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+border: 1px solid #3a3a3a;
+border-radius: 6px;
+padding: 4px;
+min-width: 180px;
+z-index: 100;
+box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+display: none;
+}
+.ctx-menu.show { display: block; }
+.ctx-item {
+padding: 7px 10px;
+font-size: 12px;
+cursor: pointer;
+border-radius: 4px;
+display: flex;
+align-items: center;
+gap: 8px;
+color: #e8e8e8;
+}
+.ctx-item:hover { background: #2a2a2a; color: #fff; }
+.ctx-sep { height: 1px; background: #2a2a2a; margin: 4px 0; }
+
+.modal-bg {
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.75);
+display: none;
+align-items: center;
+justify-content: center;
+z-index: 200;
+padding: 20px;
+}
+.modal-bg.show { display: flex; }
+.modal {
+background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+border: 1px solid #3a3a3a;
+border-radius: 8px;
+padding: 20px;
+min-width: 320px;
+max-width: 90vw;
+width: 400px;
+}
+.modal h3 { margin-bottom: 14px; color: #fff; font-size: 15px; }
+.modal label { display: block; font-size: 12px; margin-bottom: 4px; color: #aaa; }
+.modal input, .modal select {
+width: 100%;
+padding: 8px 10px;
+background: #000;
+border: 1px solid #2a2a2a;
+border-radius: 4px;
+color: #e8e8e8;
+font-size: 13px;
+margin-bottom: 12px;
+outline: none;
+}
+.modal input:focus, .modal select:focus { border-color: #fff; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+.btn {
+padding: 7px 14px;
+border-radius: 4px;
+border: 1px solid #2a2a2a;
+background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+color: #e8e8e8;
+cursor: pointer;
+font-size: 12px;
+}
+.btn:hover { border-color: #fff; color: #fff; }
+.btn.primary {
+background: linear-gradient(135deg, #fff 0%, #bbb 100%);
+color: #000;
+border-color: #fff;
+font-weight: 600;
+}
+.btn.primary:hover { background: linear-gradient(135deg, #eee 0%, #aaa 100%); }
+
+.toast {
+position: fixed;
+bottom: 60px; left: 50%;
+transform: translateX(-50%);
+background: linear-gradient(135deg, #fff 0%, #ccc 100%);
+color: #000;
+padding: 8px 16px;
+border-radius: 6px;
+font-size: 13px;
+z-index: 1000;
+box-shadow: 0 4px 16px rgba(255,255,255,0.2), 0 4px 16px rgba(0,0,0,0.6);
+animation: toastIn 0.2s;
+font-weight: 500;
+}
+@keyframes toastIn { from { opacity: 0; transform: translate(-50%, 10px); } }
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3a3a; }
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+<h2>🌐 Сеть</h2>
+<div class="net-panel">
+<div class="net-status">
+<div class="status-dot" id="netStatusDot"></div>
+<span id="netStatusText">Оффлайн</span>
+</div>
+<div style="font-size:10px;color:#888;margin-bottom:4px;">Ваш ID:</div>
+<div class="my-id">
+<span id="myPeerId">—</span>
+<button class="copy-btn" onclick="app.net.copyId()">Копировать</button>
+</div>
+<input class="net-input" id="peerIdInput" placeholder="ID удалённого пира...">
+<button class="net-btn" onclick="app.net.connect()">🔗 Подключиться</button>
+<button class="net-btn secondary" onclick="app.net.toggle()">
+<span id="netToggleText">Включить сеть</span>
+</button>
+<div class="peers-list" id="peersList"></div>
+</div>
+
+<h2>Сущности</h2>
+<div class="entity-list" id="entityList"></div>
+
+<h2>Действия</h2>
+<button class="action-btn" onclick="app.manualSave()">💾 Сохранить вручную</button>
+<button class="action-btn" onclick="app.resetView()">🔎 Сбросить вид</button>
+<button class="action-btn" onclick="app.exportJSON()">📤 Экспорт JSON</button>
+<button class="action-btn" onclick="app.importJSON()">📥 Импорт JSON</button>
+<button class="action-btn" onclick="app.autoLayout()">🧩 Авто-раскладка</button>
+<button class="action-btn" onclick="app.fitView()">🔎 Вписать в экран</button>
+<button class="action-btn danger" onclick="app.clearAll()">🗑️ Очистить всё</button>
+</aside>
+
+<div class="overlay" id="overlay" onclick="app.toggleSidebar()"></div>
+<button class="menu-toggle" onclick="app.toggleSidebar()">☰</button>
+
+<div class="canvas-wrap" id="canvasWrap">
+<canvas id="graph"></canvas>
+<div id="nodes-layer"></div>
+
+<div class="toolbar">
+<button class="tool-btn" onclick="app.zoomIn()" title="Приблизить">+</button>
+<button class="tool-btn" onclick="app.zoomOut()" title="Отдалить">−</button>
+<button class="tool-btn" onclick="app.fitView()" title="Вписать">⊡</button>
+</div>
+
+<div class="info-panel">
+<span id="nodeCount">0</span> узлов · <span id="edgeCount">0</span> связей ·
+Зум: <span id="zoomLevel">100%</span> ·
+<a href="https://github.com/peers/peerjs" target="_blank" rel="noopener">P2P сеть</a> ·
+<a href="https://osint-graph.local/" target="_blank">🌐 Сайт</a>
+</div>
+</div>
+</div>
+
+<div class="ctx-menu" id="ctxMenu"></div>
+
+<div class="modal-bg" id="modalBg">
+<div class="modal" id="modal"></div>
+</div>
+
+<script>
+const ENTITY_TYPES = {
+person: { icon: '👤', label: 'Человек' },
+email: { icon: '✉️', label: 'Email' },
+phone: { icon: '📱', label: 'Телефон' },
+domain: { icon: '🌐', label: 'Домен' },
+ip: { icon: '🖥️', label: 'IP адрес' },
+social: { icon: '👥', label: 'Соцсеть' },
+location: { icon: '📍', label: 'Локация' },
+document: { icon: '📄', label: 'Документ' },
+company: { icon: '🏢', label: 'Компания' },
+crypto: { icon: '₿', label: 'Крипто-кошелёк' },
+event: { icon: '📅', label: 'Событие' },
+note: { icon: '📝', label: 'Заметка' }
+};
+
+const STORAGE_KEY = 'osint-graph-autosave';
+// Визуальный радиус иконки в ЭКРАННЫХ пикселях (половина от 56px)
+const NODE_VISUAL_RADIUS = 28;
+
+class NetworkManager {
+constructor(app) {
+this.app = app;
+this.peer = null;
+this.connections = new Map();
+this.enabled = false;
+this.myId = null;
+}
+
+toggle() {
+if (this.enabled) this.disable();
+else this.enable();
+}
+
+enable() {
+if (this.enabled) return;
+this.setStatus('connecting', 'Подключение...');
+const id = 'osint-' + Math.random().toString(36).substr(2, 9);
+try {
+this.peer = new Peer(id, {
+debug: 1,
+config: {
+iceServers: [
+{ urls: 'stun:stun.l.google.com:19302' },
+{ urls: 'stun:stun1.l.google.com:19302' }
+ ]
+}
+});
+
+this.peer.on('open', (assignedId) => {
+this.myId = assignedId;
+this.enabled = true;
+document.getElementById('myPeerId').textContent = assignedId;
+document.getElementById('netToggleText').textContent = 'Отключить сеть';
+this.setStatus('online', 'Онлайн');
+this.app.flash('Сеть активна. Ваш ID: ' + assignedId);
+});
+
+this.peer.on('connection', (conn) => this._setupConnection(conn));
+
+this.peer.on('error', (err) => {
+console.error('Peer error:', err);
+if (err.type === 'unavailable-id') {
+this.app.flash('ID занят, пробуем другой...');
+this.disable();
+setTimeout(() => this.enable(), 500);
+} else {
+this.setStatus('', 'Ошибка: ' + err.type);
+this.app.flash('Ошибка сети: ' + err.type);
+}
+});
+
+this.peer.on('disconnected', () => {
+this.setStatus('', 'Отключён');
+});
+} catch (e) {
+this.app.flash('Не удалось инициализировать сеть');
+this.setStatus('', 'Ошибка');
+}
+}
+
+disable() {
+if (this.peer) {
+this.peer.destroy();
+this.peer = null;
+}
+this.connections.clear();
+this.enabled = false;
+this.myId = null;
+document.getElementById('myPeerId').textContent = '—';
+document.getElementById('netToggleText').textContent = 'Включить сеть';
+this.setStatus('', 'Оффлайн');
+this._renderPeers();
+}
+
+connect() {
+if (!this.enabled) { this.app.flash('Сначала включите сеть'); return; }
+const targetId = document.getElementById('peerIdInput').value.trim();
+if (!targetId) { this.app.flash('Введите ID пира'); return; }
+if (targetId === this.myId) { this.app.flash('Нельзя подключиться к самому себе'); return; }
+if (this.connections.has(targetId)) { this.app.flash('Уже подключены'); return; }
+try {
+const conn = this.peer.connect(targetId, { reliable: true });
+this._setupConnection(conn);
+this.app.flash('Подключение к ' + targetId + '...');
+} catch (e) {
+this.app.flash('Ошибка подключения');
+}
+}
+
+_setupConnection(conn) {
+conn.on('open', () => {
+this.connections.set(conn.peer, conn);
+this._renderPeers();
+this.app.flash('Подключён: ' + conn.peer);
+conn.send({ type: 'sync', data: this.app.serialize() });
+});
+conn.on('data', (data) => this._handleMessage(data, conn.peer));
+conn.on('close', () => {
+this.connections.delete(conn.peer);
+this._renderPeers();
+this.app.flash('Отключён: ' + conn.peer);
+});
+conn.on('error', (err) => {
+console.error('Connection error:', err);
+this.connections.delete(conn.peer);
+this._renderPeers();
+});
+}
+
+_handleMessage(msg, fromPeer) {
+this.app._remoteChange = true;
+try {
+switch (msg.type) {
+case 'sync': this.app.deserialize(msg.data); break;
+case 'node:add': this.app._addNodeRemote(msg.data); break;
+case 'node:move': this.app._moveNodeRemote(msg.data.id, msg.data.x, msg.data.y); break;
+case 'node:delete': this.app._deleteNodeRemote(msg.data.id); break;
+case 'node:edit': this.app._editNodeRemote(msg.data); break;
+case 'edge:add': this.app._addEdgeRemote(msg.data); break;
+case 'edge:delete': this.app._deleteEdgeRemote(msg.data); break;
+}
+} catch (e) { console.error('Handle message error:', e); }
+this.app._remoteChange = false;
+}
+
+broadcast(msg, excludePeer = null) {
+if (!this.enabled) return;
+for (const [peerId, conn] of this.connections) {
+if (peerId === excludePeer) continue;
+try { if (conn.open) conn.send(msg); }
+catch (e) { console.error('Broadcast error:', e); }
+}
+}
+
+disconnectPeer(peerId) {
+const conn = this.connections.get(peerId);
+if (conn) {
+conn.close();
+this.connections.delete(peerId);
+this._renderPeers();
+}
+}
+
+_renderPeers() {
+const list = document.getElementById('peersList');
+if (this.connections.size === 0) {
+list.innerHTML = '<div style="color:#666;font-size:10px;padding:4px;">Нет подключений</div>';
+return;
+}
+list.innerHTML = [...this.connections.keys()].map(id => &lt;div class="peer-item"&gt; &lt;span class="peer-id"&gt;● ${id}</span>
+<button class="peer-disconnect" onclick="app.net.disconnectPeer('${id}')" title="Отключить"&gt;✕&lt;/button&gt; &lt;/div&gt;).join('');
+}
+
+setStatus(state, text) {
+const dot = document.getElementById('netStatusDot');
+const txt = document.getElementById('netStatusText');
+dot.className = 'status-dot' + (state ? ' ' + state : '');
+txt.textContent = text;
+}
+
+copyId() {
+if (!this.myId) { this.app.flash('Сначала включите сеть'); return; }
+navigator.clipboard.writeText(this.myId).then(() => {
+this.app.flash('ID скопирован');
+}).catch(() => {
+const ta = document.createElement('textarea');
+ta.value = this.myId;
+document.body.appendChild(ta);
+ta.select();
+document.execCommand('copy');
+ta.remove();
+this.app.flash('ID скопирован');
+});
+}
+}
+
+class OSINTGraph {
+constructor() {
+this.canvas = document.getElementById('graph');
+this.ctx = this.canvas.getContext('2d');
+this.nodesLayer = document.getElementById('nodes-layer');
+this.canvasWrap = document.getElementById('canvasWrap');
+
+this.nodes = new Map();
+this.edges = [];
+this.nextId = 1;
+
+this.offset = { x: 0, y: 0 };
+this.scale = 1;
+
+this.selectedNode = null;
+this.dragNode = null;
+this.dragOffset = { x: 0, y: 0 };
+this.isPanning = false;
+this.panStart = { x: 0, y: 0 };
+this.connecting = null;
+this.mouse = { x: 0, y: 0 };
+
+this._remoteChange = false;
+this._lastBroadcastPos = new Map();
+this._saveTimer = null;
+
+this.net = new NetworkManager(this);
+this.init();
+this._restoreFromStorage();
+}
+
+init() {
+this.resize();
+window.addEventListener('resize', () => this.resize());
+
+const list = document.getElementById('entityList');
+for (const [key, t] of Object.entries(ENTITY_TYPES)) {
+const el = document.createElement('div');
+el.className = 'entity-item';
+el.draggable = true;
+el.innerHTML = <div class="entity-icon"&gt;${t.icon}</div><span>${t.label}&lt;/span>;
+el.addEventListener('dragstart', e => e.dataTransfer.setData('entity-type', key));
+el.addEventListener('click', () => {
+const rect = this.canvasWrap.getBoundingClientRect();
+const wx = (rect.width / 2 - this.offset.x) / this.scale;
+const wy = (rect.height / 2 - this.offset.y) / this.scale;
+this.addNode(key, wx, wy);
+if (window.innerWidth <= 768) this.toggleSidebar();
+});
+list.appendChild(el);
+}
+
+this.canvasWrap.addEventListener('drop', e => this.onDrop(e));
+this.canvasWrap.addEventListener('dragover', e => e.preventDefault());
+this.canvasWrap.addEventListener('dblclick', e => this.onDblClick(e));
+this.canvasWrap.addEventListener('mousedown', e => this.onMouseDown(e));
+this.canvasWrap.addEventListener('touchstart', e => this.onTouchStart(e), { passive: false });
+window.addEventListener('mousemove', e => this.onMouseMove(e));
+window.addEventListener('touchmove', e => this.onTouchMove(e), { passive: false });
+window.addEventListener('mouseup', e => this.onMouseUp(e));
+window.addEventListener('touchend', e => this.onTouchEnd(e));
+this.canvasWrap.addEventListener('wheel', e => this.onWheel(e), { passive: false });
+this.canvasWrap.addEventListener('contextmenu', e => {
+e.preventDefault();
+this.showContextMenu(e.clientX, e.clientY, { type: 'canvas' });
+});
+
+window.addEventListener('click', () => this.hideContextMenu());
+window.addEventListener('keydown', e => this.onKey(e));
+window.addEventListener('beforeunload', () => this._saveNow());
+document.addEventListener('visibilitychange', () => {
+if (document.hidden) this._saveNow();
+});
+
+this.render();
+}
+
+// ---- Автосохранение ----
+_scheduleSave() {
+if (this._saveTimer) clearTimeout(this._saveTimer);
+this._saveTimer = setTimeout(() => this._saveNow(), 400);
+}
+
+_saveNow() {
+try {
+const data = {
+graph: this.serialize(),
+view: { offset: this.offset, scale: this.scale }
+};
+localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+} catch (e) { console.warn('Save failed:', e); }
+}
+
+_restoreFromStorage() {
+try {
+const raw = localStorage.getItem(STORAGE_KEY);
+if (!raw) return;
+const data = JSON.parse(raw);
+if (data.graph) this.deserialize(data.graph);
+if (data.view) {
+this.offset = data.view.offset || { x: 0, y: 0 };
+this.scale = data.view.scale || 1;
+this.updateZoomLabel();
+}
+this.updateAllNodePositions();
+this.render();
+} catch (e) { console.warn('Restore failed:', e); }
+}
+
+resize() {
+const rect = this.canvasWrap.getBoundingClientRect();
+const dpr = window.devicePixelRatio || 1;
+this.canvas.width = rect.width * dpr;
+this.canvas.height = rect.height * dpr;
+this.canvas.style.width = rect.width + 'px';
+this.canvas.style.height = rect.height + 'px';
+this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+this.render();
+}
+
+screenToWorld(sx, sy) {
+const rect = this.canvasWrap.getBoundingClientRect();
+return {
+x: (sx - rect.left - this.offset.x) / this.scale,
+y: (sy - rect.top - this.offset.y) / this.scale
+};
+}
+
+// Конвертирует мировые координаты узла в ЭКРАННЫЕ (CSS-пиксели относительно canvas-wrap)
+worldToNodeScreen(wx, wy) {
+return {
+x: wx * this.scale + this.offset.x,
+y: wy * this.scale + this.offset.y
+};
+}
+
+// Обновляет DOM-позицию одного узла
+updateNodeScreenPosition(node) {
+if (!node.el) return;
+const s = this.worldToNodeScreen(node.x, node.y);
+node.el.style.left = s.x + 'px';
+node.el.style.top = s.y + 'px';
+}
+
+// Обновляет позиции ВСЕХ узлов (нужно при pan/zoom)
+updateAllNodePositions() {
+for (const node of this.nodes.values()) {
+this.updateNodeScreenPosition(node);
+}
+}
+
+// ---- Nodes ----
+addNode(type, x, y, label = '', broadcast = true) {
+const id = this.nextId++;
+const node = { id, type, x, y, label: label || ${ENTITY_TYPES[type].label} #${id} };
+this.nodes.set(id, node);
+this.createNodeElement(node);
+this.updateStats();
+this.render();
+if (broadcast && !this._remoteChange) {
+this.net.broadcast({ type: 'node:add', data: node });
+}
+this._scheduleSave();
+return node;
+}
+
+_addNodeRemote(data) {
+if (this.nodes.has(data.id)) return;
+const node = { ...data };
+this.nodes.set(node.id, node);
+if (node.id >= this.nextId) this.nextId = node.id + 1;
+this.createNodeElement(node);
+this.updateStats();
+this.render();
+this._scheduleSave();
+}
+
+createNodeElement(node) {
+const t = ENTITY_TYPES[node.type];
+const el = document.createElement('div');
+el.className = 'node';
+el.dataset.id = node.id;
+el.innerHTML = &lt;div class="node-body"&gt; &lt;span&gt;${t.icon}</span>
+<div class="port" title="Соединить"></div>
+</div>
+<div class="node-label">${this.escapeHtml(node.label)}&lt;/div&gt;;
+// Позиционирование: left/top = экранные координаты ЦЕНТРА узла
+// Внутри .node-body через margin-left/margin-top: -28px центрируется
+const s = this.worldToNodeScreen(node.x, node.y);
+el.style.left = s.x + 'px';
+el.style.top = s.y + 'px';
+
+const onPointerDown = (e) => {
+const target = e.target;
+const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+if (target.classList.contains('port')) {
+this.startConnect(node.id, e);
+return;
+}
+this.selectNode(node.id);
+this.dragNode = node;
+const rect = this.canvasWrap.getBoundingClientRect();
+// Смещение курсора относительно центра узла в экранных координатах
+const nodeScreen = this.worldToNodeScreen(node.x, node.y);
+this.dragOffset = {
+x: clientX - rect.left - nodeScreen.x,
+y: clientY - rect.top - nodeScreen.y
+};
+e.stopPropagation();
+e.preventDefault();
+};
+
+el.addEventListener('mousedown', onPointerDown);
+el.addEventListener('touchstart', onPointerDown, { passive: false });
+
+el.addEventListener('contextmenu', e => {
+e.preventDefault();
+e.stopPropagation();
+this.selectNode(node.id);
+this.showContextMenu(e.clientX, e.clientY, { type: 'node', node });
+});
+
+let longTimer = null;
+el.addEventListener('touchstart', () => {
+longTimer = setTimeout(() => {
+this.selectNode(node.id);
+const rect = el.getBoundingClientRect();
+this.showContextMenu(rect.left + rect.width/2, rect.top + rect.height/2, { type: 'node', node });
+}, 600);
+}, { passive: true });
+el.addEventListener('touchmove', () => {
+if (longTimer) { clearTimeout(longTimer); longTimer = null; }
+}, { passive: true });
+el.addEventListener('touchend', () => {
+if (longTimer) { clearTimeout(longTimer); longTimer = null; }
+});
+
+this.nodesLayer.appendChild(el);
+node.el = el;
+}
+
+updateNodePosition(node, broadcast = true) {
+if (!node.el) return;
+this.updateNodeScreenPosition(node);
+if (broadcast && !this._remoteChange) {
+const now = Date.now();
+const last = this._lastBroadcastPos.get(node.id) || 0;
+if (now - last > 50) {
+this._lastBroadcastPos.set(node.id, now);
+this.net.broadcast({ type: 'node:move', data: { id: node.id, x: node.x, y: node.y } });
+}
+}
+}
+
+_moveNodeRemote(id, x, y) {
+const node = this.nodes.get(id);
+if (!node) return;
+node.x = x;
+node.y = y;
+this.updateNodePosition(node, false);
+this.render();
+this._scheduleSave();
+}
+
+selectNode(id) {
+if (this.selectedNode && this.selectedNode.el) {
+this.selectedNode.el.classList.remove('selected');
+}
+this.selectedNode = id != null ? this.nodes.get(id) : null;
+if (this.selectedNode && this.selectedNode.el) {
+this.selectedNode.el.classList.add('selected');
+}
+}
+
+deleteNode(id, broadcast = true) {
+const node = this.nodes.get(id);
+if (!node) return;
+if (node.el) node.el.remove();
+this.nodes.delete(id);
+const removedEdges = this.edges.filter(e => e.from === id || e.to === id);
+this.edges = this.edges.filter(e => e.from !== id && e.to !== id);
+if (this.selectedNode && this.selectedNode.id === id) this.selectedNode = null;
+this.updateStats();
+this.render();
+if (broadcast && !this._remoteChange) {
+this.net.broadcast({ type: 'node:delete', data: { id } });
+for (const edge of removedEdges) {
+this.net.broadcast({ type: 'edge:delete', data: edge });
+}
+}
+this._scheduleSave();
+}
+
+_deleteNodeRemote(id) {
+const node = this.nodes.get(id);
+if (!node) return;
+if (node.el) node.el.remove();
+this.nodes.delete(id);
+this.edges = this.edges.filter(e => e.from !== id && e.to !== id);
+if (this.selectedNode && this.selectedNode.id === id) this.selectedNode = null;
+this.updateStats();
+this.render();
+this._scheduleSave();
+}
+
+// ---- Edges ----
+addEdge(fromId, toId, label = '', broadcast = true) {
+if (fromId === toId) return;
+if (this.edges.some(e => e.from === fromId && e.to === toId)) return;
+const edge = { from: fromId, to: toId, label };
+this.edges.push(edge);
+this.updateStats();
+this.render();
+if (broadcast && !this._remoteChange) {
+this.net.broadcast({ type: 'edge:add', data: edge });
+}
+this._scheduleSave();
+}
+
+_addEdgeRemote(data) {
+if (data.from === data.to) return;
+if (this.edges.some(e => e.from === data.from && e.to === data.to)) return;
+this.edges.push({ ...data });
+this.updateStats();
+this.render();
+this._scheduleSave();
+}
+
+_deleteEdgeRemote(data) {
+this.edges = this.edges.filter(e => !(e.from === data.from && e.to === data.to));
+this.updateStats();
+this.render();
+this._scheduleSave();
+}
+
+// ---- Rendering ----
+render() {
+const ctx = this.ctx;
+const w = this.canvas.clientWidth;
+const h = this.canvas.clientHeight;
+ctx.clearRect(0, 0, w, h);
+
+ctx.save();
+ctx.translate(this.offset.x, this.offset.y);
+ctx.scale(this.scale, this.scale);
+
+for (const edge of this.edges) this.drawEdge(edge);
+
+if (this.connecting) {
+const from = this.nodes.get(this.connecting.fromId);
+if (from) {
+const mouseWorld = this.screenToWorld(this.mouse.x, this.mouse.y);
+this.drawCurve(from.x, from.y, mouseWorld.x, mouseWorld.y, false, '', true);
+}
+}
+
+ctx.restore();
+}
+
+drawEdge(edge) {
+const a = this.nodes.get(edge.from);
+const b = this.nodes.get(edge.to);
+if (!a || !b) return;
+this.drawCurve(a.x, a.y, b.x, b.y, false, edge.label, false);
+}
+
+/**
+• Стрелка как в Obsidian: линия подходит вплотную к краю иконки (круга).
+• Узлы хранятся в МИРОВЫХ координатах. Canvas имеет ctx.scale(this.scale).
+• Визуальный радиус иконки в ЭКРАННЫХ пикселях = NODE_VISUAL_RADIUS (28px).
+• Значит в МИРОВЫХ координатах радиус = NODE_VISUAL_RADIUS / this.scale.
+• isPreview — для превью при создании связи (второй конец — курсор,
+• там нет узла, поэтому к концу не обрезаем).
+/
+drawCurve(x1, y1, x2, y2, dashed = false, label = '', isPreview = false) {
+const ctx = this.ctx;
+const dx = x2 - x1;
+const dy = y2 - y1;
+const dist = Math.sqrt(dxdx + dy*dy);
+if (dist < 1) return;
+
+const ux = dx / dist;
+const uy = dy / dist;
+
+// Радиус в МИРОВЫХ координатах (чтобы соответствовать визуальному радиусу иконки)
+const r = NODE_VISUAL_RADIUS / this.scale;
+
+// Начало стрелки — на КРАЮ исходного узла
+const startX = x1 + ux * r;
+const startY = y1 + uy * r;
+
+// Конец стрелки:
+// - для обычной связи — на КРАЮ целевого узла (чтобы наконечник упирался в иконку)
+// - для превью — прямо в точку курсора
+let endX, endY;
+if (isPreview) {
+endX = x2;
+endY = y2;
+} else {
+// Оставляем место для наконечника стрелки — чуть раньше края,
+// чтобы остриё наконечника касалось края иконки
+const arrowSize = 11 / this.scale; // в мировых
+endX = x2 - ux * (r + arrowSize * 0.15);
+endY = y2 - uy * (r + arrowSize * 0.15);
+}
+
+const sdx = endX - startX;
+const sdy = endY - startY;
+const sdist = Math.sqrt(sdxsdx + sdysdy);
+if (sdist < 1) return;
+
+const nx = -sdy / sdist;
+const ny = sdx / sdist;
+
+const curvature = Math.min(sdist * 0.3, 100 / this.scale);
+const bend = curvature * 0.35;
+
+const cx1 = startX + sdx * 0.33 + nx * bend;
+const cy1 = startY + sdy * 0.33 + ny * bend;
+const cx2 = startX + sdx * 0.66 + nx * bend;
+const cy2 = startY + sdy * 0.66 + ny * bend;
+
+// Градиент линии
+const grad = ctx.createLinearGradient(startX, startY, endX, endY);
+grad.addColorStop(0, '#888');
+grad.addColorStop(1, '#fff');
+
+ctx.strokeStyle = grad;
+ctx.lineWidth = 2 / this.scale;
+ctx.lineCap = 'round';
+ctx.lineJoin = 'round';
+ctx.setLineDash([]);
+
+ctx.beginPath();
+ctx.moveTo(startX, startY);
+ctx.bezierCurveTo(cx1, cy1, cx2, cy2, endX, endY);
+ctx.stroke();
+
+// Наконечник стрелки (только для обычных связей, не для превью)
+if (!isPreview) {
+// Точка, куда упрётся остриё — ровно на краю целевого узла
+const tipX = x2 - ux * r;
+const tipY = y2 - uy * r;
+
+// Касательная в конце кривой (для ориентации наконечника)
+const t = 0.96;
+const u = 1 - t;
+const tx = 3uu*(cx1-startX) + 6ut*(cx2-cx1) + 3tt*(endX-cx2);
+const ty = 3uu*(cy1-startY) + 6ut*(cy2-cy1) + 3tt*(endY-cy2);
+const angle = Math.atan2(ty, tx);
+const arrowSize = 11 / this.scale;
+
+ctx.fillStyle = '#fff';
+ctx.strokeStyle = '#000';
+ctx.lineWidth = 1 / this.scale;
+ctx.beginPath();
+ctx.moveTo(tipX, tipY);
+ctx.lineTo(tipX - arrowSize * Math.cos(angle - Math.PI/7),
+tipY - arrowSize * Math.sin(angle - Math.PI/7));
+ctx.lineTo(tipX - arrowSize * Math.cos(angle + Math.PI/7),
+tipY - arrowSize * Math.sin(angle + Math.PI/7));
+ctx.closePath();
+ctx.fill();
+ctx.stroke();
+}
+
+// Метка связи
+if (label) {
+const mx = (startX + endX) / 2 + nx * bend * 0.5;
+const my = (startY + endY) / 2 + ny * bend * 0.5;
+const fontSize = 11 / this.scale;
+ctx.font = ${fontSize}px Segoe UI`;
+const tw = ctx.measureText(label).width;
+const pad = 5 / this.scale;
+ctx.fillStyle = '#000';
+ctx.fillRect(mx - tw/2 - pad, my - fontSize/2 - pad/2, tw + pad2, fontSize + pad);
+ctx.strokeStyle = '#fff';
+ctx.lineWidth = 1 / this.scale;
+ctx.strokeRect(mx - tw/2 - pad, my - fontSize/2 - pad/2, tw + pad2, fontSize + pad);
+ctx.fillStyle = '#fff';
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+ctx.fillText(label, mx, my);
+}
+}
+
+// ---- Mouse Events ----
+onMouseDown(e) {
+if (e.target.closest('.node')) return;
+if (e.button === 0) {
+this.isPanning = true;
+this.panStart = { x: e.clientX - this.offset.x, y: e.clientY - this.offset.y };
+this.canvasWrap.style.cursor = 'grabbing';
+this.selectNode(null);
+}
+}
+
+onMouseMove(e) {
+this.mouse.x = e.clientX;
+this.mouse.y = e.clientY;
+
+if (this.dragNode) {
+const rect = this.canvasWrap.getBoundingClientRect();
+// Курсор в экранных координатах -> мировые
+const sx = e.clientX - rect.left;
+const sy = e.clientY - rect.top;
+this.dragNode.x = (sx - this.offset.x - this.dragOffset.x) / this.scale;
+this.dragNode.y = (sy - this.offset.y - this.dragOffset.y) / this.scale;
+this.updateNodePosition(this.dragNode);
+this.render();
+} else if (this.isPanning) {
+this.offset.x = e.clientX - this.panStart.x;
+this.offset.y = e.clientY - this.panStart.y;
+this.updateAllNodePositions();
+this.render();
+} else if (this.connecting) {
+this.render();
+}
+}
+
+onMouseUp(e) {
+if (this.dragNode) {
+this.net.broadcast({ type: 'node:move', data: { id: this.dragNode.id, x: this.dragNode.x, y: this.dragNode.y } });
+this.dragNode = null;
+this._scheduleSave();
+}
+if (this.isPanning) {
+this.isPanning = false;
+this.canvasWrap.style.cursor = 'default';
+this._scheduleSave();
+}
+if (this.connecting) {
+const world = this.screenToWorld(e.clientX, e.clientY);
+let target = null;
+const hitRadius = NODE_VISUAL_RADIUS / this.scale + 5 / this.scale;
+for (const n of this.nodes.values()) {
+const dx = n.x - world.x, dy = n.y - world.y;
+if (dxdx + dydy < hitRadius*hitRadius) { target = n; break; }
+}
+if (target && target.id !== this.connecting.fromId) {
+this.promptEdgeLabel(this.connecting.fromId, target.id);
+}
+this.connecting = null;
+this.render();
+}
+}
+
+// ---- Touch Events ----
+onTouchStart(e) {
+if (e.target.closest('.node')) return;
+if (e.touches.length === 1) {
+const t = e.touches[0];
+this.isPanning = true;
+this.panStart = { x: t.clientX - this.offset.x, y: t.clientY - this.offset.y };
+this.selectNode(null);
+e.preventDefault();
+}
+}
+
+onTouchMove(e) {
+if (this.dragNode && e.touches.length === 1) {
+const t = e.touches[0];
+const rect = this.canvasWrap.getBoundingClientRect();
+const sx = t.clientX - rect.left;
+const sy = t.clientY - rect.top;
+this.dragNode.x = (sx - this.offset.x - this.dragOffset.x) / this.scale;
+this.dragNode.y = (sy - this.offset.y - this.dragOffset.y) / this.scale;
+this.updateNodePosition(this.dragNode);
+this.render();
+e.preventDefault();
+} else if (this.isPanning && e.touches.length === 1) {
+const t = e.touches[0];
+this.offset.x = t.clientX - this.panStart.x;
+this.offset.y = t.clientY - this.panStart.y;
+this.updateAllNodePositions();
+this.render();
+e.preventDefault();
+} else if (this.connecting && e.touches.length === 1) {
+const t = e.touches[0];
+this.mouse.x = t.clientX;
+this.mouse.y = t.clientY;
+this.render();
+e.preventDefault();
+}
+}
+
+onTouchEnd(e) {
+if (this.dragNode) {
+this.net.broadcast({ type: 'node:move', data: { id: this.dragNode.id, x: this.dragNode.x, y: this.dragNode.y } });
+this.dragNode = null;
+this._scheduleSave();
+}
+if (this.isPanning) {
+this.isPanning = false;
+this._scheduleSave();
+}
+if (this.connecting && e.changedTouches.length > 0) {
+const t = e.changedTouches[0];
+const world = this.screenToWorld(t.clientX, t.clientY);
+let target = null;
+const hitRadius = NODE_VISUAL_RADIUS / this.scale + 5 / this.scale;
+for (const n of this.nodes.values()) {
+const dx = n.x - world.x, dy = n.y - world.y;
+if (dxdx + dydy < hitRadius*hitRadius) { target = n; break; }
+}
+if (target && target.id !== this.connecting.fromId) {
+this.promptEdgeLabel(this.connecting.fromId, target.id);
+}
+this.connecting = null;
+this.render();
+}
+}
+
+onWheel(e) {
+e.preventDefault();
+const rect = this.canvasWrap.getBoundingClientRect();
+const mx = e.clientX - rect.left;
+const my = e.clientY - rect.top;
+const delta = e.deltaY > 0 ? 0.9 : 1.1;
+const newScale = Math.max(0.2, Math.min(3, this.scale * delta));
+const k = newScale / this.scale;
+this.offset.x = mx - (mx - this.offset.x) * k;
+this.offset.y = my - (my - this.offset.y) * k;
+this.scale = newScale;
+this.updateZoomLabel();
+this.updateAllNodePositions();
+this.render();
+this._scheduleSave();
+}
+
+onDblClick(e) {
+if (e.target.closest('.node')) return;
+const world = this.screenToWorld(e.clientX, e.clientY);
+this.promptAddNode(world.x, world.y);
+}
+
+onDrop(e) {
+e.preventDefault();
+const type = e.dataTransfer.getData('entity-type');
+if (!type || !ENTITY_TYPES[type]) return;
+const world = this.screenToWorld(e.clientX, e.clientY);
+this.addNode(type, world.x, world.y);
+}
+
+onKey(e) {
+if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+if ((e.key === 'Delete' || e.key === 'Backspace') && this.selectedNode) {
+this.deleteNode(this.selectedNode.id);
+}
+if (e.key === 'Escape') {
+this.selectNode(null);
+this.connecting = null;
+this.hideContextMenu();
+this.render();
+}
+}
+
+startConnect(fromId, e) {
+this.connecting = { fromId };
+e.stopPropagation();
+e.preventDefault();
+}
+
+// ---- Context menu ----
+showContextMenu(x, y, target) {
+const menu = document.getElementById('ctxMenu');
+let html = '';
+if (target.type === 'canvas') {
+const world = this.screenToWorld(x, y);
+html = &lt;div class="ctx-item" onclick="app.promptAddNode(${world.x}, latex
+{world.y})"&gt;➕ Добавить сущность&lt;/div&gt; &lt;div class="ctx-sep"&gt;&lt;/div&gt; &lt;div class="ctx-item" onclick="app.fitView()"&gt;🔎 Вписать в экран&lt;/div&gt; &lt;div class="ctx-item" onclick="app.autoLayout()"&gt;🧩 Авто-раскладка&lt;/div&gt; `; } else if (target.type === 'node') { const n = target.node; html = ` &lt;div class="ctx-item" onclick="app.editNode(
+
+{n.id})">✏️ Редактировать</div>
+<div class="ctx-item" onclick="app.duplicateNode({n.id})" style="color:#ff5577">🗑️ Удалить</div>
+`;
+}
+menu.innerHTML = html;
+menu.style.left = Math.min(x, window.innerWidth - 200) + 'px';
+menu.style.top = Math.min(y, window.innerHeight - 200) + 'px';
+menu.classList.add('show');
+}
+
+hideContextMenu() {
+document.getElementById('ctxMenu').classList.remove('show');
+}
+
+// ---- Modals ----
+showModal(html) {
+document.getElementById('modal').innerHTML = html;
+document.getElementById('modalBg').classList.add('show');
+}
+hideModal() {
+document.getElementById('modalBg').classList.remove('show');
+}
+
+promptAddNode(x, y) {
+this.hideContextMenu();
+let opts = '';
+for (const [k, t] of Object.entries(ENTITY_TYPES)) {
+opts += <option value="${k}">${t.icon} ${t.label}</option>; } this.showModal(
+<h3>Добавить сущность</h3>
+<label>Тип</label>
+<select id="m-type">${opts}&lt;/select&gt; &lt;label&gt;Название / значение&lt;/label&gt; &lt;input id="m-label" placeholder="Например: ivan@example.com" autofocus&gt; &lt;div class="modal-actions"&gt; &lt;button class="btn" onclick="app.hideModal()"&gt;Отмена&lt;/button&gt; &lt;button class="btn primary" onclick="app.confirmAddNode(${x}, ${y})"&gt;Добавить&lt;/button&gt; &lt;/div&gt;);
+setTimeout(() => document.getElementById('m-label').focus(), 50);
+}
+
+confirmAddNode(x, y) {
+const type = document.getElementById('m-type').value;
+const label = document.getElementById('m-label').value.trim();
+this.addNode(type, x, y, label);
+this.hideModal();
+}
+
+editNode(id) {
+this.hideContextMenu();
+const n = this.nodes.get(id);
+if (!n) return;
+let opts = '';
+for (const [k, t] of Object.entries(ENTITY_TYPES)) {
+opts += <option value="${k}" ${k===n.type?'selected':''}&gt;${t.icon} ${t.label}&lt;/option>;
+}
+this.showModal(&lt;h3&gt;Редактировать сущность&lt;/h3&gt; &lt;label&gt;Тип&lt;/label&gt; &lt;select id="m-type"&gt;${opts}</select>
+<label>Название / значение</label>
+<input id="m-label" value="${this.escapeHtml(n.label)}"&gt; &lt;div class="modal-actions"&gt; &lt;button class="btn" onclick="app.hideModal()"&gt;Отмена&lt;/button&gt; &lt;button class="btn primary" onclick="app.confirmEditNode(${id})">Сохранить</button>
+</div>
+`);
+}
+
+confirmEditNode(id) {
+const n = this.nodes.get(id);
+if (!n) return;
+n.type = document.getElementById('m-type').value;
+n.label = document.getElementById('m-label').value.trim() || n.label;
+if (n.el) n.el.remove();
+this.createNodeElement(n);
+this.hideModal();
+this.render();
+if (!this._remoteChange) {
+this.net.broadcast({ type: 'node:edit', data: { id: n.id, type: n.type, label: n.label } });
+}
+this._scheduleSave();
+}
+
+_editNodeRemote(data) {
+const n = this.nodes.get(data.id);
+if (!n) return;
+n.type = data.type;
+n.label = data.label;
+if (n.el) n.el.remove();
+this.createNodeElement(n);
+this.render();
+this._scheduleSave();
+}
+
+duplicateNode(id) {
+this.hideContextMenu();
+const n = this.nodes.get(id);
+if (!n) return;
+this.addNode(n.type, n.x + 80 / this.scale, n.y + 80 / this.scale, n.label + ' (копия)');
+}
+
+promptEdgeLabel(fromId, toId) {
+this.showModal(&lt;h3&gt;Новая связь&lt;/h3&gt; &lt;label&gt;Подпись связи (необязательно)&lt;/label&gt; &lt;input id="m-edge-label" placeholder="Например: владеет, связан с..." autofocus&gt; &lt;div class="modal-actions"&gt; &lt;button class="btn" onclick="app.hideModal()"&gt;Отмена&lt;/button&gt; &lt;button class="btn primary" onclick="app.confirmEdge(${fromId}, ${toId})">Создать</button>
+</div>
+`);
+setTimeout(() => document.getElementById('m-edge-label').focus(), 50);
+}
+
+confirmEdge(fromId, toId) {
+const label = document.getElementById('m-edge-label').value.trim();
+this.addEdge(fromId, toId, label);
+this.hideModal();
+}
+
+// ---- Actions ----
+zoomIn() {
+this.scale = Math.min(3, this.scale * 1.2);
+this.updateZoomLabel();
+this.updateAllNodePositions();
+this.render();
+this._scheduleSave();
+}
+zoomOut() {
+this.scale = Math.max(0.2, this.scale / 1.2);
+this.updateZoomLabel();
+this.updateAllNodePositions();
+this.render();
+this._scheduleSave();
+}
+updateZoomLabel() {
+document.getElementById('zoomLevel').textContent = Math.round(this.scale * 100) + '%';
+}
+
+fitView() {
+if (this.nodes.size === 0) return;
+let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+for (const n of this.nodes.values()) {
+minX = Math.min(minX, n.x); minY = Math.min(minY, n.y);
+maxX = Math.max(maxX, n.x); maxY = Math.max(maxY, n.y);
+}
+const pad = 100 / this.scale;
+const w = this.canvas.clientWidth;
+const h = this.canvas.clientHeight;
+const gw = maxX - minX + pad * 2;
+const gh = maxY - minY + pad * 2;
+this.scale = Math.min(w / gw, h / gh, 1.5);
+const cx = (minX + maxX) / 2;
+const cy = (minY + maxY) / 2;
+this.offset.x = w / 2 - cx * this.scale;
+this.offset.y = h / 2 - cy * this.scale;
+this.updateZoomLabel();
+this.updateAllNodePositions();
+this.render();
+this._scheduleSave();
+}
+
+resetView() {
+this.offset = { x: 0, y: 0 };
+this.scale = 1;
+this.updateZoomLabel();
+this.updateAllNodePositions();
+this.render();
+this._scheduleSave();
+}
+
+autoLayout() {
+const nodes = [...this.nodes.values()];
+if (nodes.length === 0) return;
+const radius = Math.max(200, nodes.length * 60);
+nodes.forEach((n, i) => {
+const angle = (i / nodes.length) * Math.PI * 2;
+n.x = Math.cos(angle) * radius;
+n.y = Math.sin(angle) * radius;
+this.updateNodePosition(n);
+});
+if (!this._remoteChange) {
+for (const n of nodes) {
+this.net.broadcast({ type: 'node:move', data: { id: n.id, x: n.x, y: n.y } });
+}
+}
+this.render();
+this.fitView();
+}
+
+clearAll() {
+if (!confirm('Удалить все узлы и связи?')) return;
+for (const n of this.nodes.values()) if (n.el) n.el.remove();
+this.nodes.clear();
+this.edges = [];
+this.selectedNode = null;
+this.nextId = 1;
+this.updateStats();
+this.render();
+if (!this._remoteChange) {
+this.net.broadcast({ type: 'sync', data: this.serialize() });
+}
+this._saveNow();
+}
+
+// ---- Persistence ----
+serialize() {
+return {
+nodes: [...this.nodes.values()].map(n => ({
+id: n.id, type: n.type, x: n.x, y: n.y, label: n.label
+})),
+edges: this.edges.map(e => ({ from: e.from, to: e.to, label: e.label })),
+nextId: this.nextId
+};
+}
+
+deserialize(data) {
+for (const n of this.nodes.values()) if (n.el) n.el.remove();
+this.nodes.clear();
+this.edges = [];
+for (const n of data.nodes) {
+const node = { ...n };
+this.nodes.set(node.id, node);
+this.createNodeElement(node);
+}
+this.edges = data.edges || [];
+this.nextId = data.nextId || 1;
+this.updateStats();
+this.updateAllNodePositions();
+this.render();
+}
+
+manualSave() {
+this._saveNow();
+this.flash('Проект сохранён');
+}
+
+exportJSON() {
+const blob = new Blob([JSON.stringify(this.serialize(), null, 2)], { type: 'application/json' });
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = 'osint-graph-' + Date.now() + '.json';
+a.click();
+URL.revokeObjectURL(url);
+}
+
+importJSON() {
+const input = document.createElement('input');
+input.type = 'file';
+input.accept = 'application/json';
+input.onchange = e => {
+const f = e.target.files[0];
+if (!f) return;
+const r = new FileReader();
+r.onload = ev => {
+try {
+this.deserialize(JSON.parse(ev.target.result));
+this._saveNow();
+this.flash('Импортировано и сохранено');
+} catch (err) {
+alert('Ошибка: ' + err.message);
+}
+};
+r.readAsText(f);
+};
+input.click();
+}
+
+updateStats() {
+document.getElementById('nodeCount').textContent = this.nodes.size;
+document.getElementById('edgeCount').textContent = this.edges.length;
+}
+
+escapeHtml(s) {
+return String(s).replace(/[&<>"']/g, c => ({'&':'&','<':'<','>':'>','"':'"',"'":'''}[c]));
+}
+
+flash(msg) {
+const el = document.createElement('div');
+el.className = 'toast';
+el.textContent = msg;
+document.body.appendChild(el);
+setTimeout(() => el.remove(), 2000);
+}
+
+toggleSidebar() {
+document.getElementById('sidebar').classList.toggle('open');
+document.getElementById('overlay').classList.toggle('show');
+}
+}
+
+const app = new OSINTGraph();
+</script>
+</body>
+</html>
