@@ -22,29 +22,61 @@
 
     html, body { min-height: 100%; touch-action: manipulation; }
 
+    /* ─── НОВЫЙ ФОН: ЧЁРНО-ЧЁРНЫЕ ВОЛНЫ ─── */
     body {
       color: var(--text);
-      background:
-        radial-gradient(circle at top right, rgba(255,255,255,.1), transparent 30%),
-        radial-gradient(circle at bottom left, rgba(255,255,255,.06), transparent 25%),
-        linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 45%, #161616 100%);
-      background-size: 200% 200%;
-      animation: bgFlow 20s ease infinite;
+      background: #000;
       overflow-x: hidden;
+      position: relative;
     }
 
-    @keyframes bgFlow {
-      0%   { background-position: 0% 0%; }
-      50%  { background-position: 100% 100%; }
-      100% { background-position: 0% 0%; }
+    /* Волна 1 — большая, медленно дрейфует */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -60%;
+      z-index: -2;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.05), transparent 45%),
+        radial-gradient(circle at 70% 70%, rgba(255,255,255,0.04), transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(255,255,255,0.03), transparent 50%);
+      animation: waveDrift 40s ease-in-out infinite;
+      pointer-events: none;
     }
 
+    /* Волна 2 — противоположная фаза */
     body::before {
-      content:""; position:fixed; inset:0; pointer-events:none;
+      content: "";
+      position: fixed;
+      inset: -60%;
+      z-index: -3;
+      background:
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.035), transparent 40%),
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.03), transparent 40%);
+      animation: waveDrift2 55s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes waveDrift {
+      0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+      33%      { transform: translate(6%, 4%) rotate(3deg) scale(1.05); }
+      66%      { transform: translate(-5%, 6%) rotate(-2deg) scale(0.97); }
+    }
+
+    @keyframes waveDrift2 {
+      0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+      40%      { transform: translate(-6%, -5%) rotate(-3deg) scale(1.04); }
+      75%      { transform: translate(4%, -3%) rotate(2deg) scale(0.98); }
+    }
+
+    /* Скан-линии поверх */
+    .scanlines {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 9999;
       background: repeating-linear-gradient(0deg,
         rgba(255,255,255,.02), rgba(255,255,255,.02) 1px,
         transparent 2px, transparent 4px);
-      opacity:.35; z-index:9999;
+      opacity: .35;
     }
 
     a { color:inherit; text-decoration:none; }
@@ -82,7 +114,7 @@
     .dot:nth-child(2){ background:#777; }
     .dot:nth-child(3){ background:#bbb; }
     .terminal-title { margin-left:auto; color:var(--muted); font-size:12px; }
-    .terminal-body { padding:24px; background:rgba(0,0,0,.25); }
+    .terminal-body { padding:24px; background:rgba(0,0,0,.45); }
     .brand { margin-bottom:20px; }
     .brand h1 { font-size:28px; letter-spacing:4px; color:var(--white); text-transform:uppercase; }
     .brand p { margin-top:8px; color:var(--muted); font-size:12px; letter-spacing:1px; }
@@ -164,7 +196,7 @@
 
     .graph-hint { font-size:11px; color:#6a6a6a; padding:8px 14px; border-left:2px solid #333; margin-bottom:14px; }
 
-    .graph-viewport { position:relative; width:100%; height:70vh; min-height:500px; border:1px solid var(--border); background:#050505; overflow:hidden; cursor:grab; touch-action:none; }
+    .graph-viewport { position:relative; width:100%; height:70vh; min-height:500px; border:1px solid var(--border); background:rgba(5,5,5,.7); overflow:hidden; cursor:grab; touch-action:none; }
     .graph-viewport.panning { cursor:grabbing; }
     .graph-viewport.connect-mode { cursor:cell; }
 
@@ -257,6 +289,8 @@
 </head>
 <body>
 
+  <div class="scanlines"></div>
+
   <div class="share-bar">
     <span>Поделись с другом:</span>
     <a id="shareLink" href="#" target="_blank" rel="noopener noreferrer">…</a>
@@ -282,14 +316,14 @@
         <div class="terminal-body">
           <div class="brand">
             <h1>OSINT TERMINAL</h1>
-            <p>cloud auth // v0.8</p>
+            <p>cloud auth // v0.9</p>
           </div>
           <div class="boot">
             [ ok ] open-web catalog<br>
             [ ok ] legal scope: public data only<br>
             [ ok ] auth: cloud (supabase)<br>
             [ ok ] session: 7 days<br>
-            [ ok ] data: server-side<br>
+            [ ok ] tools: 29 verified<br>
             [ -- ] login from any device
           </div>
           <div class="tabs">
@@ -367,7 +401,7 @@
         <span>OPEN SOURCES ONLY</span>
         <span id="counter">0 tools</span>
         <span>CLOUD AUTH</span>
-        <span>BUILD v0.8</span>
+        <span>BUILD v0.9</span>
       </section>
     </section>
 
@@ -470,8 +504,7 @@
 
   <script>
   /* ════════════════════════════════════════════════════════════════════
-     ─── SUPABASE CONFIG (КЛЮЧИ ВСТАВЛЕНЫ) ───
-     ВАЖНО: secret key сюда НЕ вставляется. Только анон-ключ.
+     ─── SUPABASE CONFIG ───
      ════════════════════════════════════════════════════════════════════ */
   const SUPABASE_URL = 'https://ltjxlwcuoxhoerngseym.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0anhsd2N1b3hob2VybmdzZXltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxOTUzODQsImV4cCI6MjEwODc3MTM4NH0.twVAE5geFigiCMHtHUXA0HZH1uTntAJynPEOR3L6_LI';
@@ -503,6 +536,7 @@
     { id:'website', label:'САЙТ' }
   ];
 
+  /* ─────────────── КАТЕГОРИИ И РАБОЧИЕ ИНСТРУМЕНТЫ (29) ─────────────── */
   const CATS = {
     all:'ВСЁ', phone:'НОМЕР', email:'ПОЧТА', social:'СОЦСЕТИ',
     meta:'МЕТАДАННЫЕ', image:'ФОТО ПОИСК', web:'ВЕБ / АРХИВ',
@@ -510,64 +544,52 @@
   };
 
   const TOOLS = [
-    { cat:'phone', name:'Telnum', url:'https://telnum.net/', desc:'Определение страны, оператора и типа номера по открытому плану нумерации.', note:'Техническая информация, не личное досье.' },
-    { cat:'phone', name:'Truecaller', url:'https://www.truecaller.com/', desc:'Публичный справочник номеров и определение вызывающих абонентов.', note:'Только свои номера или с согласия.' },
+    // ─── НОМЕР (2) ───
     { cat:'phone', name:'Google Dork: номер', url:'https://www.google.com/', desc:'Поиск публичных упоминаний номера в вебе через кавычки.', note:'Только проиндексированные страницы.' },
     { cat:'phone', name:'Yandex Dork: номер', url:'https://yandex.ru/', desc:'Поиск упоминаний номера в русскоязычном сегменте.', note:'Открытая выдача.' },
-    { cat:'phone', name:'NumVerify', url:'https://numverify.com/', desc:'Проверка формата номера и определение оператора по базе.', note:'Техническая проверка.' },
 
+    // ─── ПОЧТА (4) ───
     { cat:'email', name:'Have I Been Pwned', url:'https://haveibeenpwned.com/', desc:'Проверка своего e-mail по спискам утечек без раскрытия паролей.', note:'Аудит своей безопасности.' },
     { cat:'email', name:'EmailRep', url:'https://emailrep.io/', desc:'Открытая репутация адреса: подозрительность, возраст, активность.', note:'Против фишинга.' },
     { cat:'email', name:'Hunter Verifier', url:'https://hunter.io/email-verifier', desc:'Проверка существования и доставляемости деловых адресов.', note:'Есть лимиты.' },
-    { cat:'email', name:'VerifyEmailAddress', url:'https://verifyemailaddress.org/', desc:'Проверка существования почтового адреса без отправки письма.', note:'Бесплатный сервис.' },
-    { cat:'email', name:'MailTester', url:'https://www.mail-tester.com/', desc:'Проверка доставки писем и оценка репутации домена.', note:'Для диагностики.' },
-    { cat:'email', name:'Email-Checker', url:'https://email-checker.net/', desc:'Валидация синтаксиса и существования адреса.', note:'Быстрая проверка.' },
     { cat:'email', name:'Yandex Dork: почта', url:'https://yandex.ru/', desc:'Поиск публичных упоминаний почты в кавычках.', note:'Открытая выдача.' },
 
+    // ─── СОЦСЕТИ (4) ───
     { cat:'social', name:'WhatsMyName', url:'https://whatsmyname.app/', desc:'Поиск публичных профилей по одному нику на сотнях площадок.', note:'Проверяем свой ник.' },
     { cat:'social', name:'Sherlock Project', url:'https://github.com/sherlock-project/sherlock', desc:'Open-source поиск аккаунтов по нику на 300+ сайтах.', note:'Требует Python.' },
     { cat:'social', name:'Maigret', url:'https://github.com/soxoj/maigret', desc:'Мощный open-source поисковик профилей по 2500+ сайтам.', note:'Только открытые профили.' },
     { cat:'social', name:'Namechk', url:'https://namechk.com/', desc:'Проверка занятости ника и домена на популярных площадках.', note:'Для брендинга.' },
-    { cat:'social', name:'KnowEm', url:'https://knowem.com/', desc:'Проверка занятости имени на 500+ социальных платформах.', note:'Для брендов.' },
-    { cat:'social', name:'CheckUsernames', url:'https://checkusernames.com/', desc:'Поиск свободных ников на множестве площадок.', note:'Простой сервис.' },
-    { cat:'social', name:'UserSearch', url:'https://usersearch.org/', desc:'Поиск пользователей по нику на открытых платформах.', note:'Только публичные данные.' },
 
+    // ─── МЕТАДАННЫЕ (4) ───
     { cat:'meta', name:'Exif Regex Viewer', url:'https://exif.regex.info/exif.cgi', desc:'Просмотр EXIF: камера, время, софт, GPS-координаты.', note:'Только свои фото.' },
     { cat:'meta', name:'ExifTool', url:'https://exiftool.org/', desc:'Эталонный инструмент чтения и очистки метаданных.', note:'Есть веб-демо.' },
-    { cat:'meta', name:'Jimpl', url:'https://www.jimpl.com/', desc:'Быстрый онлайн-просмотр метаданных фото в браузере.', note:'Только с разрешения.' },
     { cat:'meta', name:'FotoForensics', url:'https://fotoforensics.com/', desc:'Анализ изображения на монтаж и артефакты.', note:'Проверка подлинности.' },
     { cat:'meta', name:'Forensically', url:'https://29a.ch/photo-forensics/', desc:'ELA, шум, клоны — всё в браузере без отправки файла.', note:'Локально.' },
-    { cat:'meta', name:'Metapicz', url:'https://metapicz.com/', desc:'Просмотр метаданных изображений с картой и графиками.', note:'Удобный интерфейс.' },
-    { cat:'meta', name:'ExifData.io', url:'https://exifdata.io/', desc:'Просмотр и удаление метаданных из изображений.', note:'Приватность.' },
 
+    // ─── ФОТО ПОИСК (3) ───
     { cat:'image', name:'Google Lens', url:'https://lens.google/', desc:'Поиск по изображению: где кадр встречается в открытом вебе.', note:'Публичные изображения.' },
     { cat:'image', name:'Yandex Images', url:'https://yandex.ru/images/', desc:'Сильный обратный поиск картинок для ру-сегмента.', note:'Открытая выдача.' },
     { cat:'image', name:'TinEye', url:'https://tineye.com/', desc:'Обратный поиск изображения и история распространения кадра.', note:'Открытые индексы.' },
-    { cat:'image', name:'Bing Visual Search', url:'https://www.bing.com/visualsearch', desc:'Поиск по картинке от Microsoft с распознаванием объектов.', note:'Публичные данные.' },
-    { cat:'image', name:'Google Images', url:'https://images.google.com/', desc:'Классический поиск по картинке через загрузку файла.', note:'Открытая выдача.' },
 
+    // ─── ВЕБ / АРХИВ (4) ───
     { cat:'web', name:'Wayback Machine', url:'https://web.archive.org/', desc:'История публичных веб-страниц: как сайты выглядели раньше.', note:'Архивные копии.' },
     { cat:'web', name:'Archive.today', url:'https://archive.ph/', desc:'Мгновенные снимки веб-страниц и архивирование.', note:'Публичные страницы.' },
     { cat:'web', name:'OSINT Framework', url:'https://osintframework.com/', desc:'Дерево сотен легальных открытых OSINT-ресурсов.', note:'Карта для расширения.' },
-    { cat:'web', name:'DNSDumpster', url:'https://dnsdumpster.com/', desc:'Разведка доменной инфраструктуры: DNS-записи, поддомены.', note:'Техническая информация.' },
-    { cat:'web', name:'ViewDNS.info', url:'https://viewdns.info/', desc:'DNS-записи, история домена, whois и другие данные.', note:'Открытые данные.' },
-    { cat:'web', name:'Whois.com', url:'https://www.whois.com/', desc:'Публичные данные о регистрации доменов и владельцах.', note:'Открытый реестр.' },
+    { cat:'web', name:'Google Cache', url:'https://www.google.com/', desc:'Кэшированные копии страниц через поиск.', note:'Если сайт недоступен.' },
 
+    // ─── ДОМЕНЫ / IP (4) ───
     { cat:'domain', name:'Who.is', url:'https://who.is/', desc:'Whois-данные домена: регистратор, даты, статус.', note:'Открытый реестр.' },
     { cat:'domain', name:'IPinfo.io', url:'https://ipinfo.io/', desc:'Информация об IP-адресе: геолокация, провайдер, организация.', note:'Технические данные.' },
     { cat:'domain', name:'Shodan', url:'https://www.shodan.io/', desc:'Поисковик по подключённым к интернету устройствам.', note:'Для исследования инфраструктуры.' },
     { cat:'domain', name:'Censys', url:'https://search.censys.io/', desc:'Анализ сертификатов и хостов в интернете.', note:'Открытые данные.' },
-    { cat:'domain', name:'IP2Location', url:'https://www.ip2location.com/', desc:'Определение местоположения по IP-адресу.', note:'Приблизительная геолокация.' },
-    { cat:'domain', name:'WhatIsMyIPAddress', url:'https://whatismyipaddress.com/ip-lookup', desc:'Поиск информации о любом IP-адресе.', note:'Открытые данные.' },
-    { cat:'domain', name:'Hurricane Electric BGP', url:'https://bgp.he.net/', desc:'Информация о маршрутизации и автономных системах.', note:'Сетевая инфраструктура.' },
 
+    // ─── ТРАНСПОРТ (2) ───
     { cat:'transport', name:'FlightRadar24', url:'https://www.flightradar24.com/', desc:'Отслеживание самолётов в реальном времени по открытым данным.', note:'Публичные рейсы.' },
     { cat:'transport', name:'MarineTraffic', url:'https://www.marinetraffic.com/', desc:'Отслеживание судов по AIS-сигналам.', note:'Открытые данные.' },
-    { cat:'transport', name:'VesselFinder', url:'https://www.vesselfinder.com/', desc:'Поиск судов и история маршрутов.', note:'Публичные данные.' },
 
+    // ─── КАРТЫ (2) ───
     { cat:'maps', name:'Google Maps', url:'https://www.google.com/maps', desc:'Поиск мест, панорамы улиц, фотографии локаций.', note:'Открытые данные.' },
-    { cat:'maps', name:'OpenStreetMap', url:'https://www.openstreetmap.org/', desc:'Свободная карта мира с детальными данными.', note:'Открытые данные.' },
-    { cat:'maps', name:'Wikimapia', url:'https://wikimapia.org/', desc:'Интерактивная карта с пользовательскими описаниями мест.', note:'Публичные данные.' }
+    { cat:'maps', name:'OpenStreetMap', url:'https://www.openstreetmap.org/', desc:'Свободная карта мира с детальными данными.', note:'Открытые данные.' }
   ];
 
   /* ─────────────── УТИЛИТЫ ─────────────── */
@@ -592,7 +614,6 @@
       shareLink.textContent = window.location.href;
     }
 
-    // Проверяем активную сессию при загрузке
     try {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
@@ -673,14 +694,11 @@
       const { data, error } = await supabaseClient.auth.signUp({
         email: email,
         password: pass,
-        options: {
-          data: { nickname: nick }
-        }
+        options: { data: { nickname: nick } }
       });
 
       if (error) throw error;
 
-      // Если включено подтверждение почты, сессии может не быть
       if (data.session) {
         const nickname = data.user.user_metadata?.nickname || data.user.email;
         setAuthMessage('аккаунт создан, вход выполнен', 'success');
@@ -1388,4 +1406,4 @@
   $('zoomResetBtn').addEventListener('click', () => graph.fitToView());
   </script>
 </body>
-  </html>
+</html>
