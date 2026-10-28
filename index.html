@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="utf-8">
@@ -380,7 +380,7 @@
         <div class="terminal-body">
           <div class="brand">
             <h1>OSINT TERMINAL</h1>
-            <p>public sources only // v0.5</p>
+            <p>public sources only // v0.6</p>
           </div>
           <div class="boot">
             [ ok ] open-web catalog<br>
@@ -388,6 +388,7 @@
             [ ok ] graph engine: ready<br>
             [ ok ] touch zoom: enabled<br>
             [ ok ] node positioning: fixed<br>
+            [ ok ] catalog: 50 tools<br>
             [ -- ] storage: localStorage
           </div>
           <div class="tabs">
@@ -460,7 +461,7 @@
         <span>OPEN SOURCES ONLY</span>
         <span id="counter">0 tools</span>
         <span>GRAPH ENGINE READY</span>
-        <span>BUILD v0.5</span>
+        <span>BUILD v0.6</span>
       </section>
     </section>
 
@@ -591,37 +592,89 @@
     { id:'website',  label:'САЙТ'     }
   ];
 
+  /* ─────────────── КАТЕГОРИИ КАТАЛОГА ─────────────── */
   const CATS = {
-    all:'ВСЁ', phone:'НОМЕР', email:'ПОЧТА', social:'СОЦСЕТИ',
-    meta:'МЕТАДАННЫЕ', web:'ВЕБ / ФОТО'
+    all:'ВСЁ',
+    phone:'НОМЕР',
+    email:'ПОЧТА',
+    social:'СОЦСЕТИ',
+    meta:'МЕТАДАННЫЕ',
+    image:'ФОТО ПОИСК',
+    web:'ВЕБ / АРХИВ',
+    domain:'ДОМЕНЫ / IP',
+    transport:'ТРАНСПОРТ',
+    maps:'КАРТЫ'
   };
 
+  /* ─────────────── КАТАЛОГ ИНСТРУМЕНТОВ (50) ─────────────── */
   const TOOLS = [
-    { cat:'phone', name:'Telnum', url:'https://telnum.net/', desc:'Открытые справочные данные по номеру: страна, оператор, тип.', note:'Техническая информация, не личное досье.' },
-    { cat:'phone', name:'Truecaller Public', url:'https://www.truecaller.com/', desc:'Публичный справочник определения вызывающих абонентов.', note:'Только свои номера или с согласия.' },
-    { cat:'phone', name:'Google Dork: номер', url:'https://www.google.com/', desc:'Публичные упоминания номера в вебе через кавычки.', note:'Только проиндексированные страницы.' },
+    // ─── НОМЕР (5) ───
+    { cat:'phone', name:'Telnum', url:'https://telnum.net/', desc:'Определение страны, оператора и типа номера по открытому плану нумерации.', note:'Техническая информация, не личное досье.' },
+    { cat:'phone', name:'Truecaller', url:'https://www.truecaller.com/', desc:'Публичный справочник номеров и определение вызывающих абонентов.', note:'Только свои номера или с согласия.' },
+    { cat:'phone', name:'Google Dork: номер', url:'https://www.google.com/', desc:'Поиск публичных упоминаний номера в вебе через кавычки.', note:'Только проиндексированные страницы.' },
+    { cat:'phone', name:'Yandex Dork: номер', url:'https://yandex.ru/', desc:'Поиск упоминаний номера в русскоязычном сегменте.', note:'Открытая выдача.' },
+    { cat:'phone', name:'NumVerify', url:'https://numverify.com/', desc:'Проверка формата номера и определение оператора по базе.', note:'Техническая проверка.' },
 
-    { cat:'email', name:'Have I Been Pwned', url:'https://haveibeenpwned.com/', desc:'Проверка своего e-mail по спискам утечек.', note:'Аудит своей безопасности.' },
-    { cat:'email', name:'EmailRep', url:'https://emailrep.io/', desc:'Открытая репутация адреса.', note:'Против фишинга и сомнительных писем.' },
-    { cat:'email', name:'Hunter Verifier', url:'https://hunter.io/email-verifier', desc:'Проверка существования деловых адресов.', note:'Есть лимиты.' },
-    { cat:'email', name:'Search Engine: e-mail', url:'https://yandex.ru/', desc:'Поиск публичных упоминаний почты в кавычках.', note:'Открытая выдача.' },
+    // ─── ПОЧТА (7) ───
+    { cat:'email', name:'Have I Been Pwned', url:'https://haveibeenpwned.com/', desc:'Проверка своего e-mail по спискам утечек без раскрытия паролей.', note:'Аудит своей безопасности.' },
+    { cat:'email', name:'EmailRep', url:'https://emailrep.io/', desc:'Открытая репутация адреса: подозрительность, возраст, активность.', note:'Против фишинга.' },
+    { cat:'email', name:'Hunter Verifier', url:'https://hunter.io/email-verifier', desc:'Проверка существования и доставляемости деловых адресов.', note:'Есть лимиты.' },
+    { cat:'email', name:'VerifyEmailAddress', url:'https://verifyemailaddress.org/', desc:'Проверка существования почтового адреса без отправки письма.', note:'Бесплатный сервис.' },
+    { cat:'email', name:'MailTester', url:'https://www.mail-tester.com/', desc:'Проверка доставки писем и оценка репутации домена.', note:'Для диагностики.' },
+    { cat:'email', name:'Email-Checker', url:'https://email-checker.net/', desc:'Валидация синтаксиса и существования адреса.', note:'Быстрая проверка.' },
+    { cat:'email', name:'Yandex Dork: почта', url:'https://yandex.ru/', desc:'Поиск публичных упоминаний почты в кавычках.', note:'Открытая выдача.' },
 
-    { cat:'social', name:'WhatsMyName', url:'https://whatsmyname.app/', desc:'Поиск публичных профилей по нику.', note:'Проверяем свой ник.' },
-    { cat:'social', name:'Sherlock Project', url:'https://github.com/sherlock-project/sherlock', desc:'Open-source поиск аккаунтов по нику.', note:'Требует Python.' },
-    { cat:'social', name:'Maigret', url:'https://github.com/soxoj/maigret', desc:'Мощный open-source поисковик профилей.', note:'Только открытые профили.' },
-    { cat:'social', name:'Namechk', url:'https://namechk.com/', desc:'Проверка занятости ника на площадках.', note:'Для брендинга и своих аккаунтов.' },
+    // ─── СОЦСЕТИ (7) ───
+    { cat:'social', name:'WhatsMyName', url:'https://whatsmyname.app/', desc:'Поиск публичных профилей по одному нику на сотнях площадок.', note:'Проверяем свой ник.' },
+    { cat:'social', name:'Sherlock Project', url:'https://github.com/sherlock-project/sherlock', desc:'Open-source поиск аккаунтов по нику на 300+ сайтах.', note:'Требует Python.' },
+    { cat:'social', name:'Maigret', url:'https://github.com/soxoj/maigret', desc:'Мощный open-source поисковик профилей по 2500+ сайтам.', note:'Только открытые профили.' },
+    { cat:'social', name:'Namechk', url:'https://namechk.com/', desc:'Проверка занятости ника и домена на популярных площадках.', note:'Для брендинга.' },
+    { cat:'social', name:'KnowEm', url:'https://knowem.com/', desc:'Проверка занятости имени на 500+ социальных платформах.', note:'Для брендов.' },
+    { cat:'social', name:'CheckUsernames', url:'https://checkusernames.com/', desc:'Поиск свободных ников на множестве площадок.', note:'Простой сервис.' },
+    { cat:'social', name:'UserSearch', url:'https://usersearch.org/', desc:'Поиск пользователей по нику на открытых платформах.', note:'Только публичные данные.' },
 
-    { cat:'meta', name:'Exif Regex Viewer', url:'https://exif.regex.info/exif.cgi', desc:'Просмотр EXIF: камера, время, GPS.', note:'Только свои фото.' },
-    { cat:'meta', name:'ExifTool', url:'https://exiftool.org/', desc:'Эталонный просмотр и очистка метаданных.', note:'Есть локальный и веб-вариант.' },
-    { cat:'meta', name:'Jimpl', url:'https://www.jimpl.com/', desc:'Быстрый онлайн EXIF прямо в браузере.', note:'Только с разрешения.' },
-    { cat:'meta', name:'FotoForensics', url:'https://fotoforensics.com/', desc:'Анализ на монтаж и артефакты.', note:'Проверка подлинности.' },
-    { cat:'meta', name:'Forensically', url:'https://29a.ch/photo-forensics/', desc:'ELA, шум, клоны — всё в браузере.', note:'Локально.' },
+    // ─── МЕТАДАННЫЕ (7) ───
+    { cat:'meta', name:'Exif Regex Viewer', url:'https://exif.regex.info/exif.cgi', desc:'Просмотр EXIF: камера, время, софт, GPS-координаты.', note:'Только свои фото.' },
+    { cat:'meta', name:'ExifTool', url:'https://exiftool.org/', desc:'Эталонный инструмент чтения и очистки метаданных.', note:'Есть веб-демо.' },
+    { cat:'meta', name:'Jimpl', url:'https://www.jimpl.com/', desc:'Быстрый онлайн-просмотр метаданных фото в браузере.', note:'Только с разрешения.' },
+    { cat:'meta', name:'FotoForensics', url:'https://fotoforensics.com/', desc:'Анализ изображения на монтаж и артефакты.', note:'Проверка подлинности.' },
+    { cat:'meta', name:'Forensically', url:'https://29a.ch/photo-forensics/', desc:'ELA, шум, клоны — всё в браузере без отправки файла.', note:'Локально.' },
+    { cat:'meta', name:'Metapicz', url:'https://metapicz.com/', desc:'Просмотр метаданных изображений с картой и графиками.', note:'Удобный интерфейс.' },
+    { cat:'meta', name:'ExifData.io', url:'https://exifdata.io/', desc:'Просмотр и удаление метаданных из изображений.', note:'Приватность.' },
 
-    { cat:'web', name:'OSINT Framework', url:'https://osintframework.com/', desc:'Дерево легальных открытых OSINT-ресурсов.', note:'Карта для расширения.' },
-    { cat:'web', name:'Wayback Machine', url:'https://web.archive.org/', desc:'История публичных веб-страниц.', note:'Архивные копии.' },
-    { cat:'web', name:'Google Lens', url:'https://lens.google/', desc:'Поиск по изображению в открытом вебе.', note:'Публичные изображения.' },
-    { cat:'web', name:'Yandex Images', url:'https://yandex.ru/images/', desc:'Сильный обратный поиск картинок.', note:'Открытая выдача.' },
-    { cat:'web', name:'TinEye', url:'https://tineye.com/', desc:'Обратный поиск и история кадра.', note:'Открытые индексы.' }
+    // ─── ФОТО ПОИСК (5) ───
+    { cat:'image', name:'Google Lens', url:'https://lens.google/', desc:'Поиск по изображению: где кадр встречается в открытом вебе.', note:'Публичные изображения.' },
+    { cat:'image', name:'Yandex Images', url:'https://yandex.ru/images/', desc:'Сильный обратный поиск картинок для ру-сегмента.', note:'Открытая выдача.' },
+    { cat:'image', name:'TinEye', url:'https://tineye.com/', desc:'Обратный поиск изображения и история распространения кадра.', note:'Открытые индексы.' },
+    { cat:'image', name:'Bing Visual Search', url:'https://www.bing.com/visualsearch', desc:'Поиск по картинке от Microsoft с распознаванием объектов.', note:'Публичные данные.' },
+    { cat:'image', name:'Google Images', url:'https://images.google.com/', desc:'Классический поиск по картинке через загрузку файла.', note:'Открытая выдача.' },
+
+    // ─── ВЕБ / АРХИВ (6) ───
+    { cat:'web', name:'Wayback Machine', url:'https://web.archive.org/', desc:'История публичных веб-страниц: как сайты выглядели раньше.', note:'Архивные копии.' },
+    { cat:'web', name:'Archive.today', url:'https://archive.ph/', desc:'Мгновенные снимки веб-страниц и архивирование.', note:'Публичные страницы.' },
+    { cat:'web', name:'OSINT Framework', url:'https://osintframework.com/', desc:'Дерево сотен легальных открытых OSINT-ресурсов.', note:'Карта для расширения.' },
+    { cat:'web', name:'DNSDumpster', url:'https://dnsdumpster.com/', desc:'Разведка доменной инфраструктуры: DNS-записи, поддомены.', note:'Техническая информация.' },
+    { cat:'web', name:'ViewDNS.info', url:'https://viewdns.info/', desc:'DNS-записи, история домена, whois и другие данные.', note:'Открытые данные.' },
+    { cat:'web', name:'Whois.com', url:'https://www.whois.com/', desc:'Публичные данные о регистрации доменов и владельцах.', note:'Открытый реестр.' },
+
+    // ─── ДОМЕНЫ / IP (7) ───
+    { cat:'domain', name:'Who.is', url:'https://who.is/', desc:'Whois-данные домена: регистратор, даты, статус.', note:'Открытый реестр.' },
+    { cat:'domain', name:'IPinfo.io', url:'https://ipinfo.io/', desc:'Информация об IP-адресе: геолокация, провайдер, организация.', note:'Технические данные.' },
+    { cat:'domain', name:'Shodan', url:'https://www.shodan.io/', desc:'Поисковик по подключённым к интернету устройствам.', note:'Для исследования инфраструктуры.' },
+    { cat:'domain', name:'Censys', url:'https://search.censys.io/', desc:'Анализ сертификатов и хостов в интернете.', note:'Открытые данные.' },
+    { cat:'domain', name:'IP2Location', url:'https://www.ip2location.com/', desc:'Определение местоположения по IP-адресу.', note:'Приблизительная геолокация.' },
+    { cat:'domain', name:'WhatIsMyIPAddress', url:'https://whatismyipaddress.com/ip-lookup', desc:'Поиск информации о любом IP-адресе.', note:'Открытые данные.' },
+    { cat:'domain', name:'Hurricane Electric BGP', url:'https://bgp.he.net/', desc:'Информация о маршрутизации и автономных системах.', note:'Сетевая инфраструктура.' },
+
+    // ─── ТРАНСПОРТ (3) ───
+    { cat:'transport', name:'FlightRadar24', url:'https://www.flightradar24.com/', desc:'Отслеживание самолётов в реальном времени по открытым данным.', note:'Публичные рейсы.' },
+    { cat:'transport', name:'MarineTraffic', url:'https://www.marinetraffic.com/', desc:'Отслеживание судов по AIS-сигналам.', note:'Открытые данные.' },
+    { cat:'transport', name:'VesselFinder', url:'https://www.vesselfinder.com/', desc:'Поиск судов и история маршрутов.', note:'Публичные данные.' },
+
+    // ─── КАРТЫ (3) ───
+    { cat:'maps', name:'Google Maps', url:'https://www.google.com/maps', desc:'Поиск мест, панорамы улиц, фотографии локаций.', note:'Открытые данные.' },
+    { cat:'maps', name:'OpenStreetMap', url:'https://www.openstreetmap.org/', desc:'Свободная карта мира с детальными данными.', note:'Открытые данные.' },
+    { cat:'maps', name:'Wikimapia', url:'https://wikimapia.org/', desc:'Интерактивная карта с пользовательскими описаниями мест.', note:'Публичные данные.' }
   ];
 
   /* ─────────────── УТИЛИТЫ ─────────────── */
@@ -816,7 +869,7 @@
   $('closeRulesBtn').addEventListener('click', () => $('rulesModal').close());
 
   /* ════════════════════════════════════════════════════════════════════
-     ─── GRAPH ENGINE (с исправленной системой координат) ───
+     ─── GRAPH ENGINE (без изменений, как в рабочей версии) ───
      ════════════════════════════════════════════════════════════════════ */
   const graph = (() => {
     const STORAGE_KEY = 'plx_osint_graph_v3';
@@ -826,7 +879,6 @@
     let state = { nodes: [], edges: [] };
     let nextId = 1;
 
-    // трансформация мира
     let view = { x: 0, y: 0, scale: 1 };
     const MIN_SCALE = 0.2;
     const MAX_SCALE = 3;
@@ -840,10 +892,8 @@
     let panStart = { x: 0, y: 0, viewX: 0, viewY: 0 };
     let clickStart = { x: 0, y: 0, time: 0, moved: false };
 
-    // ИСПРАВЛЕНИЕ: объект, который мутируется, а не переприсваивается
     const lastTapPos = { x: null, y: null };
 
-    // мультитач
     let touchState = { ids: [], dist: 0, center: { x: 0, y: 0 }, startScale: 1, startView: { x: 0, y: 0 } };
 
     const viewport = $('graphViewport');
@@ -853,7 +903,6 @@
     const hint = $('graphHint');
     const zoomLabel = $('zoomLabel');
 
-    /* ── сохранение ── */
     function save() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ state, nextId, view }));
@@ -883,7 +932,6 @@
       render();
     }
 
-    /* ── трансформация ── */
     function applyTransform() {
       world.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.scale})`;
       zoomLabel.textContent = Math.round(view.scale * 100) + '%';
@@ -940,8 +988,6 @@
       save();
     }
 
-    /* ── координаты ── */
-    // экранные (абсолютные) → мировые
     function screenToWorld(sx, sy) {
       const r = viewport.getBoundingClientRect();
       const px = sx - r.left;
@@ -952,7 +998,6 @@
       };
     }
 
-    /* ── очистка (кастомный модал) ── */
     let clearResolver = null;
     function askClear() {
       return new Promise(resolve => {
@@ -983,19 +1028,15 @@
       showToast('граф очищен');
     }
 
-    /* ── узлы ── */
-    // ИСПРАВЛЕНИЕ: правильная обработка координат
     function addNode(type, label, wx, wy) {
       if (!type) return;
       if (!label || !label.trim()) label = NODE_TYPES.find(t => t.id === type).label;
 
       let x, y;
       if (typeof wx === 'number' && typeof wy === 'number' && !isNaN(wx) && !isNaN(wy)) {
-        // переданы мировые координаты точки тапа
         x = wx - 60;
         y = wy - 40;
       } else {
-        // центр видимой области
         const r = viewport.getBoundingClientRect();
         const center = screenToWorld(r.left + r.width / 2, r.top + r.height / 2);
         x = center.x - 60 + (Math.random() * 60 - 30);
@@ -1035,7 +1076,6 @@
       log('graph: edge ' + from + ' ↔ ' + to);
     }
 
-    /* ── рендер ── */
     function render() {
       world.querySelectorAll('.graph-node').forEach(el => el.remove());
       empty.classList.toggle('hidden', state.nodes.length > 0);
@@ -1097,7 +1137,6 @@
       });
     }
 
-    /* ── drag узла ── */
     function startNodeDrag(ev, node, el) {
       if (connectMode) {
         ev.stopPropagation();
@@ -1148,7 +1187,6 @@
       }
     }
 
-    // ИСПРАВЛЕНИЕ: клик по узлу для выделения в обычном режиме
     function onEnd(ev) {
       if (dragging) {
         const el = world.querySelector('[data-id="' + dragging.id + '"]');
@@ -1172,7 +1210,6 @@
     document.addEventListener('touchend', onEnd);
     document.addEventListener('touchcancel', onEnd);
 
-    /* ── мультитач зум + pan по пустому месту ── */
     function getTouchDistance(t1, t2) {
       const dx = t1.clientX - t2.clientX;
       const dy = t1.clientY - t2.clientY;
@@ -1239,13 +1276,11 @@
         touchState.ids = [];
       }
       if (ev.touches.length === 0 && panning && !clickStart.moved && Date.now() - clickStart.time < 280) {
-        // быстрый тап по пустому месту — добавить узел сюда
         handleEmptyTap(clickStart.x, clickStart.y);
       }
       save();
     });
 
-    /* ── мышь: pan + колёсико ── */
     viewport.addEventListener('mousedown', ev => {
       if (ev.target.closest('.graph-node')) return;
       if (ev.target.closest('.zoom-controls') || ev.target.closest('.zoom-help')) return;
@@ -1273,8 +1308,6 @@
       zoomAt(delta, cx, cy);
     }, { passive: false });
 
-    /* ── тап по пустому месту (для модалки добавления) ── */
-    // ИСПРАВЛЕНИЕ: мутируем объект, а не переприсваиваем
     function handleEmptyTap(clientX, clientY) {
       const w = screenToWorld(clientX, clientY);
       lastTapPos.x = w.x;
@@ -1282,7 +1315,6 @@
       openAddNodeModal();
     }
 
-    /* ── клик по узлу ── */
     function handleNodeClick(id) {
       if (!connectMode) {
         selectedNode = selectedNode === id ? null : id;
@@ -1320,7 +1352,6 @@
       }
     }
 
-    /* ── экспорт/импорт ── */
     function exportGraph() {
       const data = JSON.stringify({ state, nextId, view, exported: new Date().toISOString() }, null, 2);
       const blob = new Blob([data], { type: 'application/json' });
@@ -1368,7 +1399,6 @@
         const r = viewport.getBoundingClientRect();
         zoomAt(1 / 1.25, r.width / 2, r.height / 2);
       },
-      // ИСПРАВЛЕНИЕ: возвращаем копию объекта с актуальными данными
       getLastTapPos: () => ({ x: lastTapPos.x, y: lastTapPos.y }),
       resetLastTapPos: () => { lastTapPos.x = null; lastTapPos.y = null; }
     };
@@ -1409,7 +1439,6 @@
   });
   $('cancelNodeBtn').addEventListener('click', () => addNodeModal.close());
 
-  // ИСПРАВЛЕНИЕ: проверяем, есть ли реальные координаты тапа
   $('confirmNodeBtn').addEventListener('click', () => {
     if (!selectedType) { showToast('выбери тип'); return; }
     const pos = graph.getLastTapPos();
