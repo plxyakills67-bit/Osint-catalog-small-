@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>PLX // OSINT TERMINAL</title>
 
+  <!-- Supabase JS клиент -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     :root {
       --bg-1: #000; --bg-2: #0b0b0b; --bg-3: #111;
@@ -49,7 +52,6 @@
     ::selection { background:#fff; color:#000; }
     .hidden { display:none !important; }
 
-    /* ─── SHARE BAR ─── */
     .share-bar {
       position:sticky; top:0; left:0; z-index:50;
       display:flex; flex-wrap:wrap; gap:8px; align-items:center;
@@ -70,7 +72,6 @@
     }
     .share-bar button:hover { color:#fff; border-color:rgba(255,255,255,.28); background:rgba(255,255,255,.06); }
 
-    /* ─── AUTH ─── */
     .auth-wrap { min-height:calc(100vh - 54px); display:grid; place-items:center; padding:20px; }
     .auth-shell { width:100%; max-width:480px; animation:appear .35s ease; }
     @keyframes appear { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
@@ -97,15 +98,12 @@
     .btn { width:100%; border:1px solid #ddd; background:linear-gradient(180deg,#f5f5f5,#dcdcdc); color:#000; padding:14px; cursor:pointer; font-weight:700; letter-spacing:2px; margin-top:8px; }
     .btn:hover { background:#fff; }
     .btn:disabled { opacity:.5; cursor:wait; }
-    .btn.secondary { margin-top:12px; background:transparent; color:#ccc; border:1px solid #444; font-weight:500; }
-    .btn.secondary:hover { border-color:#888; color:#fff; }
     .auth-message { min-height:22px; margin-top:12px; color:#cfcfcf; font-size:12px; }
     .auth-message.error { color:#ff9a9a; }
     .auth-message.success { color:#9aff9a; }
     .small-note { margin-top:16px; color:#666; font-size:11px; line-height:1.6; }
     .small-note strong { color:#999; }
 
-    /* ─── APP / CATALOG ─── */
     .app { width:min(1200px, calc(100% - 24px)); margin:0 auto; padding:20px 0 40px; }
     .topbar { display:flex; align-items:center; gap:12px; padding:16px 0; border-bottom:1px solid rgba(255,255,255,.08); flex-wrap:wrap; }
     .logo { font-size:18px; font-weight:800; letter-spacing:3px; color:var(--white); text-transform:uppercase; }
@@ -153,12 +151,7 @@
     .console { margin-top:24px; border:1px solid rgba(255,255,255,.08); background:rgba(0,0,0,.35); min-height:110px; padding:14px; font-size:12px; color:#909090; line-height:1.8; overflow:hidden; }
     .statusline { display:flex; gap:14px; flex-wrap:wrap; margin-top:18px; color:#5d5d5d; font-size:11px; letter-spacing:1px; }
 
-    /* ─── GRAPH SCREEN ─── */
-    .graph-header {
-      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-      padding:14px; border:1px solid var(--border);
-      background:rgba(0,0,0,.3); margin-bottom:14px;
-    }
+    .graph-header { display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:14px; border:1px solid var(--border); background:rgba(0,0,0,.3); margin-bottom:14px; }
     .graph-title { font-size:14px; letter-spacing:2px; color:#fff; }
     .graph-title em { color:#888; font-style:normal; font-weight:400; }
     .graph-actions { margin-left:auto; display:flex; gap:8px; flex-wrap:wrap; }
@@ -171,25 +164,12 @@
 
     .graph-hint { font-size:11px; color:#6a6a6a; padding:8px 14px; border-left:2px solid #333; margin-bottom:14px; }
 
-    .graph-viewport {
-      position:relative;
-      width:100%;
-      height:70vh;
-      min-height:500px;
-      border:1px solid var(--border);
-      background:#050505;
-      overflow:hidden;
-      cursor:grab;
-      touch-action:none;
-    }
+    .graph-viewport { position:relative; width:100%; height:70vh; min-height:500px; border:1px solid var(--border); background:#050505; overflow:hidden; cursor:grab; touch-action:none; }
     .graph-viewport.panning { cursor:grabbing; }
     .graph-viewport.connect-mode { cursor:cell; }
 
     .graph-world {
-      position:absolute;
-      top:0; left:0;
-      width:6000px;
-      height:6000px;
+      position:absolute; top:0; left:0; width:6000px; height:6000px;
       transform-origin:0 0;
       background:
         radial-gradient(circle at 50% 50%, rgba(255,255,255,.02), transparent 70%),
@@ -203,104 +183,38 @@
     .graph-edge.selected { stroke:#fff; stroke-width:2.5; }
 
     .graph-node {
-      position:absolute; z-index:2;
-      min-width:120px;
+      position:absolute; z-index:2; min-width:120px;
       border:1px solid var(--border);
       background:linear-gradient(180deg,#111,#080808);
-      color:#eee;
-      padding:10px 12px;
+      color:#eee; padding:10px 12px;
       display:flex; flex-direction:column; align-items:center; gap:6px;
-      cursor:grab;
-      user-select:none;
-      transition:border-color .18s;
-      font-size:12px;
+      cursor:grab; user-select:none;
+      transition:border-color .18s; font-size:12px;
     }
     .graph-node:hover { border-color:#888; }
     .graph-node.selected { border-color:#fff; box-shadow:0 0 0 2px rgba(255,255,255,.15); }
     .graph-node.dragging { cursor:grabbing; z-index:10; }
-    .graph-node .node-icon {
-      width:32px; height:32px;
-      display:flex; align-items:center; justify-content:center;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
-      padding:4px;
-    }
+    .graph-node .node-icon { width:32px; height:32px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); background:rgba(255,255,255,.03); padding:4px; }
     .graph-node .node-icon svg { width:22px; height:22px; stroke:#ddd; fill:none; stroke-width:1.5; }
     .graph-node .node-type { font-size:9px; letter-spacing:1.5px; color:#888; text-transform:uppercase; }
     .graph-node .node-label { font-size:12px; color:#fff; text-align:center; word-break:break-word; max-width:180px; line-height:1.35; }
-    .graph-node .node-remove {
-      position:absolute; top:-8px; right:-8px;
-      width:22px; height:22px;
-      border-radius:50%;
-      background:#1a1a1a;
-      border:1px solid #555;
-      color:#ddd; font-size:14px; line-height:1;
-      display:none; align-items:center; justify-content:center;
-      cursor:pointer;
-    }
+    .graph-node .node-remove { position:absolute; top:-8px; right:-8px; width:22px; height:22px; border-radius:50%; background:#1a1a1a; border:1px solid #555; color:#ddd; font-size:14px; line-height:1; display:none; align-items:center; justify-content:center; cursor:pointer; }
     .graph-node:hover .node-remove { display:flex; }
     .graph-node .node-remove:hover { background:#3a1212; color:#fff; border-color:#777; }
 
-    .graph-empty {
-      position:absolute; inset:0;
-      display:flex; flex-direction:column;
-      align-items:center; justify-content:center;
-      color:#555; font-size:13px; text-align:center; padding:20px;
-      pointer-events:none; z-index:0;
-    }
+    .graph-empty { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#555; font-size:13px; text-align:center; padding:20px; pointer-events:none; z-index:0; }
     .graph-empty h2 { color:#888; letter-spacing:3px; margin-bottom:10px; font-size:16px; }
     .graph-empty p { max-width:480px; line-height:1.7; }
 
-    .zoom-controls {
-      position:absolute;
-      bottom:14px; right:14px;
-      display:flex; flex-direction:column; gap:6px;
-      z-index:20;
-      background:rgba(0,0,0,.7);
-      border:1px solid var(--border);
-      padding:6px;
-      backdrop-filter:blur(4px);
-    }
-    .zoom-btn {
-      width:38px; height:38px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
-      color:#ddd;
-      cursor:pointer;
-      font-size:16px;
-      font-weight:700;
-      display:flex; align-items:center; justify-content:center;
-    }
+    .zoom-controls { position:absolute; bottom:14px; right:14px; display:flex; flex-direction:column; gap:6px; z-index:20; background:rgba(0,0,0,.7); border:1px solid var(--border); padding:6px; backdrop-filter:blur(4px); }
+    .zoom-btn { width:38px; height:38px; border:1px solid var(--border); background:rgba(255,255,255,.03); color:#ddd; cursor:pointer; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center; }
     .zoom-btn:hover { color:#fff; border-color:var(--border-hi); background:rgba(255,255,255,.08); }
     .zoom-btn.reset { font-size:10px; letter-spacing:1px; }
-    .zoom-label {
-      text-align:center;
-      color:#999;
-      font-size:10px;
-      padding:4px 0;
-      letter-spacing:1px;
-      border-top:1px solid var(--border);
-      margin-top:2px;
-    }
+    .zoom-label { text-align:center; color:#999; font-size:10px; padding:4px 0; letter-spacing:1px; border-top:1px solid var(--border); margin-top:2px; }
 
-    .zoom-help {
-      position:absolute;
-      top:14px; left:14px;
-      background:rgba(0,0,0,.7);
-      border:1px solid var(--border);
-      color:#888;
-      padding:8px 12px;
-      font-size:10px;
-      letter-spacing:1px;
-      z-index:20;
-      backdrop-filter:blur(4px);
-      line-height:1.6;
-    }
+    .zoom-help { position:absolute; top:14px; left:14px; background:rgba(0,0,0,.7); border:1px solid var(--border); color:#888; padding:8px 12px; font-size:10px; letter-spacing:1px; z-index:20; backdrop-filter:blur(4px); line-height:1.6; }
 
-    dialog {
-      width:min(92vw, 560px);
-      border:1px solid #333; background:#0b0b0b; color:#ddd; padding:0;
-    }
+    dialog { width:min(92vw, 560px); border:1px solid #333; background:#0b0b0b; color:#ddd; padding:0; }
     dialog::backdrop { background:rgba(0,0,0,.75); backdrop-filter:blur(4px); }
     .modal-inner { padding:22px; }
     .modal-inner h2 { margin-bottom:16px; font-size:18px; color:#fff; letter-spacing:2px; }
@@ -311,25 +225,13 @@
     .modal-actions .btn.cancel { background:transparent; color:#aaa; border:1px solid #444; }
 
     .type-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:10px; margin:14px 0; }
-    .type-btn {
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.02);
-      padding:14px 8px;
-      display:flex; flex-direction:column; align-items:center; gap:8px;
-      cursor:pointer; color:#aaa; font-size:10px; letter-spacing:1px;
-      transition:.18s;
-    }
+    .type-btn { border:1px solid var(--border); background:rgba(255,255,255,.02); padding:14px 8px; display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer; color:#aaa; font-size:10px; letter-spacing:1px; transition:.18s; }
     .type-btn:hover { color:#fff; border-color:var(--border-hi); }
     .type-btn.selected { background:#eaeaea; color:#000; border-color:#eaeaea; font-weight:700; }
     .type-btn svg { width:24px; height:24px; stroke:currentColor; fill:none; stroke-width:1.5; }
     .type-btn.selected svg { stroke:#000; }
 
-    .toast {
-      position:fixed; left:50%; bottom:22px;
-      transform:translateX(-50%) translateY(20px);
-      background:#eaeaea; color:#000; padding:11px 14px; font-size:12px; font-weight:700;
-      opacity:0; pointer-events:none; transition:.22s; z-index:10000;
-    }
+    .toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(20px); background:#eaeaea; color:#000; padding:11px 14px; font-size:12px; font-weight:700; opacity:0; pointer-events:none; transition:.22s; z-index:10000; }
     .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
     @media (max-width:700px) {
@@ -380,15 +282,15 @@
         <div class="terminal-body">
           <div class="brand">
             <h1>OSINT TERMINAL</h1>
-            <p>anonymous local auth // v0.7</p>
+            <p>cloud auth // v0.8</p>
           </div>
           <div class="boot">
             [ ok ] open-web catalog<br>
             [ ok ] legal scope: public data only<br>
-            [ ok ] auth: local anonymous<br>
+            [ ok ] auth: cloud (supabase)<br>
             [ ok ] session: 7 days<br>
-            [ ok ] data: device only<br>
-            [ -- ] no server, no tracking
+            [ ok ] data: server-side<br>
+            [ -- ] login from any device
           </div>
           <div class="tabs">
             <button type="button" class="tab active" data-tab="login">ВХОД</button>
@@ -396,13 +298,14 @@
           </div>
 
           <form id="loginForm">
-            <div class="field"><label>Позывной</label><input id="loginUser" placeholder="твой позывной" autocomplete="off"></div>
+            <div class="field"><label>E-mail</label><input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="off"></div>
             <div class="field"><label>Пароль</label><input id="loginPass" type="password" placeholder="••••••••"></div>
             <button class="btn" type="submit" id="loginBtn">ВОЙТИ</button>
           </form>
 
           <form id="registerForm" class="hidden">
             <div class="field"><label>Позывной</label><input id="regNick" placeholder="твой позывной" autocomplete="off"></div>
+            <div class="field"><label>E-mail</label><input id="regEmail" type="email" placeholder="you@example.com" autocomplete="off"></div>
             <div class="field"><label>Пароль</label><input id="regPass" type="password" placeholder="минимум 6 символов"></div>
             <div class="field"><label>Подтверждение пароля</label><input id="regPass2" type="password" placeholder="повтори пароль"></div>
             <button class="btn" type="submit" id="regBtn">СОЗДАТЬ АККАУНТ</button>
@@ -410,11 +313,11 @@
 
           <div class="auth-message" id="authMessage"></div>
           <div class="small-note">
-            <strong>Анонимная локальная регистрация.</strong><br>
-            Аккаунт хранится только на этом устройстве в этом браузере.<br>
-            Пароль хешируется, на сервер ничего не отправляется.<br>
+            <strong>Облачная авторизация.</strong><br>
+            Аккаунт хранится на сервере, вход с любого устройства.<br>
             Сессия действует 7 дней, потом нужно войти снова.<br>
-            <strong>Если забудешь пароль — восстановить невозможно.</strong>
+            Позывной и e-mail хранятся на сервере.<br>
+            <strong>Не используй пароль от других сервисов.</strong>
           </div>
         </div>
       </div>
@@ -438,7 +341,6 @@
       </div>
     </header>
 
-    <!-- ─── CATALOG VIEW ─── -->
     <section id="catalogView">
       <section class="prompt-line">
         <span>plx@osint:~$</span>
@@ -464,12 +366,11 @@
       <section class="statusline">
         <span>OPEN SOURCES ONLY</span>
         <span id="counter">0 tools</span>
-        <span>ANONYMOUS AUTH</span>
-        <span>BUILD v0.7</span>
+        <span>CLOUD AUTH</span>
+        <span>BUILD v0.8</span>
       </section>
     </section>
 
-    <!-- ─── GRAPH VIEW ─── -->
     <section id="graphView" class="hidden">
       <section class="prompt-line">
         <span>plx@osint:~$</span>
@@ -521,7 +422,6 @@
     </section>
   </main>
 
-  <!-- ─── MODAL: Add Node ─── -->
   <dialog id="addNodeModal">
     <div class="modal-inner">
       <h2>ДОБАВИТЬ УЗЕЛ</h2>
@@ -538,7 +438,6 @@
     </div>
   </dialog>
 
-  <!-- ─── MODAL: Confirm Clear ─── -->
   <dialog id="confirmModal">
     <div class="modal-inner">
       <h2>ПОДТВЕРЖДЕНИЕ</h2>
@@ -550,7 +449,6 @@
     </div>
   </dialog>
 
-  <!-- ─── MODAL: Rules ─── -->
   <dialog id="rulesModal">
     <div class="modal-inner">
       <h2>ПРОТОКОЛ OSINT</h2>
@@ -559,7 +457,7 @@
         <li>Свои данные или данные с разрешения владельца.</li>
         <li>Никаких дампов, утечек и баз операторов.</li>
         <li>EXIF-метаданные — только для своих файлов.</li>
-        <li>Граф и аккаунт хранятся локально в твоём браузере.</li>
+        <li>Аккаунт хранится на сервере, граф — локально.</li>
         <li>Сторонние сервисы имеют свои правила.</li>
       </ul>
       <div class="modal-actions">
@@ -571,6 +469,15 @@
   <div class="toast" id="toast">готово</div>
 
   <script>
+  /* ════════════════════════════════════════════════════════════════════
+     ─── SUPABASE CONFIG (КЛЮЧИ ВСТАВЛЕНЫ) ───
+     ВАЖНО: secret key сюда НЕ вставляется. Только анон-ключ.
+     ════════════════════════════════════════════════════════════════════ */
+  const SUPABASE_URL = 'https://ltjxlwcuoxhoerngseym.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0anhsd2N1b3hob2VybmdzZXltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxOTUzODQsImV4cCI6MjEwODc3MTM4NH0.twVAE5geFigiCMHtHUXA0HZH1uTntAJynPEOR3L6_LI';
+
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
   /* ─────────────── ИКОНКИ SVG ─────────────── */
   const ICONS = {
     phone: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z"/></svg>',
@@ -585,28 +492,21 @@
   };
 
   const NODE_TYPES = [
-    { id:'phone',    label:'ТЕЛЕФОН'  },
-    { id:'email',    label:'ПОЧТА'    },
-    { id:'person',   label:'ЧЕЛОВЕК'  },
-    { id:'social',   label:'СОЦСЕТЬ'  },
-    { id:'location', label:'АДРЕС'    },
-    { id:'image',    label:'ФОТО'     },
-    { id:'note',     label:'ЗАМЕТКА'  },
-    { id:'link',     label:'ССЫЛКА'   },
-    { id:'website',  label:'САЙТ'     }
+    { id:'phone', label:'ТЕЛЕФОН' },
+    { id:'email', label:'ПОЧТА' },
+    { id:'person', label:'ЧЕЛОВЕК' },
+    { id:'social', label:'СОЦСЕТЬ' },
+    { id:'location', label:'АДРЕС' },
+    { id:'image', label:'ФОТО' },
+    { id:'note', label:'ЗАМЕТКА' },
+    { id:'link', label:'ССЫЛКА' },
+    { id:'website', label:'САЙТ' }
   ];
 
   const CATS = {
-    all:'ВСЁ',
-    phone:'НОМЕР',
-    email:'ПОЧТА',
-    social:'СОЦСЕТИ',
-    meta:'МЕТАДАННЫЕ',
-    image:'ФОТО ПОИСК',
-    web:'ВЕБ / АРХИВ',
-    domain:'ДОМЕНЫ / IP',
-    transport:'ТРАНСПОРТ',
-    maps:'КАРТЫ'
+    all:'ВСЁ', phone:'НОМЕР', email:'ПОЧТА', social:'СОЦСЕТИ',
+    meta:'МЕТАДАННЫЕ', image:'ФОТО ПОИСК', web:'ВЕБ / АРХИВ',
+    domain:'ДОМЕНЫ / IP', transport:'ТРАНСПОРТ', maps:'КАРТЫ'
   };
 
   const TOOLS = [
@@ -684,109 +584,24 @@
   let clockInterval = null;
   let currentView = 'catalog';
 
-  /* ════════════════════════════════════════════════════════════════════
-     ─── АНОНИМНАЯ ЛОКАЛЬНАЯ АВТОРИЗАЦИЯ ───
-     ════════════════════════════════════════════════════════════════════ */
-  const USERS_KEY = 'plx_osint_users';
-  const SESSION_KEY = 'plx_osint_session';
-  const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 дней
-
-  async function sha256(message) {
-    if (crypto && crypto.subtle) {
-      const msgBuffer = new TextEncoder().encode(message);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    } else {
-      let hash = 0;
-      for (let i = 0; i < message.length; i++) {
-        const char = message.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash |= 0;
-      }
-      return 'fallback_' + Math.abs(hash).toString(16);
-    }
-  }
-
-  function generateSalt() {
-    const array = new Uint8Array(16);
-    crypto.getRandomValues(array);
-    return Array.from(array).map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-
-  function getUsers() {
-    try { return JSON.parse(localStorage.getItem(USERS_KEY)) || {}; }
-    catch { return {}; }
-  }
-  function saveUsers(users) {
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-  }
-  function getSession() {
-    try { return JSON.parse(localStorage.getItem(SESSION_KEY)); }
-    catch { return null; }
-  }
-  function saveSession(session) {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-  }
-  function clearSession() {
-    localStorage.removeItem(SESSION_KEY);
-  }
-
-  async function registerUser(username, password) {
-    const users = getUsers();
-    const userKey = await sha256(username.toLowerCase());
-    if (users[userKey]) throw new Error('Позывной уже занят');
-    const salt = generateSalt();
-    const passHash = await sha256(password + salt);
-    users[userKey] = { passHash, salt, createdAt: Date.now() };
-    saveUsers(users);
-    return userKey;
-  }
-
-  async function loginUser(username, password) {
-    const users = getUsers();
-    const userKey = await sha256(username.toLowerCase());
-    const user = users[userKey];
-    if (!user) throw new Error('Пользователь не найден');
-    const passHash = await sha256(password + user.salt);
-    if (passHash !== user.passHash) throw new Error('Неверный пароль');
-    const now = Date.now();
-    return {
-      userKey,
-      username,
-      sessionStart: now,
-      sessionExpiry: now + SESSION_DURATION
-    };
-  }
-
-  function checkSession() {
-    const session = getSession();
-    if (!session) return null;
-    if (Date.now() > session.sessionExpiry) {
-      clearSession();
-      return null;
-    }
-    return session;
-  }
-
-  function setAuthMessage(text, type) {
-    const el = $('authMessage');
-    el.textContent = text;
-    el.className = 'auth-message' + (type ? ' ' + type : '');
-  }
-
-  /* ─────────────── SHARE LINK ─────────────── */
-  window.addEventListener('load', () => {
+  /* ─────────────── SHARE LINK + ПРОВЕРКА СЕССИИ ─────────────── */
+  window.addEventListener('load', async () => {
     const shareLink = $('shareLink');
     if (shareLink) {
       shareLink.href = window.location.href;
       shareLink.textContent = window.location.href;
     }
 
-    // Проверяем активную сессию
-    const session = checkSession();
-    if (session) {
-      startSession(session.username);
+    // Проверяем активную сессию при загрузке
+    try {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) {
+        const nickname = session.user.user_metadata?.nickname || session.user.email;
+        startSession(nickname);
+        log('session restored from server');
+      }
+    } catch (e) {
+      console.warn('session check failed', e);
     }
   });
   $('copyShareBtn').addEventListener('click', () => copyText(window.location.href));
@@ -803,22 +618,34 @@
     });
   });
 
+  function setAuthMessage(text, type) {
+    const el = $('authMessage');
+    el.textContent = text;
+    el.className = 'auth-message' + (type ? ' ' + type : '');
+  }
+
   $('loginForm').addEventListener('submit', async e => {
     e.preventDefault();
-    const user = $('loginUser').value.trim();
+    const email = $('loginEmail').value.trim();
     const pass = $('loginPass').value;
-    if (user.length < 2) return setAuthMessage('! позывной от 2 символов', 'error');
-    if (pass.length < 4) return setAuthMessage('! пароль от 4 символов', 'error');
+    if (!email) return setAuthMessage('! введи e-mail', 'error');
+    if (!pass) return setAuthMessage('! введи пароль', 'error');
 
     const btn = $('loginBtn');
     btn.disabled = true;
     btn.textContent = 'ВХОД...';
 
     try {
-      const session = await loginUser(user, pass);
-      saveSession(session);
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: pass
+      });
+
+      if (error) throw error;
+
+      const nickname = data.user.user_metadata?.nickname || data.user.email;
       setAuthMessage('вход выполнен', 'success');
-      startSession(session.username);
+      startSession(nickname);
     } catch (err) {
       setAuthMessage('! ' + err.message, 'error');
     } finally {
@@ -830,9 +657,11 @@
   $('registerForm').addEventListener('submit', async e => {
     e.preventDefault();
     const nick = $('regNick').value.trim();
+    const email = $('regEmail').value.trim();
     const pass = $('regPass').value;
     const pass2 = $('regPass2').value;
     if (nick.length < 3) return setAuthMessage('! позывной от 3 символов', 'error');
+    if (!email) return setAuthMessage('! введи e-mail', 'error');
     if (pass.length < 6) return setAuthMessage('! пароль от 6 символов', 'error');
     if (pass !== pass2) return setAuthMessage('! пароли не совпадают', 'error');
 
@@ -841,11 +670,24 @@
     btn.textContent = 'СОЗДАНИЕ...';
 
     try {
-      await registerUser(nick, pass);
-      const session = await loginUser(nick, pass);
-      saveSession(session);
-      setAuthMessage('аккаунт создан, вход выполнен', 'success');
-      startSession(session.username);
+      const { data, error } = await supabaseClient.auth.signUp({
+        email: email,
+        password: pass,
+        options: {
+          data: { nickname: nick }
+        }
+      });
+
+      if (error) throw error;
+
+      // Если включено подтверждение почты, сессии может не быть
+      if (data.session) {
+        const nickname = data.user.user_metadata?.nickname || data.user.email;
+        setAuthMessage('аккаунт создан, вход выполнен', 'success');
+        startSession(nickname);
+      } else {
+        setAuthMessage('аккаунт создан! проверь почту для подтверждения', 'success');
+      }
     } catch (err) {
       setAuthMessage('! ' + err.message, 'error');
     } finally {
@@ -867,16 +709,12 @@
     renderFilters();
     renderTools();
     graph.load();
-
-    const session = getSession();
-    if (session) {
-      const daysLeft = Math.ceil((session.sessionExpiry - Date.now()) / (24 * 60 * 60 * 1000));
-      log('session expires in ' + daysLeft + ' days');
-    }
   }
 
-  $('logoutBtn').addEventListener('click', () => {
-    clearSession();
+  $('logoutBtn').addEventListener('click', async () => {
+    try {
+      await supabaseClient.auth.signOut();
+    } catch (e) { console.warn('signout error', e); }
     currentUser = null;
     if (clockInterval) clearInterval(clockInterval);
     $('appScreen').classList.add('hidden');
@@ -886,23 +724,6 @@
     $('consoleBox').innerHTML = '';
     setAuthMessage('');
   });
-
-  // Периодическая проверка истечения сессии (раз в минуту)
-  setInterval(() => {
-    if (!currentUser) return;
-    const session = getSession();
-    if (session && Date.now() > session.sessionExpiry) {
-      clearSession();
-      currentUser = null;
-      if (clockInterval) clearInterval(clockInterval);
-      $('appScreen').classList.add('hidden');
-      $('authScreen').classList.remove('hidden');
-      $('loginForm').reset();
-      $('registerForm').reset();
-      $('consoleBox').innerHTML = '';
-      setAuthMessage('! сессия истекла, войдите снова', 'error');
-    }
-  }, 60000);
 
   /* ─────────────── VIEW ROUTING ─────────────── */
   document.querySelectorAll('.nav-tab').forEach(btn => {
@@ -1020,7 +841,7 @@
   $('closeRulesBtn').addEventListener('click', () => $('rulesModal').close());
 
   /* ════════════════════════════════════════════════════════════════════
-     ─── GRAPH ENGINE (без изменений) ───
+     ─── GRAPH ENGINE ───
      ════════════════════════════════════════════════════════════════════ */
   const graph = (() => {
     const STORAGE_KEY = 'plx_osint_graph_v3';
@@ -1052,9 +873,8 @@
     const zoomLabel = $('zoomLabel');
 
     function save() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ state, nextId, view }));
-      } catch (e) { console.warn('save failed', e); }
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ state, nextId, view })); }
+      catch (e) { console.warn('save failed', e); }
     }
 
     function load() {
@@ -1071,7 +891,6 @@
           }
         }
       } catch (e) { state = { nodes: [], edges: [] }; }
-
       if (!hasSavedView) { fitToView(); } else { applyTransform(); }
       render();
     }
@@ -1096,10 +915,7 @@
       save();
     }
 
-    function resetView() {
-      view = { x: 0, y: 0, scale: 1 };
-      fitToView();
-    }
+    function resetView() { view = { x: 0, y: 0, scale: 1 }; fitToView(); }
 
     function fitToView() {
       const r = viewport.getBoundingClientRect();
@@ -1115,10 +931,8 @@
       const r = viewport.getBoundingClientRect();
       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
       state.nodes.forEach(n => {
-        minX = Math.min(minX, n.x);
-        minY = Math.min(minY, n.y);
-        maxX = Math.max(maxX, n.x);
-        maxY = Math.max(maxY, n.y);
+        minX = Math.min(minX, n.x); minY = Math.min(minY, n.y);
+        maxX = Math.max(maxX, n.x); maxY = Math.max(maxY, n.y);
       });
       const cx = (minX + maxX) / 2 + 60;
       const cy = (minY + maxY) / 2 + 40;
@@ -1133,10 +947,7 @@
       const r = viewport.getBoundingClientRect();
       const px = sx - r.left;
       const py = sy - r.top;
-      return {
-        x: (px - view.x) / view.scale,
-        y: (py - view.y) / view.scale
-      };
+      return { x: (px - view.x) / view.scale, y: (py - view.y) / view.scale };
     }
 
     let clearResolver = null;
@@ -1172,18 +983,15 @@
     function addNode(type, label, wx, wy) {
       if (!type) return;
       if (!label || !label.trim()) label = NODE_TYPES.find(t => t.id === type).label;
-
       let x, y;
       if (typeof wx === 'number' && typeof wy === 'number' && !isNaN(wx) && !isNaN(wy)) {
-        x = wx - 60;
-        y = wy - 40;
+        x = wx - 60; y = wy - 40;
       } else {
         const r = viewport.getBoundingClientRect();
         const center = screenToWorld(r.left + r.width / 2, r.top + r.height / 2);
         x = center.x - 60 + (Math.random() * 60 - 30);
         y = center.y - 40 + (Math.random() * 60 - 30);
       }
-
       const node = { id: 'n' + (nextId++), type, label: label.trim(), x, y };
       state.nodes.push(node);
       save();
@@ -1229,13 +1037,11 @@
         world.appendChild(el);
 
         el.querySelector('.node-remove').addEventListener('click', ev => {
-          ev.stopPropagation();
-          ev.preventDefault();
+          ev.stopPropagation(); ev.preventDefault();
           removeNode(node.id);
         });
         el.querySelector('.node-remove').addEventListener('touchstart', ev => {
-          ev.stopPropagation();
-          ev.preventDefault();
+          ev.stopPropagation(); ev.preventDefault();
         }, { passive: false });
 
         el.addEventListener('mousedown', ev => startNodeDrag(ev, node, el));
@@ -1254,12 +1060,10 @@
         const nodeA = world.querySelector('[data-id="' + a.id + '"]');
         const nodeB = world.querySelector('[data-id="' + b.id + '"]');
         if (!nodeA || !nodeB) return;
-
         const x1 = a.x + nodeA.offsetWidth / 2;
         const y1 = a.y + nodeA.offsetHeight / 2;
         const x2 = b.x + nodeB.offsetWidth / 2;
         const y2 = b.y + nodeB.offsetHeight / 2;
-
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         const mx = (x1 + x2) / 2;
         const my = (y1 + y2) / 2;
@@ -1274,13 +1078,11 @@
 
     function startNodeDrag(ev, node, el) {
       if (connectMode) {
-        ev.stopPropagation();
-        ev.preventDefault();
+        ev.stopPropagation(); ev.preventDefault();
         handleNodeClick(node.id);
         return;
       }
       if (ev.target.closest('.node-remove')) return;
-
       const pt = ev.touches ? ev.touches[0] : ev;
       dragging = node;
       const worldPoint = screenToWorld(pt.clientX, pt.clientY);
@@ -1312,7 +1114,6 @@
         ev.preventDefault();
         return;
       }
-
       if (panning) {
         const pt = ev.touches ? ev.touches[0] : ev;
         view.x = panStart.viewX + (pt.clientX - panStart.x);
@@ -1351,16 +1152,12 @@
       return Math.hypot(dx, dy);
     }
     function getTouchCenter(t1, t2) {
-      return {
-        x: (t1.clientX + t2.clientX) / 2,
-        y: (t1.clientY + t2.clientY) / 2
-      };
+      return { x: (t1.clientX + t2.clientX) / 2, y: (t1.clientY + t2.clientY) / 2 };
     }
 
     viewport.addEventListener('touchstart', ev => {
       if (ev.target.closest('.graph-node')) return;
       if (ev.target.closest('.zoom-controls') || ev.target.closest('.zoom-help')) return;
-
       if (ev.touches.length === 2) {
         ev.preventDefault();
         touchState.ids = [ev.touches[0].identifier, ev.touches[1].identifier];
@@ -1372,12 +1169,7 @@
       } else if (ev.touches.length === 1 && !dragging) {
         panning = true;
         viewport.classList.add('panning');
-        panStart = {
-          x: ev.touches[0].clientX,
-          y: ev.touches[0].clientY,
-          viewX: view.x,
-          viewY: view.y
-        };
+        panStart = { x: ev.touches[0].clientX, y: ev.touches[0].clientY, viewX: view.x, viewY: view.y };
         clickStart = { x: ev.touches[0].clientX, y: ev.touches[0].clientY, time: Date.now(), moved: false };
       }
     }, { passive: false });
@@ -1389,7 +1181,6 @@
         const newCenter = getTouchCenter(ev.touches[0], ev.touches[1]);
         const factor = newDist / touchState.dist;
         const newScale = clampScale(touchState.startScale * factor);
-
         const r = viewport.getBoundingClientRect();
         const cx = touchState.center.x - r.left;
         const cy = touchState.center.y - r.top;
@@ -1398,10 +1189,8 @@
         view.scale = newScale;
         view.x = cx - wx * newScale;
         view.y = cy - wy * newScale;
-
         view.x += newCenter.x - touchState.center.x;
         view.y += newCenter.y - touchState.center.y;
-
         applyTransform();
       }
     }, { passive: false });
@@ -1599,4 +1388,4 @@
   $('zoomResetBtn').addEventListener('click', () => graph.fitToView());
   </script>
 </body>
-</html>
+  </html>
