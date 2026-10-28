@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>PLX // OSINT TERMINAL</title>
+  <title>OSINT Terminal</title>
 
   <!-- Supabase JS клиент -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -22,7 +22,7 @@
 
     html, body { min-height: 100%; touch-action: manipulation; }
 
-    /* ─── НОВЫЙ ФОН: ЧЁРНО-ЧЁРНЫЕ ВОЛНЫ ─── */
+    /* ─── ФОН: ЧЁРНО-ЧЁРНЫЕ ВОЛНЫ ─── */
     body {
       color: var(--text);
       background: #000;
@@ -30,7 +30,6 @@
       position: relative;
     }
 
-    /* Волна 1 — большая, медленно дрейфует */
     body::after {
       content: "";
       position: fixed;
@@ -44,7 +43,6 @@
       pointer-events: none;
     }
 
-    /* Волна 2 — противоположная фаза */
     body::before {
       content: "";
       position: fixed;
@@ -69,7 +67,6 @@
       75%      { transform: translate(4%, -3%) rotate(2deg) scale(0.98); }
     }
 
-    /* Скан-линии поверх */
     .scanlines {
       position: fixed; inset: 0;
       pointer-events: none; z-index: 9999;
@@ -211,8 +208,7 @@
     }
 
     .graph-svg { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1; }
-    .graph-edge { stroke:#666; stroke-width:1.5; fill:none; }
-    .graph-edge.selected { stroke:#fff; stroke-width:2.5; }
+    .graph-edge { stroke:#888; stroke-width:1.5; }
 
     .graph-node {
       position:absolute; z-index:2; min-width:120px;
@@ -256,11 +252,11 @@
     .modal-actions .btn { flex:1; min-width:140px; }
     .modal-actions .btn.cancel { background:transparent; color:#aaa; border:1px solid #444; }
 
-    .type-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:10px; margin:14px 0; }
-    .type-btn { border:1px solid var(--border); background:rgba(255,255,255,.02); padding:14px 8px; display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer; color:#aaa; font-size:10px; letter-spacing:1px; transition:.18s; }
+    .type-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(80px,1fr)); gap:8px; margin:14px 0; }
+    .type-btn { border:1px solid var(--border); background:rgba(255,255,255,.02); padding:12px 6px; display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; color:#aaa; font-size:9px; letter-spacing:.5px; transition:.18s; text-align:center; }
     .type-btn:hover { color:#fff; border-color:var(--border-hi); }
     .type-btn.selected { background:#eaeaea; color:#000; border-color:#eaeaea; font-weight:700; }
-    .type-btn svg { width:24px; height:24px; stroke:currentColor; fill:none; stroke-width:1.5; }
+    .type-btn svg { width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.5; }
     .type-btn.selected svg { stroke:#000; }
 
     .toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(20px); background:#eaeaea; color:#000; padding:11px 14px; font-size:12px; font-weight:700; opacity:0; pointer-events:none; transition:.22s; z-index:10000; }
@@ -301,22 +297,22 @@
   <section class="auth-wrap" id="authScreen">
     <div class="auth-shell">
       <pre class="ascii">
- ____  _     ___ ____ _____   _____
-|  _ \| |   |_ _/ ___|_   _| |_   _|__ _ __ _ __ ___
-| |_) | |    | | |     | |     | |/ _ \ '__| '_ ` _ \
-|  __/| |___ | | |___  | |     | |  __/ |  | | | | | |
-|_|   |_____|___\____| |_|     |_|\___|_|  |_| |_| |_|
+  ___  ____  ___  _  _  ____  _____
+ / _ \/ ___|/ _ \| \| |/ ___||_   _|
+| | | \___ \ | | |  ` | |     | |
+| |_| |___) | |_| | |\  | |___ | |
+ \___/|____/ \___/|_| \_|\____||_|
       </pre>
 
       <div class="terminal">
         <div class="terminal-header">
           <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-          <span class="terminal-title">plx@osint: ~/auth</span>
+          <span class="terminal-title">user@osint: ~/auth</span>
         </div>
         <div class="terminal-body">
           <div class="brand">
             <h1>OSINT TERMINAL</h1>
-            <p>cloud auth // v0.9</p>
+            <p>cloud auth // v1.0</p>
           </div>
           <div class="boot">
             [ ok ] open-web catalog<br>
@@ -324,6 +320,7 @@
             [ ok ] auth: cloud (supabase)<br>
             [ ok ] session: 7 days<br>
             [ ok ] tools: 29 verified<br>
+            [ ok ] graph: 22 entity types<br>
             [ -- ] login from any device
           </div>
           <div class="tabs">
@@ -361,7 +358,7 @@
   <!-- ─── APP ─── -->
   <main class="app hidden" id="appScreen">
     <header class="topbar">
-      <div class="logo">PLX<span>//</span>OSINT</div>
+      <div class="logo">OSINT<span>//</span>TERMINAL</div>
 
       <nav class="nav-tabs">
         <button class="nav-tab active" data-view="catalog">КАТАЛОГ</button>
@@ -377,7 +374,7 @@
 
     <section id="catalogView">
       <section class="prompt-line">
-        <span>plx@osint:~$</span>
+        <span>operator@osint:~$</span>
         <strong> ./open-sources --legal</strong><span class="cursor"></span>
       </section>
       <section class="legal-banner">
@@ -401,18 +398,18 @@
         <span>OPEN SOURCES ONLY</span>
         <span id="counter">0 tools</span>
         <span>CLOUD AUTH</span>
-        <span>BUILD v0.9</span>
+        <span>BUILD v1.0</span>
       </section>
     </section>
 
     <section id="graphView" class="hidden">
       <section class="prompt-line">
-        <span>plx@osint:~$</span>
+        <span>operator@osint:~$</span>
         <strong> ./visualizer --graph --persist --touch</strong><span class="cursor"></span>
       </section>
 
       <div class="graph-header">
-        <div class="graph-title">PERSONAL GRAPH <em>// Maltego-style</em></div>
+        <div class="graph-title">Визуализация связей <em>// граф расследования</em></div>
         <div class="graph-actions">
           <button class="graph-btn primary" id="addNodeBtn">+ УЗЕЛ</button>
           <button class="graph-btn" id="connectBtn">СОЕДИНИТЬ</button>
@@ -435,11 +432,17 @@
         </div>
 
         <div class="graph-world" id="graphWorld">
-          <svg class="graph-svg" id="graphSvg"></svg>
+          <svg class="graph-svg" id="graphSvg">
+            <defs>
+              <marker id="arrowhead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+                <path d="M0,0 L10,4 L0,8 L2,4 Z" fill="#aaa"/>
+              </marker>
+            </defs>
+          </svg>
           <div class="graph-empty" id="graphEmpty">
             <h2>// ПУСТОЙ ГРАФ</h2>
             <p>Нажми <strong>+ УЗЕЛ</strong> или тапни по пустому полю, чтобы добавить первую сущность.
-            Соединяй узлы линиями, чтобы видеть связи.</p>
+            Соединяй узлы стрелками, чтобы видеть направления связей.</p>
           </div>
         </div>
 
@@ -511,7 +514,7 @@
 
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  /* ─────────────── ИКОНКИ SVG ─────────────── */
+  /* ─────────────── ИКОНКИ SVG (22 типа как в Maltego) ─────────────── */
   const ICONS = {
     phone: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z"/></svg>',
     email: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>',
@@ -521,19 +524,45 @@
     image: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>',
     note: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>',
     link: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
-    website: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>'
+    website: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>',
+    company: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="1"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M8 10h.01M16 10h.01M12 10h.01M8 14h.01M16 14h.01M12 14h.01"/></svg>',
+    ip: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 6h.01M6 18h.01"/></svg>',
+    device: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',
+    hash: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M10 13l-2 2 2 2M14 13l2 2-2 2"/></svg>',
+    date: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+    event: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>',
+    vehicle: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11"/><rect x="3" y="11" width="18" height="7" rx="2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>',
+    username: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>',
+    gps: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>',
+    document: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>',
+    network: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><line x1="12" y1="8" x2="5" y2="16"/><line x1="12" y1="8" x2="19" y2="16"/></svg>',
+    keyword: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.83z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>',
+    dns: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>'
   };
 
   const NODE_TYPES = [
-    { id:'phone', label:'ТЕЛЕФОН' },
-    { id:'email', label:'ПОЧТА' },
-    { id:'person', label:'ЧЕЛОВЕК' },
-    { id:'social', label:'СОЦСЕТЬ' },
+    { id:'phone',    label:'ТЕЛЕФОН' },
+    { id:'email',    label:'ПОЧТА' },
+    { id:'person',   label:'ЧЕЛОВЕК' },
+    { id:'social',   label:'СОЦСЕТЬ' },
     { id:'location', label:'АДРЕС' },
-    { id:'image', label:'ФОТО' },
-    { id:'note', label:'ЗАМЕТКА' },
-    { id:'link', label:'ССЫЛКА' },
-    { id:'website', label:'САЙТ' }
+    { id:'image',    label:'ФОТО' },
+    { id:'note',     label:'ЗАМЕТКА' },
+    { id:'link',     label:'ССЫЛКА' },
+    { id:'website',  label:'САЙТ' },
+    { id:'company',  label:'ОРГАНИЗАЦИЯ' },
+    { id:'ip',       label:'IP-АДРЕС' },
+    { id:'device',   label:'УСТРОЙСТВО' },
+    { id:'hash',     label:'ФАЙЛ / ХЕШ' },
+    { id:'date',     label:'ДАТА' },
+    { id:'event',    label:'СОБЫТИЕ' },
+    { id:'vehicle',  label:'ТРАНСПОРТ' },
+    { id:'username', label:'НИК' },
+    { id:'gps',      label:'GPS' },
+    { id:'document', label:'ДОКУМЕНТ' },
+    { id:'network',  label:'СЕТЬ' },
+    { id:'keyword',  label:'КЛЮЧ. СЛОВО' },
+    { id:'dns',      label:'DNS / ДОМЕН' }
   ];
 
   /* ─────────────── КАТЕГОРИИ И РАБОЧИЕ ИНСТРУМЕНТЫ (29) ─────────────── */
@@ -544,50 +573,41 @@
   };
 
   const TOOLS = [
-    // ─── НОМЕР (2) ───
     { cat:'phone', name:'Google Dork: номер', url:'https://www.google.com/', desc:'Поиск публичных упоминаний номера в вебе через кавычки.', note:'Только проиндексированные страницы.' },
     { cat:'phone', name:'Yandex Dork: номер', url:'https://yandex.ru/', desc:'Поиск упоминаний номера в русскоязычном сегменте.', note:'Открытая выдача.' },
 
-    // ─── ПОЧТА (4) ───
     { cat:'email', name:'Have I Been Pwned', url:'https://haveibeenpwned.com/', desc:'Проверка своего e-mail по спискам утечек без раскрытия паролей.', note:'Аудит своей безопасности.' },
     { cat:'email', name:'EmailRep', url:'https://emailrep.io/', desc:'Открытая репутация адреса: подозрительность, возраст, активность.', note:'Против фишинга.' },
     { cat:'email', name:'Hunter Verifier', url:'https://hunter.io/email-verifier', desc:'Проверка существования и доставляемости деловых адресов.', note:'Есть лимиты.' },
     { cat:'email', name:'Yandex Dork: почта', url:'https://yandex.ru/', desc:'Поиск публичных упоминаний почты в кавычках.', note:'Открытая выдача.' },
 
-    // ─── СОЦСЕТИ (4) ───
     { cat:'social', name:'WhatsMyName', url:'https://whatsmyname.app/', desc:'Поиск публичных профилей по одному нику на сотнях площадок.', note:'Проверяем свой ник.' },
     { cat:'social', name:'Sherlock Project', url:'https://github.com/sherlock-project/sherlock', desc:'Open-source поиск аккаунтов по нику на 300+ сайтах.', note:'Требует Python.' },
     { cat:'social', name:'Maigret', url:'https://github.com/soxoj/maigret', desc:'Мощный open-source поисковик профилей по 2500+ сайтам.', note:'Только открытые профили.' },
     { cat:'social', name:'Namechk', url:'https://namechk.com/', desc:'Проверка занятости ника и домена на популярных площадках.', note:'Для брендинга.' },
 
-    // ─── МЕТАДАННЫЕ (4) ───
     { cat:'meta', name:'Exif Regex Viewer', url:'https://exif.regex.info/exif.cgi', desc:'Просмотр EXIF: камера, время, софт, GPS-координаты.', note:'Только свои фото.' },
     { cat:'meta', name:'ExifTool', url:'https://exiftool.org/', desc:'Эталонный инструмент чтения и очистки метаданных.', note:'Есть веб-демо.' },
     { cat:'meta', name:'FotoForensics', url:'https://fotoforensics.com/', desc:'Анализ изображения на монтаж и артефакты.', note:'Проверка подлинности.' },
     { cat:'meta', name:'Forensically', url:'https://29a.ch/photo-forensics/', desc:'ELA, шум, клоны — всё в браузере без отправки файла.', note:'Локально.' },
 
-    // ─── ФОТО ПОИСК (3) ───
     { cat:'image', name:'Google Lens', url:'https://lens.google/', desc:'Поиск по изображению: где кадр встречается в открытом вебе.', note:'Публичные изображения.' },
     { cat:'image', name:'Yandex Images', url:'https://yandex.ru/images/', desc:'Сильный обратный поиск картинок для ру-сегмента.', note:'Открытая выдача.' },
     { cat:'image', name:'TinEye', url:'https://tineye.com/', desc:'Обратный поиск изображения и история распространения кадра.', note:'Открытые индексы.' },
 
-    // ─── ВЕБ / АРХИВ (4) ───
     { cat:'web', name:'Wayback Machine', url:'https://web.archive.org/', desc:'История публичных веб-страниц: как сайты выглядели раньше.', note:'Архивные копии.' },
     { cat:'web', name:'Archive.today', url:'https://archive.ph/', desc:'Мгновенные снимки веб-страниц и архивирование.', note:'Публичные страницы.' },
     { cat:'web', name:'OSINT Framework', url:'https://osintframework.com/', desc:'Дерево сотен легальных открытых OSINT-ресурсов.', note:'Карта для расширения.' },
     { cat:'web', name:'Google Cache', url:'https://www.google.com/', desc:'Кэшированные копии страниц через поиск.', note:'Если сайт недоступен.' },
 
-    // ─── ДОМЕНЫ / IP (4) ───
     { cat:'domain', name:'Who.is', url:'https://who.is/', desc:'Whois-данные домена: регистратор, даты, статус.', note:'Открытый реестр.' },
     { cat:'domain', name:'IPinfo.io', url:'https://ipinfo.io/', desc:'Информация об IP-адресе: геолокация, провайдер, организация.', note:'Технические данные.' },
     { cat:'domain', name:'Shodan', url:'https://www.shodan.io/', desc:'Поисковик по подключённым к интернету устройствам.', note:'Для исследования инфраструктуры.' },
     { cat:'domain', name:'Censys', url:'https://search.censys.io/', desc:'Анализ сертификатов и хостов в интернете.', note:'Открытые данные.' },
 
-    // ─── ТРАНСПОРТ (2) ───
     { cat:'transport', name:'FlightRadar24', url:'https://www.flightradar24.com/', desc:'Отслеживание самолётов в реальном времени по открытым данным.', note:'Публичные рейсы.' },
     { cat:'transport', name:'MarineTraffic', url:'https://www.marinetraffic.com/', desc:'Отслеживание судов по AIS-сигналам.', note:'Открытые данные.' },
 
-    // ─── КАРТЫ (2) ───
     { cat:'maps', name:'Google Maps', url:'https://www.google.com/maps', desc:'Поиск мест, панорамы улиц, фотографии локаций.', note:'Открытые данные.' },
     { cat:'maps', name:'OpenStreetMap', url:'https://www.openstreetmap.org/', desc:'Свободная карта мира с детальными данными.', note:'Открытые данные.' }
   ];
@@ -862,7 +882,7 @@
      ─── GRAPH ENGINE ───
      ════════════════════════════════════════════════════════════════════ */
   const graph = (() => {
-    const STORAGE_KEY = 'plx_osint_graph_v3';
+    const STORAGE_KEY = 'osint_graph_v1';
     const WORLD_SIZE = 6000;
     const WORLD_CENTER = WORLD_SIZE / 2;
 
@@ -1034,7 +1054,7 @@
       state.edges.push({ from, to });
       save();
       render();
-      log('graph: edge ' + from + ' ↔ ' + to);
+      log('graph: edge ' + from + ' → ' + to);
     }
 
     function render() {
@@ -1069,8 +1089,11 @@
       renderEdges();
     }
 
+    /* ─── ПРЯМЫЕ СТРЕЛКИ ─── */
     function renderEdges() {
-      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      // Удаляем только старые линии, оставляем <defs> с маркером стрелки
+      svg.querySelectorAll('.graph-edge').forEach(el => el.remove());
+
       state.edges.forEach(edge => {
         const a = state.nodes.find(n => n.id === edge.from);
         const b = state.nodes.find(n => n.id === edge.to);
@@ -1078,19 +1101,36 @@
         const nodeA = world.querySelector('[data-id="' + a.id + '"]');
         const nodeB = world.querySelector('[data-id="' + b.id + '"]');
         if (!nodeA || !nodeB) return;
+
         const x1 = a.x + nodeA.offsetWidth / 2;
         const y1 = a.y + nodeA.offsetHeight / 2;
         const x2 = b.x + nodeB.offsetWidth / 2;
         const y2 = b.y + nodeB.offsetHeight / 2;
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        const mx = (x1 + x2) / 2;
-        const my = (y1 + y2) / 2;
-        const dx = x2 - x1, dy = y2 - y1;
-        const cx = mx - dy * 0.08;
-        const cy = my + dx * 0.08;
-        path.setAttribute('d', `M${x1},${y1} Q${cx},${cy} ${x2},${y2}`);
-        path.setAttribute('class', 'graph-edge');
-        svg.appendChild(path);
+
+        // Обрезаем линию по краям узлов, чтобы стрелка была видна
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const len = Math.hypot(dx, dy);
+        if (len < 20) return;
+
+        const ux = dx / len;
+        const uy = dy / len;
+        const offsetA = Math.max(nodeA.offsetWidth / 2, nodeA.offsetHeight / 2) + 4;
+        const offsetB = Math.max(nodeB.offsetWidth / 2, nodeB.offsetHeight / 2) + 10;
+
+        const sx1 = x1 + ux * offsetA;
+        const sy1 = y1 + uy * offsetA;
+        const sx2 = x2 - ux * offsetB;
+        const sy2 = y2 - uy * offsetB;
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', sx1);
+        line.setAttribute('y1', sy1);
+        line.setAttribute('x2', sx2);
+        line.setAttribute('y2', sy2);
+        line.setAttribute('class', 'graph-edge');
+        line.setAttribute('marker-end', 'url(#arrowhead)');
+        svg.appendChild(line);
       });
     }
 
@@ -1285,7 +1325,7 @@
       $('connectBtn').classList.toggle('active', connectMode);
       if (connectMode) {
         pendingConnect = null;
-        hint.textContent = 'Режим соединения: выбери первый узел, затем второй.';
+        hint.textContent = 'Режим соединения: выбери первый узел (откуда), затем второй (куда).';
       } else {
         pendingConnect = null;
         hint.textContent = 'Пальцами: 1 — двигать, 2 — зум. Тап по пустому месту — узел.';
@@ -1298,7 +1338,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'plx-osint-graph-' + Date.now() + '.json';
+      a.download = 'osint-graph-' + Date.now() + '.json';
       a.click();
       URL.revokeObjectURL(url);
       showToast('граф экспортирован');
@@ -1406,4 +1446,4 @@
   $('zoomResetBtn').addEventListener('click', () => graph.fitToView());
   </script>
 </body>
-</html>
+        </html>
