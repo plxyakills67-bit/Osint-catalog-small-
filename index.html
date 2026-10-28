@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="utf-8">
@@ -185,8 +185,8 @@
     .graph-world {
       position:absolute;
       top:0; left:0;
-      width:4000px;
-      height:4000px;
+      width:6000px;
+      height:6000px;
       transform-origin:0 0;
       background:
         radial-gradient(circle at 50% 50%, rgba(255,255,255,.02), transparent 70%),
@@ -380,13 +380,14 @@
         <div class="terminal-body">
           <div class="brand">
             <h1>OSINT TERMINAL</h1>
-            <p>public sources only // v0.4</p>
+            <p>public sources only // v0.5</p>
           </div>
           <div class="boot">
             [ ok ] open-web catalog<br>
             [ ok ] legal scope: public data only<br>
             [ ok ] graph engine: ready<br>
             [ ok ] touch zoom: enabled<br>
+            [ ok ] node positioning: fixed<br>
             [ -- ] storage: localStorage
           </div>
           <div class="tabs">
@@ -459,7 +460,7 @@
         <span>OPEN SOURCES ONLY</span>
         <span id="counter">0 tools</span>
         <span>GRAPH ENGINE READY</span>
-        <span>BUILD v0.4</span>
+        <span>BUILD v0.5</span>
       </section>
     </section>
 
@@ -483,20 +484,21 @@
 
       <div class="graph-hint" id="graphHint">
         Пальцами: 1 палец — двигать поле, 2 пальца — зум. Колёсиком мыши — зум.
+        Тап по пустому месту — добавить узел.
       </div>
 
       <div class="graph-viewport" id="graphViewport">
         <div class="zoom-help">
           DRAG — ПАН<br>
           PINCH / WHEEL — ZOOM<br>
-          DBL-CLICK УЗЕЛ — УДАЛИТЬ
+          TAP / DBL-CLICK — УЗЕЛ
         </div>
 
         <div class="graph-world" id="graphWorld">
           <svg class="graph-svg" id="graphSvg"></svg>
           <div class="graph-empty" id="graphEmpty">
             <h2>// ПУСТОЙ ГРАФ</h2>
-            <p>Нажми <strong>+ УЗЕЛ</strong> или дважды кликни по пустому полю, чтобы добавить первую сущность.
+            <p>Нажми <strong>+ УЗЕЛ</strong> или тапни по пустому полю, чтобы добавить первую сущность.
             Соединяй узлы линиями, чтобы видеть связи.</p>
           </div>
         </div>
@@ -504,7 +506,8 @@
         <div class="zoom-controls">
           <button class="zoom-btn" id="zoomInBtn" type="button" title="приблизить">+</button>
           <button class="zoom-btn" id="zoomOutBtn" type="button" title="отдалить">−</button>
-          <button class="zoom-btn reset" id="zoomResetBtn" type="button" title="сброс">RST</button>
+          <button class="zoom-btn" id="zoomFitBtn" type="button" title="центрировать на узлах">⌖</button>
+          <button class="zoom-btn reset" id="zoomResetBtn" type="button" title="сброс вида">RST</button>
           <div class="zoom-label" id="zoomLabel">100%</div>
         </div>
       </div>
@@ -621,14 +624,19 @@
     { cat:'web', name:'TinEye', url:'https://tineye.com/', desc:'Обратный поиск и история кадра.', note:'Открытые индексы.' }
   ];
 
+  /* ─────────────── УТИЛИТЫ ─────────────── */
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  const $ = id => document.getElementById(id);
+
   /* ─────────────── STATE ─────────────── */
   let currentUser = null;
   let currentCat = 'all';
   let searchQuery = '';
   let clockInterval = null;
   let currentView = 'catalog';
-
-  const $ = id => document.getElementById(id);
 
   /* ─────────────── SHARE LINK ─────────────── */
   window.addEventListener('load', () => {
@@ -700,7 +708,10 @@
       currentView = btn.dataset.view;
       $('catalogView').classList.toggle('hidden', currentView !== 'catalog');
       $('graphView').classList.toggle('hidden', currentView !== 'graph');
-      if (currentView === 'graph') { graph.render(); graph.fitToView(); }
+      if (currentView === 'graph') {
+        graph.render();
+        graph.fitToView();
+      }
     });
   });
 
@@ -805,29 +816,35 @@
   $('closeRulesBtn').addEventListener('click', () => $('rulesModal').close());
 
   /* ════════════════════════════════════════════════════════════════════
-     ─── GRAPH ENGINE (с зумом и тач-системой) ───
+     ─── GRAPH ENGINE (с исправленной системой координат) ───
      ════════════════════════════════════════════════════════════════════ */
   const graph = (() => {
-    const STORAGE_KEY = 'plx_osint_graph_v2';
+    const STORAGE_KEY = 'plx_osint_graph_v3';
+    const WORLD_SIZE = 6000;
+    const WORLD_CENTER = WORLD_SIZE / 2;
+
     let state = { nodes: [], edges: [] };
     let nextId = 1;
 
     // трансформация мира
     let view = { x: 0, y: 0, scale: 1 };
-    const MIN_SCALE = 0.25;
-    const MAX_SCALE = 2.5;
+    const MIN_SCALE = 0.2;
+    const MAX_SCALE = 3;
 
     let selectedNode = null;
     let connectMode = false;
     let pendingConnect = null;
     let dragging = null;
-    let dragOffset = { x:0, y:0 };
+    let dragOffset = { x: 0, y: 0 };
     let panning = false;
-    let panStart = { x:0, y:0, viewX:0, viewY:0 };
-    let clickStart = { x:0, y:0, time:0, moved:false };
+    let panStart = { x: 0, y: 0, viewX: 0, viewY: 0 };
+    let clickStart = { x: 0, y: 0, time: 0, moved: false };
+
+    // ИСПРАВЛЕНИЕ: объект, который мутируется, а не переприсваивается
+    const lastTapPos = { x: null, y: null };
 
     // мультитач
-    let touchState = { ids:[], dist:0, center:{x:0,y:0}, startScale:1, startView:{x:0,y:0} };
+    let touchState = { ids: [], dist: 0, center: { x: 0, y: 0 }, startScale: 1, startView: { x: 0, y: 0 } };
 
     const viewport = $('graphViewport');
     const world = $('graphWorld');
@@ -844,16 +861,25 @@
     }
 
     function load() {
+      let hasSavedView = false;
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
           const data = JSON.parse(raw);
           state = data.state || { nodes: [], edges: [] };
           nextId = data.nextId || (state.nodes.length + 1);
-          if (data.view) view = { ...view, ...data.view };
+          if (data.view && typeof data.view.x === 'number' && typeof data.view.y === 'number') {
+            view = { ...view, ...data.view };
+            hasSavedView = true;
+          }
         }
       } catch (e) { state = { nodes: [], edges: [] }; }
-      applyTransform();
+
+      if (!hasSavedView) {
+        fitToView();
+      } else {
+        applyTransform();
+      }
       render();
     }
 
@@ -869,7 +895,6 @@
       const oldScale = view.scale;
       const newScale = clampScale(oldScale * delta);
       if (newScale === oldScale) return;
-      // зум относительно точки (cx, cy) в координатах viewport
       const wx = (cx - view.x) / oldScale;
       const wy = (cy - view.y) / oldScale;
       view.scale = newScale;
@@ -881,23 +906,42 @@
 
     function resetView() {
       view = { x: 0, y: 0, scale: 1 };
+      fitToView();
+    }
+
+    function fitToView() {
+      const r = viewport.getBoundingClientRect();
+      view.x = -WORLD_CENTER + r.width / 2;
+      view.y = -WORLD_CENTER + r.height / 2;
+      view.scale = 1;
       applyTransform();
       save();
     }
 
-    function fitToView() {
-      // центрируем мир при первом входе, если граф пустой
+    function fitToNodes() {
       if (state.nodes.length === 0) {
-        const r = viewport.getBoundingClientRect();
-        view.x = -2000 + r.width / 2;
-        view.y = -2000 + r.height / 2;
-        view.scale = 1;
-        applyTransform();
+        fitToView();
+        return;
       }
+      const r = viewport.getBoundingClientRect();
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      state.nodes.forEach(n => {
+        minX = Math.min(minX, n.x);
+        minY = Math.min(minY, n.y);
+        maxX = Math.max(maxX, n.x);
+        maxY = Math.max(maxY, n.y);
+      });
+      const cx = (minX + maxX) / 2 + 60;
+      const cy = (minY + maxY) / 2 + 40;
+      view.x = -cx + r.width / 2;
+      view.y = -cy + r.height / 2;
+      view.scale = 1;
+      applyTransform();
+      save();
     }
 
     /* ── координаты ── */
-    // экранные (viewport) → мировые (world)
+    // экранные (абсолютные) → мировые
     function screenToWorld(sx, sy) {
       const r = viewport.getBoundingClientRect();
       const px = sx - r.left;
@@ -940,24 +984,30 @@
     }
 
     /* ── узлы ── */
+    // ИСПРАВЛЕНИЕ: правильная обработка координат
     function addNode(type, label, wx, wy) {
       if (!type) return;
       if (!label || !label.trim()) label = NODE_TYPES.find(t => t.id === type).label;
-      const r = viewport.getBoundingClientRect();
+
       let x, y;
-      if (typeof wx === 'number' && typeof wy === 'number') {
-        x = wx - 60; y = wy - 40;
+      if (typeof wx === 'number' && typeof wy === 'number' && !isNaN(wx) && !isNaN(wy)) {
+        // переданы мировые координаты точки тапа
+        x = wx - 60;
+        y = wy - 40;
       } else {
-        const center = screenToWorld(r.left + r.width/2, r.top + r.height/2);
-        x = center.x - 60 + (Math.random()*40 - 20);
-        y = center.y - 40 + (Math.random()*40 - 20);
+        // центр видимой области
+        const r = viewport.getBoundingClientRect();
+        const center = screenToWorld(r.left + r.width / 2, r.top + r.height / 2);
+        x = center.x - 60 + (Math.random() * 60 - 30);
+        y = center.y - 40 + (Math.random() * 60 - 30);
       }
+
       const node = {
         id: 'n' + (nextId++),
         type,
         label: label.trim(),
-        x: Math.max(0, Math.min(3880, x)),
-        y: Math.max(0, Math.min(3920, y))
+        x: x,
+        y: y
       };
       state.nodes.push(node);
       save();
@@ -1011,10 +1061,10 @@
         el.querySelector('.node-remove').addEventListener('touchstart', ev => {
           ev.stopPropagation();
           ev.preventDefault();
-        }, { passive:false });
+        }, { passive: false });
 
         el.addEventListener('mousedown', ev => startNodeDrag(ev, node, el));
-        el.addEventListener('touchstart', ev => startNodeDrag(ev, node, el), { passive:false });
+        el.addEventListener('touchstart', ev => startNodeDrag(ev, node, el), { passive: false });
       });
 
       renderEdges();
@@ -1059,12 +1109,11 @@
 
       const pt = ev.touches ? ev.touches[0] : ev;
       dragging = node;
-      const rect = viewport.getBoundingClientRect();
       const worldPoint = screenToWorld(pt.clientX, pt.clientY);
       dragOffset.x = worldPoint.x - node.x;
       dragOffset.y = worldPoint.y - node.y;
       el.classList.add('dragging');
-      clickStart = { x: pt.clientX, y: pt.clientY, time: Date.now(), moved:false };
+      clickStart = { x: pt.clientX, y: pt.clientY, time: Date.now(), moved: false };
       ev.stopPropagation();
       ev.preventDefault();
     }
@@ -1073,8 +1122,8 @@
       if (dragging) {
         const pt = ev.touches ? ev.touches[0] : ev;
         const worldPoint = screenToWorld(pt.clientX, pt.clientY);
-        dragging.x = Math.max(0, Math.min(3880, worldPoint.x - dragOffset.x));
-        dragging.y = Math.max(0, Math.min(3920, worldPoint.y - dragOffset.y));
+        dragging.x = worldPoint.x - dragOffset.x;
+        dragging.y = worldPoint.y - dragOffset.y;
         const el = world.querySelector('[data-id="' + dragging.id + '"]');
         if (el) {
           el.style.left = dragging.x + 'px';
@@ -1099,13 +1148,13 @@
       }
     }
 
+    // ИСПРАВЛЕНИЕ: клик по узлу для выделения в обычном режиме
     function onEnd(ev) {
       if (dragging) {
         const el = world.querySelector('[data-id="' + dragging.id + '"]');
         if (el) el.classList.remove('dragging');
-        // если не было движения — считаем это кликом по узлу
         if (!clickStart.moved && Date.now() - clickStart.time < 400) {
-          // обработка уже идёт через handleNodeClick в startNodeDrag при connectMode
+          handleNodeClick(dragging.id);
         }
         dragging = null;
         save();
@@ -1118,7 +1167,7 @@
     }
 
     document.addEventListener('mousemove', onMove);
-    document.addEventListener('touchmove', onMove, { passive:false });
+    document.addEventListener('touchmove', onMove, { passive: false });
     document.addEventListener('mouseup', onEnd);
     document.addEventListener('touchend', onEnd);
     document.addEventListener('touchcancel', onEnd);
@@ -1138,6 +1187,8 @@
 
     viewport.addEventListener('touchstart', ev => {
       if (ev.target.closest('.graph-node')) return;
+      if (ev.target.closest('.zoom-controls') || ev.target.closest('.zoom-help')) return;
+
       if (ev.touches.length === 2) {
         ev.preventDefault();
         touchState.ids = [ev.touches[0].identifier, ev.touches[1].identifier];
@@ -1155,9 +1206,9 @@
           viewX: view.x,
           viewY: view.y
         };
-        clickStart = { x: ev.touches[0].clientX, y: ev.touches[0].clientY, time: Date.now(), moved:false };
+        clickStart = { x: ev.touches[0].clientX, y: ev.touches[0].clientY, time: Date.now(), moved: false };
       }
-    }, { passive:false });
+    }, { passive: false });
 
     viewport.addEventListener('touchmove', ev => {
       if (ev.touches.length === 2) {
@@ -1167,7 +1218,6 @@
         const factor = newDist / touchState.dist;
         const newScale = clampScale(touchState.startScale * factor);
 
-        // зум относительно начального центра
         const r = viewport.getBoundingClientRect();
         const cx = touchState.center.x - r.left;
         const cy = touchState.center.y - r.top;
@@ -1177,20 +1227,19 @@
         view.x = cx - wx * newScale;
         view.y = cy - wy * newScale;
 
-        // плюс смещение центра (pan двумя пальцами)
         view.x += newCenter.x - touchState.center.x;
         view.y += newCenter.y - touchState.center.y;
 
         applyTransform();
       }
-    }, { passive:false });
+    }, { passive: false });
 
     viewport.addEventListener('touchend', ev => {
       if (ev.touches.length < 2) {
         touchState.ids = [];
       }
       if (ev.touches.length === 0 && panning && !clickStart.moved && Date.now() - clickStart.time < 280) {
-        // двойной тап — добавить узел в эту точку
+        // быстрый тап по пустому месту — добавить узел сюда
         handleEmptyTap(clickStart.x, clickStart.y);
       }
       save();
@@ -1204,7 +1253,7 @@
       panning = true;
       viewport.classList.add('panning');
       panStart = { x: ev.clientX, y: ev.clientY, viewX: view.x, viewY: view.y };
-      clickStart = { x: ev.clientX, y: ev.clientY, time: Date.now(), moved:false };
+      clickStart = { x: ev.clientX, y: ev.clientY, time: Date.now(), moved: false };
       ev.preventDefault();
     });
 
@@ -1222,13 +1271,14 @@
       const cy = ev.clientY - r.top;
       const delta = ev.deltaY < 0 ? 1.15 : 1 / 1.15;
       zoomAt(delta, cx, cy);
-    }, { passive:false });
+    }, { passive: false });
 
     /* ── тап по пустому месту (для модалки добавления) ── */
-    let lastTapPos = { x:0, y:0 };
+    // ИСПРАВЛЕНИЕ: мутируем объект, а не переприсваиваем
     function handleEmptyTap(clientX, clientY) {
       const w = screenToWorld(clientX, clientY);
-      lastTapPos = w;
+      lastTapPos.x = w.x;
+      lastTapPos.y = w.y;
       openAddNodeModal();
     }
 
@@ -1266,7 +1316,7 @@
         hint.textContent = 'Режим соединения: выбери первый узел, затем второй.';
       } else {
         pendingConnect = null;
-        hint.textContent = 'Пальцами: 1 — двигать, 2 — зум. Колёсиком мыши — зум.';
+        hint.textContent = 'Пальцами: 1 — двигать, 2 — зум. Тап по пустому месту — узел.';
       }
     }
 
@@ -1309,22 +1359,20 @@
     return {
       render, load, save, addNode, removeNode, clear,
       toggleConnect, exportGraph, importGraph,
-      fitToView, resetView,
+      fitToView, fitToNodes, resetView,
       zoomIn: () => {
         const r = viewport.getBoundingClientRect();
-        zoomAt(1.25, r.width/2, r.height/2);
+        zoomAt(1.25, r.width / 2, r.height / 2);
       },
       zoomOut: () => {
         const r = viewport.getBoundingClientRect();
-        zoomAt(1/1.25, r.width/2, r.height/2);
+        zoomAt(1 / 1.25, r.width / 2, r.height / 2);
       },
-      lastTapPos: lastTapPos
+      // ИСПРАВЛЕНИЕ: возвращаем копию объекта с актуальными данными
+      getLastTapPos: () => ({ x: lastTapPos.x, y: lastTapPos.y }),
+      resetLastTapPos: () => { lastTapPos.x = null; lastTapPos.y = null; }
     };
   })();
-
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  }
 
   /* ─────────────── ADD NODE MODAL ─────────────── */
   const addNodeModal = $('addNodeModal');
@@ -1355,11 +1403,23 @@
     addNodeModal.showModal();
   }
 
-  $('addNodeBtn').addEventListener('click', openAddNodeModal);
+  $('addNodeBtn').addEventListener('click', () => {
+    graph.resetLastTapPos();
+    openAddNodeModal();
+  });
   $('cancelNodeBtn').addEventListener('click', () => addNodeModal.close());
+
+  // ИСПРАВЛЕНИЕ: проверяем, есть ли реальные координаты тапа
   $('confirmNodeBtn').addEventListener('click', () => {
     if (!selectedType) { showToast('выбери тип'); return; }
-    graph.addNode(selectedType, $('nodeLabel').value, graph.lastTapPos.x, graph.lastTapPos.y);
+    const pos = graph.getLastTapPos();
+    const hasPos = typeof pos.x === 'number' && typeof pos.y === 'number' && !isNaN(pos.x) && !isNaN(pos.y);
+    if (hasPos) {
+      graph.addNode(selectedType, $('nodeLabel').value, pos.x, pos.y);
+      graph.resetLastTapPos();
+    } else {
+      graph.addNode(selectedType, $('nodeLabel').value);
+    }
     addNodeModal.close();
   });
 
@@ -1375,7 +1435,8 @@
 
   $('zoomInBtn').addEventListener('click', () => graph.zoomIn());
   $('zoomOutBtn').addEventListener('click', () => graph.zoomOut());
-  $('zoomResetBtn').addEventListener('click', () => graph.resetView());
+  $('zoomFitBtn').addEventListener('click', () => graph.fitToNodes());
+  $('zoomResetBtn').addEventListener('click', () => graph.fitToView());
   </script>
 </body>
-              </html>
+</html>
