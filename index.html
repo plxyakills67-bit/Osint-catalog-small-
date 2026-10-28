@@ -1,1 +1,1618 @@
+import http.server
+import socket
+import webbrowser
 
+
+def get_lan_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.settimeout(0.35)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        if ip:
+            return ip
+    except Exception:
+        pass
+
+    try:
+        ip = socket.gethostbyname(socket.gethostname())
+        if ip and not ip.startswith("127."):
+            return ip
+    except Exception:
+        pass
+
+    return "127.0.0.1"
+
+
+def get_free_port():
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+    try:
+        s.bind(("0.0.0.0", 8000))
+        port = 8000
+    except OSError:
+        s.bind(("0.0.0.0", 0))
+        port = s.getsockname()[1]
+    finally:
+        s.close()
+
+    return port
+
+
+HTML_TEMPLATE = r"""<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PLX // OSINT TERMINAL</title>
+
+  <style>
+    :root {
+      --bg-1: #000000;
+      --bg-2: #0b0b0b;
+      --bg-3: #111111;
+      --panel: #0d0d0d;
+      --panel-2: #141414;
+      --border: #2a2a2a;
+      --text: #eaeaea;
+      --muted: #8f8f8f;
+      --dim: #5f5f5f;
+      --white: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas,
+        "Courier New", monospace;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 25%),
+        radial-gradient(circle at bottom left, rgba(255,255,255,0.05), transparent 20%),
+        linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 45%, #161616 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(255,255,255,0.02),
+        rgba(255,255,255,0.02) 1px,
+        transparent 2px,
+        transparent 4px
+      );
+      opacity: 0.35;
+      z-index: 9999;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    ::selection {
+      background: #ffffff;
+      color: #000000;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .share-bar {
+      position: sticky;
+      top: 0;
+      left: 0;
+      z-index: 50;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      padding: 9px 12px;
+      background: rgba(0,0,0,0.86);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      color: #ddd;
+      font-size: 12px;
+      backdrop-filter: blur(8px);
+    }
+
+    .share-bar span {
+      color: #9a9a9a;
+      white-space: nowrap;
+    }
+
+    .share-bar a {
+      color: #fff;
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(255,255,255,0.45);
+      word-break: break-all;
+    }
+
+    .share-bar button {
+      margin-left: auto;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.03);
+      color: #ddd;
+      padding: 6px 9px;
+      cursor: pointer;
+      transition: 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .share-bar button:hover {
+      color: #fff;
+      border-color: rgba(255,255,255,0.28);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .auth-wrap {
+      min-height: calc(100vh - 54px);
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .auth-shell {
+      width: 100%;
+      max-width: 480px;
+      animation: appear 0.35s ease;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .ascii {
+      white-space: pre;
+      color: #666;
+      font-size: 10px;
+      line-height: 1.2;
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+
+    .terminal {
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
+      box-shadow: 0 0 80px rgba(0,0,0,0.8);
+      backdrop-filter: blur(4px);
+    }
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #444;
+    }
+
+    .dot:nth-child(2) {
+      background: #777;
+    }
+
+    .dot:nth-child(3) {
+      background: #bbb;
+    }
+
+    .terminal-title {
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .terminal-body {
+      padding: 24px;
+      background: rgba(0,0,0,0.25);
+    }
+
+    .brand {
+      margin-bottom: 20px;
+    }
+
+    .brand h1 {
+      font-size: 28px;
+      letter-spacing: 4px;
+      color: var(--white);
+      text-transform: uppercase;
+    }
+
+    .brand p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 1px;
+    }
+
+    .boot {
+      margin: 18px 0;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      color: #9a9a9a;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .tab {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      padding: 12px 10px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: 0.2s ease;
+    }
+
+    .tab.active {
+      background: #eaeaea;
+      color: #000;
+      font-weight: 700;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    input {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 13px 14px;
+      outline: none;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    input:focus {
+      border-color: #999;
+      background: rgba(255,255,255,0.05);
+    }
+
+    input::placeholder {
+      color: #555;
+    }
+
+    .btn {
+      width: 100%;
+      border: 1px solid #ddd;
+      background: linear-gradient(180deg, #f5f5f5, #dcdcdc);
+      color: #000;
+      padding: 14px;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 2px;
+      transition: 0.2s ease;
+      margin-top: 8px;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      background: #ffffff;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn.secondary {
+      margin-top: 12px;
+      background: transparent;
+      color: #ccc;
+      border: 1px solid #444;
+      font-weight: 500;
+    }
+
+    .btn.secondary:hover {
+      border-color: #888;
+      color: #fff;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .auth-message {
+      min-height: 22px;
+      margin-top: 12px;
+      color: #cfcfcf;
+      font-size: 12px;
+    }
+
+    .small-note {
+      margin-top: 16px;
+      color: #666;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .app {
+      width: min(1200px, calc(100% - 24px));
+      margin: 0 auto;
+      padding: 20px 0 40px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: var(--white);
+      text-transform: uppercase;
+    }
+
+    .logo span {
+      color: #777;
+      font-weight: 400;
+    }
+
+    .topbar-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .clock,
+    .user-chip {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      color: #cfcfcf;
+      padding: 9px 12px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .logout-btn {
+      border: 1px solid rgba(255,255,255,0.12);
+      background: transparent;
+      color: #ddd;
+      padding: 9px 12px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+    }
+
+    .prompt-line {
+      margin: 22px 0;
+      color: #b5b5b5;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .prompt-line strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 9px;
+      height: 16px;
+      background: #fff;
+      vertical-align: middle;
+      margin-left: 4px;
+      animation: blink 1.1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 45% { opacity: 1; }
+      50%, 95% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    .legal-banner {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
+      padding: 15px;
+      margin-bottom: 22px;
+      color: #bdbdbd;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .legal-banner strong {
+      color: #fff;
+    }
+
+    .legal-banner button {
+      margin-left: auto;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: transparent;
+      color: #ddd;
+      padding: 8px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .legal-banner button:hover {
+      background: rgba(255,255,255,0.06);
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      padding-left: 42px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #777;
+      pointer-events: none;
+      font-size: 14px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .filter-btn {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      color: #aaa;
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: 0.18s ease;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-btn:hover {
+      color: #fff;
+      border-color: rgba(255,255,255,0.2);
+      transform: translateY(-1px);
+    }
+
+    .filter-btn.active {
+      background: #eaeaea;
+      color: #000;
+      font-weight: 700;
+      border-color: #eaeaea;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+      padding: 16px;
+      min-height: 210px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+      animation: cardIn 0.25s ease;
+    }
+
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255,255,255,0.18);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.04), transparent);
+      transform: translateX(-120%);
+      transition: 0.5s ease;
+      pointer-events: none;
+    }
+
+    .card:hover::after {
+      transform: translateX(120%);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .category {
+      color: #9a9a9a;
+      font-size: 10px;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 5px 7px;
+      background: rgba(255,255,255,0.02);
+      white-space: nowrap;
+    }
+
+    .index-num {
+      color: #4c4c4c;
+      font-size: 11px;
+    }
+
+    .card h3 {
+      font-size: 18px;
+      color: #ffffff;
+      letter-spacing: 0.4px;
+      line-height: 1.35;
+    }
+
+    .card p {
+      color: #a7a7a7;
+      font-size: 12px;
+      line-height: 1.7;
+      flex: 1;
+    }
+
+    .card-note {
+      color: #7d7d7d;
+      font-size: 11px;
+      border-top: 1px dashed rgba(255,255,255,0.09);
+      padding-top: 10px;
+      line-height: 1.6;
+    }
+
+    .card-actions {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .open-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255,255,255,0.85);
+      background: linear-gradient(180deg, #f3f3f3, #d9d9d9);
+      color: #000;
+      min-height: 42px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      font-size: 12px;
+      transition: 0.18s ease;
+      cursor: pointer;
+    }
+
+    .open-link:hover {
+      background: #fff;
+      transform: translateY(-1px);
+    }
+
+    .copy-btn {
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.03);
+      color: #ccc;
+      min-width: 72px;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .copy-btn:hover {
+      color: #fff;
+      border-color: rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      border: 1px dashed rgba(255,255,255,0.12);
+      color: #777;
+      padding: 34px 16px;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .console {
+      margin-top: 24px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.35);
+      min-height: 110px;
+      padding: 14px;
+      font-size: 12px;
+      color: #909090;
+      line-height: 1.8;
+      overflow: hidden;
+    }
+
+    .statusline {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+      color: #5d5d5d;
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+
+    dialog {
+      width: min(92vw, 560px);
+      border: 1px solid #333;
+      background: #0b0b0b;
+      color: #ddd;
+      padding: 0;
+    }
+
+    dialog::backdrop {
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-inner {
+      padding: 22px;
+    }
+
+    .modal-inner h2 {
+      margin-bottom: 16px;
+      font-size: 20px;
+      color: #fff;
+      letter-spacing: 2px;
+    }
+
+    .modal-inner ul {
+      padding-left: 18px;
+      color: #b7b7b7;
+      line-height: 1.8;
+      font-size: 13px;
+    }
+
+    .modal-inner li + li {
+      margin-top: 10px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(20px);
+      background: #eaeaea;
+      color: #000;
+      padding: 11px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.22s ease;
+      z-index: 10000;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 700px) {
+      .ascii {
+        font-size: 8px;
+      }
+
+      .brand h1 {
+        font-size: 22px;
+      }
+
+      .terminal-body {
+        padding: 18px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .topbar-right {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .legal-banner {
+        flex-direction: column;
+      }
+
+      .legal-banner button {
+        margin-left: 0;
+      }
+
+      .card-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .copy-btn {
+        min-height: 42px;
+      }
+
+      .share-bar button {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="share-bar">
+    <span>Поделись с другом:</span>
+    <a href="__SHARE_URL__" target="_blank" rel="noopener noreferrer">__SHARE_URL__</a>
+    <button type="button" id="copyShareBtn">COPY</button>
+  </div>
+
+  <!-- ЭКРАН ВХОДА -->
+  <section class="auth-wrap" id="authScreen">
+    <div class="auth-shell">
+      <pre class="ascii">
+ ____  _     ___ ____ _____   _____
+|  _ \| |   |_ _/ ___|_   _| |_   _|__ _ __ _ __ ___
+| |_) | |    | | |     | |     | |/ _ \ '__| '_ ` _ \
+|  __/| |___ | | |___  | |     | |  __/ |  | | | | | |
+|_|   |_____|___\____| |_|     |_|\___|_|  |_| |_| |_|
+      </pre>
+
+      <div class="terminal">
+        <div class="terminal-header">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="terminal-title">plx@osint: ~/auth</span>
+        </div>
+
+        <div class="terminal-body">
+          <div class="brand">
+            <h1>OSINT TERMINAL</h1>
+            <p>public sources only // demo build</p>
+          </div>
+
+          <div class="boot">
+            [ ok ] open-web catalog<br>
+            [ ok ] legal scope: public data only<br>
+            [ .. ] auth module: visual demo<br>
+            [ -- ] storage: disabled<br>
+            [ -- ] network send: disabled
+          </div>
+
+          <div class="tabs">
+            <button type="button" class="tab active" data-tab="login">ВХОД</button>
+            <button type="button" class="tab" data-tab="register">РЕГИСТРАЦИЯ</button>
+          </div>
+
+          <form id="loginForm">
+            <div class="field">
+              <label for="loginUser">Позывной</label>
+              <input id="loginUser" placeholder="например: plx" autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label for="loginPass">Пароль</label>
+              <input id="loginPass" type="password" placeholder="••••••••">
+            </div>
+
+            <button class="btn" type="submit">ВОЙТИ</button>
+          </form>
+
+          <form id="registerForm" class="hidden">
+            <div class="field">
+              <label for="regNick">Позывной</label>
+              <input id="regNick" placeholder="твой позывной" autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label for="regEmail">E-mail</label>
+              <input id="regEmail" type="email" placeholder="you@example.com" autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label for="regPass">Пароль</label>
+              <input id="regPass" type="password" placeholder="минимум 6 символов">
+            </div>
+
+            <button class="btn" type="submit">СОЗДАТЬ АККАУНТ</button>
+          </form>
+
+          <button class="btn secondary" id="demoBtn" type="button">ДЕМО-ВХОД БЕЗ ВВОДА</button>
+
+          <div class="auth-message" id="authMessage"></div>
+
+          <div class="small-note">
+            Это визуальный макет авторизации. Данные никуда не отправляются,
+            не сохраняются и не проверяются. После перезагрузки страницы сессия сбрасывается.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ОСНОВНОЙ ИНТЕРФЕЙС -->
+  <main class="app hidden" id="appScreen">
+    <header class="topbar">
+      <div class="logo">PLX<span>//</span>OSINT</div>
+
+      <div class="topbar-right">
+        <div class="clock" id="clock">--:--:--</div>
+        <div class="user-chip" id="userChip">guest</div>
+        <button class="logout-btn" id="logoutBtn" type="button">ВЫХОД</button>
+      </div>
+    </header>
+
+    <section class="prompt-line">
+      <span>plx@osint:~$</span>
+      <strong> ./open-sources --legal --demo</strong>
+      <span class="cursor"></span>
+    </section>
+
+    <section class="legal-banner">
+      <div>
+        <strong>ТОЛЬКО ОТКРЫТЫЕ ИСТОЧНИКИ.</strong><br>
+        Разрешено: свои данные, публичные страницы, данные с согласия владельца.
+        Запрещено: слежка, поиск чужих паролей, приватных баз, геолокации людей без согласия.
+      </div>
+      <button id="rulesBtn" type="button">ПРАВИЛА</button>
+    </section>
+
+    <section class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">&gt;_</span>
+        <input id="searchInput" placeholder="поиск по каталогу: почта, номер, exif, архив..." autocomplete="off">
+      </div>
+    </section>
+
+    <section class="filters" id="filters"></section>
+
+    <section class="grid" id="toolGrid"></section>
+
+    <section class="console" id="consoleBox"></section>
+
+    <section class="statusline">
+      <span>OPEN SOURCES ONLY</span>
+      <span id="counter">0 tools</span>
+      <span>NO PRIVATE DATABASES</span>
+      <span>BUILD v0.2</span>
+    </section>
+  </main>
+
+  <!-- МОДАЛКА ПРАВИЛ -->
+  <dialog id="rulesModal">
+    <div class="modal-inner">
+      <h2>ПРОТОКОЛ OSINT</h2>
+      <ul>
+        <li>Ищем только в открытых публичных источниках.</li>
+        <li>Свои данные или данные с разрешения владельца.</li>
+        <li>Не используем дампы, утечки, базы операторов и закрытые сервисы.</li>
+        <li>Не ищем чужую геолокацию, адреса, пароли и частную переписку.</li>
+        <li>EXIF-данные фото анализируем только для своих файлов или с согласия автора.</li>
+        <li>Ссылки ведут на сторонние открытые сервисы. Их политика — на их стороне.</li>
+      </ul>
+      <br>
+      <button class="btn" id="closeRulesBtn" type="button">ПРИНЯТО</button>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast">скопировано</div>
+
+  <script>
+    const SHARE_URL = "__SHARE_URL__";
+
+    const CATS = {
+      all: "ВСЁ",
+      phone: "НОМЕР",
+      email: "ПОЧТА",
+      social: "СОЦСЕТИ",
+      meta: "МЕТАДАННЫЕ",
+      web: "ВЕБ / ФОТО"
+    };
+
+    const TOOLS = [
+      {
+        cat: "phone",
+        name: "Telnum",
+        url: "https://telnum.net/",
+        desc: "Открытые справочные данные по номеру: страна, оператор, тип номера.",
+        note: "Техническая информация, не личное досье."
+      },
+      {
+        cat: "phone",
+        name: "Truecaller Public",
+        url: "https://www.truecaller.com/",
+        desc: "Публичный справочник номеров и определения вызывающих абонентов.",
+        note: "Использовать только для своих номеров или с согласия."
+      },
+      {
+        cat: "phone",
+        name: "Google Dork: номер",
+        url: "https://www.google.com/",
+        desc: "Поиск открытых упоминаний номера в вебе. Пример: номер в кавычках.",
+        note: "Только публично проиндексированные страницы."
+      },
+
+      {
+        cat: "email",
+        name: "Have I Been Pwned",
+        url: "https://haveibeenpwned.com/",
+        desc: "Проверка своего e-mail по публичным спискам утечек без раскрытия паролей.",
+        note: "Хорошо подходит для аудита собственной безопасности."
+      },
+      {
+        cat: "email",
+        name: "EmailRep",
+        url: "https://emailrep.io/",
+        desc: "Открытая репутация адреса: подозрительность, возраст, активность.",
+        note: "Полезно против фишинга и сомнительных писем."
+      },
+      {
+        cat: "email",
+        name: "Hunter Verifier",
+        url: "https://hunter.io/email-verifier",
+        desc: "Проверка существования и доставляемости публичных деловых адресов.",
+        note: "Есть лимиты, нужен аккаунт сервиса."
+      },
+      {
+        cat: "email",
+        name: "Search Engine: e-mail",
+        url: "https://yandex.ru/",
+        desc: "Поиск публичных упоминаний почты в открытых источниках через кавычки.",
+        note: "Никаких закрытых баз — только открытая выдача."
+      },
+
+      {
+        cat: "social",
+        name: "WhatsMyName",
+        url: "https://whatsmyname.app/",
+        desc: "Поиск публичных профилей по одному никнейму на разных площадках.",
+        note: "Проверяем свой ник или с разрешения владельца."
+      },
+      {
+        cat: "social",
+        name: "Sherlock Project",
+        url: "https://github.com/sherlock-project/sherlock",
+        desc: "Известный open-source инструмент поиска публичных аккаунтов по нику.",
+        note: "Запускается отдельно, требует Python."
+      },
+      {
+        cat: "social",
+        name: "Maigret",
+        url: "https://github.com/soxoj/maigret",
+        desc: "Мощный open-source поисковик публичных профилей по username.",
+        note: "Только открытые профили, без обхода приватности."
+      },
+      {
+        cat: "social",
+        name: "Namechk",
+        url: "https://namechk.com/",
+        desc: "Проверка занятости ника и домена на популярных площадках.",
+        note: "Удобно для брендинга и своих аккаунтов."
+      },
+
+      {
+        cat: "meta",
+        name: "Exif Regex Viewer",
+        url: "https://exif.regex.info/exif.cgi",
+        desc: "Просмотр EXIF: камера, время, софт, GPS-координаты, если они есть.",
+        note: "Только свои фото или с разрешения владельца."
+      },
+      {
+        cat: "meta",
+        name: "ExifTool",
+        url: "https://exiftool.org/",
+        desc: "Эталонный инструмент для чтения и очистки метаданных изображений.",
+        note: "Есть локальный запуск и веб-демо."
+      },
+      {
+        cat: "meta",
+        name: "Jimpl",
+        url: "https://www.jimpl.com/",
+        desc: "Быстрый онлайн-просмотр метаданных фото прямо в браузере.",
+        note: "Не загружай чужие личные файлы без согласия."
+      },
+      {
+        cat: "meta",
+        name: "FotoForensics",
+        url: "https://fotoforensics.com/",
+        desc: "Анализ изображения на монтаж, пересохранение и артефакты.",
+        note: "Подходит для проверки подлинности своих картинок."
+      },
+      {
+        cat: "meta",
+        name: "Forensically",
+        url: "https://29a.ch/photo-forensics/",
+        desc: "Браузерный набор для анализа изображений: ELA, шум, клоны.",
+        note: "Работает локально в браузере."
+      },
+
+      {
+        cat: "web",
+        name: "OSINT Framework",
+        url: "https://osintframework.com/",
+        desc: "Большое дерево легальных открытых OSINT-ресурсов и категорий.",
+        note: "Отличная карта для расширения каталога."
+      },
+      {
+        cat: "web",
+        name: "Wayback Machine",
+        url: "https://web.archive.org/",
+        desc: "История публичных веб-страниц: как сайты выглядели раньше.",
+        note: "Только общедоступные архивные копии."
+      },
+      {
+        cat: "web",
+        name: "Google Lens",
+        url: "https://lens.google/",
+        desc: "Поиск по изображению: где кадр встречается в открытом интернете.",
+        note: "Только публичные изображения и свои файлы."
+      },
+      {
+        cat: "web",
+        name: "Yandex Images",
+        url: "https://yandex.ru/images/",
+        desc: "Сильный обратный поиск картинок, хорош для ру-сегмента.",
+        note: "Открытая поисковая выдача."
+      },
+      {
+        cat: "web",
+        name: "TinEye",
+        url: "https://tineye.com/",
+        desc: "Обратный поиск изображения и отслеживание распространения копии.",
+        note: "Хорош для проверки оригинальности картинки."
+      }
+    ];
+
+    let currentUser = null;
+    let currentCat = "all";
+    let searchQuery = "";
+    let clockInterval = null;
+
+    const $ = function (id) {
+      return document.getElementById(id);
+    };
+
+    const authScreen = $("authScreen");
+    const appScreen = $("appScreen");
+    const authMessage = $("authMessage");
+
+    const loginForm = $("loginForm");
+    const registerForm = $("registerForm");
+    const tabs = document.querySelectorAll(".tab");
+
+    const filtersBox = $("filters");
+    const toolGrid = $("toolGrid");
+    const searchInput = $("searchInput");
+    const consoleBox = $("consoleBox");
+    const counter = $("counter");
+    const toast = $("toast");
+
+    function setAuthMessage(text) {
+      authMessage.textContent = text || "";
+    }
+
+    function isValidEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    function startSession(name) {
+      currentUser = name;
+
+      authScreen.classList.add("hidden");
+      appScreen.classList.remove("hidden");
+
+      $("userChip").textContent = "● " + currentUser;
+
+      searchInput.value = "";
+      searchQuery = "";
+      currentCat = "all";
+      consoleBox.innerHTML = "";
+
+      startClock();
+
+      log("session opened as: " + currentUser);
+      log("loaded modules: " + TOOLS.length);
+      log("policy: open public sources only");
+
+      renderFilters();
+      renderTools();
+    }
+
+    tabs.forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        tabs.forEach(function (t) {
+          t.classList.remove("active");
+        });
+
+        tab.classList.add("active");
+
+        const target = tab.dataset.tab;
+
+        if (target === "login") {
+          loginForm.classList.remove("hidden");
+          registerForm.classList.add("hidden");
+        } else {
+          loginForm.classList.add("hidden");
+          registerForm.classList.remove("hidden");
+        }
+
+        setAuthMessage("");
+      });
+    });
+
+    loginForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const user = $("loginUser").value.trim();
+      const pass = $("loginPass").value.trim();
+
+      if (user.length < 2) {
+        setAuthMessage("! позывной должен быть минимум 2 символа");
+        return;
+      }
+
+      if (pass.length < 4) {
+        setAuthMessage("! пароль для демо должен быть минимум 4 символа");
+        return;
+      }
+
+      startSession(user);
+    });
+
+    registerForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const nick = $("regNick").value.trim();
+      const email = $("regEmail").value.trim();
+      const pass = $("regPass").value.trim();
+
+      if (nick.length < 3) {
+        setAuthMessage("! позывной должен быть минимум 3 символа");
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        setAuthMessage("! e-mail выглядит неправильно");
+        return;
+      }
+
+      if (pass.length < 6) {
+        setAuthMessage("! пароль должен быть минимум 6 символов");
+        return;
+      }
+
+      startSession(nick);
+    });
+
+    $("demoBtn").addEventListener("click", function () {
+      startSession("plx");
+    });
+
+    $("logoutBtn").addEventListener("click", function () {
+      currentUser = null;
+
+      if (clockInterval) {
+        clearInterval(clockInterval);
+        clockInterval = null;
+      }
+
+      appScreen.classList.add("hidden");
+      authScreen.classList.remove("hidden");
+
+      loginForm.reset();
+      registerForm.reset();
+      consoleBox.innerHTML = "";
+      searchInput.value = "";
+      searchQuery = "";
+      currentCat = "all";
+
+      setAuthMessage("");
+    });
+
+    $("copyShareBtn").addEventListener("click", function () {
+      copyText(SHARE_URL);
+      log("share link copied");
+    });
+
+    function startClock() {
+      const tick = function () {
+        $("clock").textContent = new Date().toLocaleTimeString("ru-RU");
+      };
+
+      tick();
+
+      if (clockInterval) clearInterval(clockInterval);
+      clockInterval = setInterval(tick, 1000);
+    }
+
+    function renderFilters() {
+      filtersBox.innerHTML = "";
+
+      Object.entries(CATS).forEach(function (entry) {
+        const key = entry[0];
+        const label = entry[1];
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "filter-btn" + (currentCat === key ? " active" : "");
+
+        const count = key === "all"
+          ? TOOLS.length
+          : TOOLS.filter(function (t) {
+              return t.cat === key;
+            }).length;
+
+        btn.textContent = label + " · " + count;
+
+        btn.addEventListener("click", function () {
+          currentCat = key;
+          renderFilters();
+          renderTools();
+          log("filter applied: " + label);
+        });
+
+        filtersBox.appendChild(btn);
+      });
+    }
+
+    function getFilteredTools() {
+      const q = searchQuery.toLowerCase().trim();
+
+      return TOOLS.filter(function (tool) {
+        const byCat = currentCat === "all" || tool.cat === currentCat;
+
+        const text = [
+          tool.name,
+          tool.desc,
+          tool.note,
+          CATS[tool.cat]
+        ].join(" ").toLowerCase();
+
+        const bySearch = q === "" || text.includes(q);
+
+        return byCat && bySearch;
+      });
+    }
+
+    function renderTools() {
+      toolGrid.innerHTML = "";
+
+      const items = getFilteredTools();
+      counter.textContent = items.length + " / " + TOOLS.length + " tools";
+
+      if (!items.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = "// ничего не найдено. попробуй другой запрос или категорию.";
+        toolGrid.appendChild(empty);
+        return;
+      }
+
+      items.forEach(function (tool) {
+        const card = document.createElement("article");
+        card.className = "card";
+
+        const top = document.createElement("div");
+        top.className = "card-top";
+
+        const category = document.createElement("div");
+        category.className = "category";
+        category.textContent = CATS[tool.cat];
+
+        const num = document.createElement("div");
+        num.className = "index-num";
+        num.textContent = "#" + String(TOOLS.indexOf(tool) + 1).padStart(2, "0");
+
+        top.append(category, num);
+
+        const title = document.createElement("h3");
+        title.textContent = tool.name;
+
+        const desc = document.createElement("p");
+        desc.textContent = tool.desc;
+
+        const note = document.createElement("div");
+        note.className = "card-note";
+        note.textContent = "⚑ " + tool.note;
+
+        const actions = document.createElement("div");
+        actions.className = "card-actions";
+
+        const openBtn = document.createElement("button");
+        openBtn.className = "open-link";
+        openBtn.type = "button";
+        openBtn.textContent = "ОТКРЫТЬ ↗";
+
+        openBtn.addEventListener("click", function () {
+          openTool(tool.url);
+        });
+
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "copy-btn";
+        copyBtn.type = "button";
+        copyBtn.textContent = "COPY";
+
+        copyBtn.addEventListener("click", function () {
+          copyText(tool.url);
+          log("copied: " + tool.url);
+        });
+
+        actions.append(openBtn, copyBtn);
+        card.append(top, title, desc, note, actions);
+
+        toolGrid.appendChild(card);
+      });
+    }
+
+    searchInput.addEventListener("input", function (e) {
+      searchQuery = e.target.value;
+      renderTools();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (
+        e.key === "/" &&
+        !appScreen.classList.contains("hidden") &&
+        document.activeElement !== searchInput
+      ) {
+        e.preventDefault();
+        searchInput.focus();
+      }
+    });
+
+    function showToast(text) {
+      toast.textContent = text;
+      toast.classList.add("show");
+
+      setTimeout(function () {
+        toast.classList.remove("show");
+      }, 1600);
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("ссылка скопирована");
+      } catch (err) {
+        fallbackCopy(text);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.style.position = "fixed";
+      area.style.opacity = "0";
+      document.body.appendChild(area);
+      area.select();
+
+      try {
+        document.execCommand("copy");
+        showToast("ссылка скопирована");
+      } catch (e) {
+        showToast("не удалось скопировать");
+      }
+
+      area.remove();
+    }
+
+    function log(text) {
+      const line = document.createElement("div");
+      const time = new Date().toLocaleTimeString("ru-RU");
+      line.textContent = "[" + time + "] " + text;
+
+      consoleBox.appendChild(line);
+
+      while (consoleBox.children.length > 7) {
+        consoleBox.removeChild(consoleBox.firstChild);
+      }
+    }
+
+    function openTool(url) {
+      log("opening: " + url);
+
+      let win = null;
+
+      try {
+        win = window.open(url, "_blank", "noopener,noreferrer");
+      } catch (e) {
+        win = null;
+      }
+
+      if (win) {
+        return;
+      }
+
+      try {
+        const a = document.createElement("a");
+        a.href = url;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } catch (e) {}
+
+      setTimeout(function () {
+        if (!document.hidden) {
+          window.location.href = url;
+        }
+      }, 350);
+    }
+
+    $("rulesBtn").addEventListener("click", function () {
+      const modal = $("rulesModal");
+
+      if (modal && typeof modal.showModal === "function") {
+        modal.showModal();
+      } else {
+        window.alert("Только открытые источники, свои данные или согласие владельца.");
+      }
+    });
+
+    $("closeRulesBtn").addEventListener("click", function () {
+      const modal = $("rulesModal");
+
+      if (modal && typeof modal.close === "function") {
+        modal.close();
+      }
+    });
+  </script>
+</body>
+</html>
+"""
+
+
+def main():
+    port = get_free_port()
+    lan_ip = get_lan_ip()
+
+    local_url = f"http://127.0.0.1:{port}"
+    lan_url = f"http://{lan_ip}:{port}"
+
+    if lan_ip and not lan_ip.startswith("127."):
+        share_url = lan_url
+    else:
+        share_url = local_url
+
+    page = HTML_TEMPLATE.replace("__SHARE_URL__", share_url)
+    page_bytes = page.encode("utf-8")
+
+    class Handler(http.server.BaseHTTPRequestHandler):
+        protocol_version = "HTTP/1.1"
+
+        def do_GET(self):
+            if self.path in ("/", "/index.html"):
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Content-Length", str(len(page_bytes)))
+                self.send_header("Cache-Control", "no-store")
+                self.end_headers()
+                self.wfile.write(page_bytes)
+
+            elif self.path == "/favicon.ico":
+                self.send_response(204)
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+
+            else:
+                self.send_response(404)
+                self.send_header("Content-Type", "text/plain; charset=utf-8")
+                msg = "404".encode("utf-8")
+                self.send_header("Content-Length", str(len(msg)))
+                self.end_headers()
+                self.wfile.write(msg)
+
+        def log_message(self, fmt, *args):
+            pass
+
+    try:
+        httpd = http.server.ThreadingHTTPServer(("0.0.0.0", port), Handler)
+    except AttributeError:
+        httpd = http.server.HTTPServer(("0.0.0.0", port), Handler)
+
+    print(f"Поделись с другом: {share_url}")
+    print(f"Локально на телефоне: {local_url}")
+
+    if lan_ip and not lan_ip.startswith("127."):
+        print(f"Для друга в этой же Wi-Fi сети: {lan_url}")
+
+    print("Остановка: кнопка STOP в Pydroid3.")
+
+    try:
+        webbrowser.open(local_url)
+    except Exception:
+        pass
+
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        httpd.server_close()
+
+
+if __name__ == "__main__":
+    main()
