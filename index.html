@@ -96,10 +96,14 @@
     input::placeholder { color:#555; }
     .btn { width:100%; border:1px solid #ddd; background:linear-gradient(180deg,#f5f5f5,#dcdcdc); color:#000; padding:14px; cursor:pointer; font-weight:700; letter-spacing:2px; margin-top:8px; }
     .btn:hover { background:#fff; }
+    .btn:disabled { opacity:.5; cursor:wait; }
     .btn.secondary { margin-top:12px; background:transparent; color:#ccc; border:1px solid #444; font-weight:500; }
     .btn.secondary:hover { border-color:#888; color:#fff; }
     .auth-message { min-height:22px; margin-top:12px; color:#cfcfcf; font-size:12px; }
+    .auth-message.error { color:#ff9a9a; }
+    .auth-message.success { color:#9aff9a; }
     .small-note { margin-top:16px; color:#666; font-size:11px; line-height:1.6; }
+    .small-note strong { color:#999; }
 
     /* ─── APP / CATALOG ─── */
     .app { width:min(1200px, calc(100% - 24px)); margin:0 auto; padding:20px 0 40px; }
@@ -167,7 +171,6 @@
 
     .graph-hint { font-size:11px; color:#6a6a6a; padding:8px 14px; border-left:2px solid #333; margin-bottom:14px; }
 
-    /* VIEWPORT = видимая рамка, WORLD = масштабируемое поле внутри */
     .graph-viewport {
       position:relative;
       width:100%;
@@ -248,7 +251,6 @@
     .graph-empty h2 { color:#888; letter-spacing:3px; margin-bottom:10px; font-size:16px; }
     .graph-empty p { max-width:480px; line-height:1.7; }
 
-    /* ─── ZOOM CONTROLS ─── */
     .zoom-controls {
       position:absolute;
       bottom:14px; right:14px;
@@ -281,7 +283,6 @@
       margin-top:2px;
     }
 
-    /* ─── HELP BADGE ─── */
     .zoom-help {
       position:absolute;
       top:14px; left:14px;
@@ -296,7 +297,6 @@
       line-height:1.6;
     }
 
-    /* ─── MODAL ─── */
     dialog {
       width:min(92vw, 560px);
       border:1px solid #333; background:#0b0b0b; color:#ddd; padding:0;
@@ -380,37 +380,41 @@
         <div class="terminal-body">
           <div class="brand">
             <h1>OSINT TERMINAL</h1>
-            <p>public sources only // v0.6</p>
+            <p>anonymous local auth // v0.7</p>
           </div>
           <div class="boot">
             [ ok ] open-web catalog<br>
             [ ok ] legal scope: public data only<br>
-            [ ok ] graph engine: ready<br>
-            [ ok ] touch zoom: enabled<br>
-            [ ok ] node positioning: fixed<br>
-            [ ok ] catalog: 50 tools<br>
-            [ -- ] storage: localStorage
+            [ ok ] auth: local anonymous<br>
+            [ ok ] session: 7 days<br>
+            [ ok ] data: device only<br>
+            [ -- ] no server, no tracking
           </div>
           <div class="tabs">
             <button type="button" class="tab active" data-tab="login">ВХОД</button>
             <button type="button" class="tab" data-tab="register">РЕГИСТРАЦИЯ</button>
           </div>
+
           <form id="loginForm">
-            <div class="field"><label>Позывной</label><input id="loginUser" placeholder="plx" autocomplete="off"></div>
+            <div class="field"><label>Позывной</label><input id="loginUser" placeholder="твой позывной" autocomplete="off"></div>
             <div class="field"><label>Пароль</label><input id="loginPass" type="password" placeholder="••••••••"></div>
-            <button class="btn" type="submit">ВОЙТИ</button>
+            <button class="btn" type="submit" id="loginBtn">ВОЙТИ</button>
           </form>
+
           <form id="registerForm" class="hidden">
             <div class="field"><label>Позывной</label><input id="regNick" placeholder="твой позывной" autocomplete="off"></div>
-            <div class="field"><label>E-mail</label><input id="regEmail" type="email" placeholder="you@example.com"></div>
             <div class="field"><label>Пароль</label><input id="regPass" type="password" placeholder="минимум 6 символов"></div>
-            <button class="btn" type="submit">СОЗДАТЬ АККАУНТ</button>
+            <div class="field"><label>Подтверждение пароля</label><input id="regPass2" type="password" placeholder="повтори пароль"></div>
+            <button class="btn" type="submit" id="regBtn">СОЗДАТЬ АККАУНТ</button>
           </form>
-          <button class="btn secondary" id="demoBtn" type="button">ДЕМО-ВХОД</button>
+
           <div class="auth-message" id="authMessage"></div>
           <div class="small-note">
-            Визуальная авторизация. Граф сохраняется в браузере (localStorage),
-            при следующем заходе всё останется на месте.
+            <strong>Анонимная локальная регистрация.</strong><br>
+            Аккаунт хранится только на этом устройстве в этом браузере.<br>
+            Пароль хешируется, на сервер ничего не отправляется.<br>
+            Сессия действует 7 дней, потом нужно войти снова.<br>
+            <strong>Если забудешь пароль — восстановить невозможно.</strong>
           </div>
         </div>
       </div>
@@ -460,8 +464,8 @@
       <section class="statusline">
         <span>OPEN SOURCES ONLY</span>
         <span id="counter">0 tools</span>
-        <span>GRAPH ENGINE READY</span>
-        <span>BUILD v0.6</span>
+        <span>ANONYMOUS AUTH</span>
+        <span>BUILD v0.7</span>
       </section>
     </section>
 
@@ -555,7 +559,7 @@
         <li>Свои данные или данные с разрешения владельца.</li>
         <li>Никаких дампов, утечек и баз операторов.</li>
         <li>EXIF-метаданные — только для своих файлов.</li>
-        <li>Граф сохраняется локально в твоём браузере.</li>
+        <li>Граф и аккаунт хранятся локально в твоём браузере.</li>
         <li>Сторонние сервисы имеют свои правила.</li>
       </ul>
       <div class="modal-actions">
@@ -592,7 +596,6 @@
     { id:'website',  label:'САЙТ'     }
   ];
 
-  /* ─────────────── КАТЕГОРИИ КАТАЛОГА ─────────────── */
   const CATS = {
     all:'ВСЁ',
     phone:'НОМЕР',
@@ -606,16 +609,13 @@
     maps:'КАРТЫ'
   };
 
-  /* ─────────────── КАТАЛОГ ИНСТРУМЕНТОВ (50) ─────────────── */
   const TOOLS = [
-    // ─── НОМЕР (5) ───
     { cat:'phone', name:'Telnum', url:'https://telnum.net/', desc:'Определение страны, оператора и типа номера по открытому плану нумерации.', note:'Техническая информация, не личное досье.' },
     { cat:'phone', name:'Truecaller', url:'https://www.truecaller.com/', desc:'Публичный справочник номеров и определение вызывающих абонентов.', note:'Только свои номера или с согласия.' },
     { cat:'phone', name:'Google Dork: номер', url:'https://www.google.com/', desc:'Поиск публичных упоминаний номера в вебе через кавычки.', note:'Только проиндексированные страницы.' },
     { cat:'phone', name:'Yandex Dork: номер', url:'https://yandex.ru/', desc:'Поиск упоминаний номера в русскоязычном сегменте.', note:'Открытая выдача.' },
     { cat:'phone', name:'NumVerify', url:'https://numverify.com/', desc:'Проверка формата номера и определение оператора по базе.', note:'Техническая проверка.' },
 
-    // ─── ПОЧТА (7) ───
     { cat:'email', name:'Have I Been Pwned', url:'https://haveibeenpwned.com/', desc:'Проверка своего e-mail по спискам утечек без раскрытия паролей.', note:'Аудит своей безопасности.' },
     { cat:'email', name:'EmailRep', url:'https://emailrep.io/', desc:'Открытая репутация адреса: подозрительность, возраст, активность.', note:'Против фишинга.' },
     { cat:'email', name:'Hunter Verifier', url:'https://hunter.io/email-verifier', desc:'Проверка существования и доставляемости деловых адресов.', note:'Есть лимиты.' },
@@ -624,7 +624,6 @@
     { cat:'email', name:'Email-Checker', url:'https://email-checker.net/', desc:'Валидация синтаксиса и существования адреса.', note:'Быстрая проверка.' },
     { cat:'email', name:'Yandex Dork: почта', url:'https://yandex.ru/', desc:'Поиск публичных упоминаний почты в кавычках.', note:'Открытая выдача.' },
 
-    // ─── СОЦСЕТИ (7) ───
     { cat:'social', name:'WhatsMyName', url:'https://whatsmyname.app/', desc:'Поиск публичных профилей по одному нику на сотнях площадок.', note:'Проверяем свой ник.' },
     { cat:'social', name:'Sherlock Project', url:'https://github.com/sherlock-project/sherlock', desc:'Open-source поиск аккаунтов по нику на 300+ сайтах.', note:'Требует Python.' },
     { cat:'social', name:'Maigret', url:'https://github.com/soxoj/maigret', desc:'Мощный open-source поисковик профилей по 2500+ сайтам.', note:'Только открытые профили.' },
@@ -633,7 +632,6 @@
     { cat:'social', name:'CheckUsernames', url:'https://checkusernames.com/', desc:'Поиск свободных ников на множестве площадок.', note:'Простой сервис.' },
     { cat:'social', name:'UserSearch', url:'https://usersearch.org/', desc:'Поиск пользователей по нику на открытых платформах.', note:'Только публичные данные.' },
 
-    // ─── МЕТАДАННЫЕ (7) ───
     { cat:'meta', name:'Exif Regex Viewer', url:'https://exif.regex.info/exif.cgi', desc:'Просмотр EXIF: камера, время, софт, GPS-координаты.', note:'Только свои фото.' },
     { cat:'meta', name:'ExifTool', url:'https://exiftool.org/', desc:'Эталонный инструмент чтения и очистки метаданных.', note:'Есть веб-демо.' },
     { cat:'meta', name:'Jimpl', url:'https://www.jimpl.com/', desc:'Быстрый онлайн-просмотр метаданных фото в браузере.', note:'Только с разрешения.' },
@@ -642,14 +640,12 @@
     { cat:'meta', name:'Metapicz', url:'https://metapicz.com/', desc:'Просмотр метаданных изображений с картой и графиками.', note:'Удобный интерфейс.' },
     { cat:'meta', name:'ExifData.io', url:'https://exifdata.io/', desc:'Просмотр и удаление метаданных из изображений.', note:'Приватность.' },
 
-    // ─── ФОТО ПОИСК (5) ───
     { cat:'image', name:'Google Lens', url:'https://lens.google/', desc:'Поиск по изображению: где кадр встречается в открытом вебе.', note:'Публичные изображения.' },
     { cat:'image', name:'Yandex Images', url:'https://yandex.ru/images/', desc:'Сильный обратный поиск картинок для ру-сегмента.', note:'Открытая выдача.' },
     { cat:'image', name:'TinEye', url:'https://tineye.com/', desc:'Обратный поиск изображения и история распространения кадра.', note:'Открытые индексы.' },
     { cat:'image', name:'Bing Visual Search', url:'https://www.bing.com/visualsearch', desc:'Поиск по картинке от Microsoft с распознаванием объектов.', note:'Публичные данные.' },
     { cat:'image', name:'Google Images', url:'https://images.google.com/', desc:'Классический поиск по картинке через загрузку файла.', note:'Открытая выдача.' },
 
-    // ─── ВЕБ / АРХИВ (6) ───
     { cat:'web', name:'Wayback Machine', url:'https://web.archive.org/', desc:'История публичных веб-страниц: как сайты выглядели раньше.', note:'Архивные копии.' },
     { cat:'web', name:'Archive.today', url:'https://archive.ph/', desc:'Мгновенные снимки веб-страниц и архивирование.', note:'Публичные страницы.' },
     { cat:'web', name:'OSINT Framework', url:'https://osintframework.com/', desc:'Дерево сотен легальных открытых OSINT-ресурсов.', note:'Карта для расширения.' },
@@ -657,7 +653,6 @@
     { cat:'web', name:'ViewDNS.info', url:'https://viewdns.info/', desc:'DNS-записи, история домена, whois и другие данные.', note:'Открытые данные.' },
     { cat:'web', name:'Whois.com', url:'https://www.whois.com/', desc:'Публичные данные о регистрации доменов и владельцах.', note:'Открытый реестр.' },
 
-    // ─── ДОМЕНЫ / IP (7) ───
     { cat:'domain', name:'Who.is', url:'https://who.is/', desc:'Whois-данные домена: регистратор, даты, статус.', note:'Открытый реестр.' },
     { cat:'domain', name:'IPinfo.io', url:'https://ipinfo.io/', desc:'Информация об IP-адресе: геолокация, провайдер, организация.', note:'Технические данные.' },
     { cat:'domain', name:'Shodan', url:'https://www.shodan.io/', desc:'Поисковик по подключённым к интернету устройствам.', note:'Для исследования инфраструктуры.' },
@@ -666,12 +661,10 @@
     { cat:'domain', name:'WhatIsMyIPAddress', url:'https://whatismyipaddress.com/ip-lookup', desc:'Поиск информации о любом IP-адресе.', note:'Открытые данные.' },
     { cat:'domain', name:'Hurricane Electric BGP', url:'https://bgp.he.net/', desc:'Информация о маршрутизации и автономных системах.', note:'Сетевая инфраструктура.' },
 
-    // ─── ТРАНСПОРТ (3) ───
     { cat:'transport', name:'FlightRadar24', url:'https://www.flightradar24.com/', desc:'Отслеживание самолётов в реальном времени по открытым данным.', note:'Публичные рейсы.' },
     { cat:'transport', name:'MarineTraffic', url:'https://www.marinetraffic.com/', desc:'Отслеживание судов по AIS-сигналам.', note:'Открытые данные.' },
     { cat:'transport', name:'VesselFinder', url:'https://www.vesselfinder.com/', desc:'Поиск судов и история маршрутов.', note:'Публичные данные.' },
 
-    // ─── КАРТЫ (3) ───
     { cat:'maps', name:'Google Maps', url:'https://www.google.com/maps', desc:'Поиск мест, панорамы улиц, фотографии локаций.', note:'Открытые данные.' },
     { cat:'maps', name:'OpenStreetMap', url:'https://www.openstreetmap.org/', desc:'Свободная карта мира с детальными данными.', note:'Открытые данные.' },
     { cat:'maps', name:'Wikimapia', url:'https://wikimapia.org/', desc:'Интерактивная карта с пользовательскими описаниями мест.', note:'Публичные данные.' }
@@ -691,6 +684,97 @@
   let clockInterval = null;
   let currentView = 'catalog';
 
+  /* ════════════════════════════════════════════════════════════════════
+     ─── АНОНИМНАЯ ЛОКАЛЬНАЯ АВТОРИЗАЦИЯ ───
+     ════════════════════════════════════════════════════════════════════ */
+  const USERS_KEY = 'plx_osint_users';
+  const SESSION_KEY = 'plx_osint_session';
+  const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 дней
+
+  async function sha256(message) {
+    if (crypto && crypto.subtle) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    } else {
+      let hash = 0;
+      for (let i = 0; i < message.length; i++) {
+        const char = message.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash |= 0;
+      }
+      return 'fallback_' + Math.abs(hash).toString(16);
+    }
+  }
+
+  function generateSalt() {
+    const array = new Uint8Array(16);
+    crypto.getRandomValues(array);
+    return Array.from(array).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function getUsers() {
+    try { return JSON.parse(localStorage.getItem(USERS_KEY)) || {}; }
+    catch { return {}; }
+  }
+  function saveUsers(users) {
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  }
+  function getSession() {
+    try { return JSON.parse(localStorage.getItem(SESSION_KEY)); }
+    catch { return null; }
+  }
+  function saveSession(session) {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+  }
+  function clearSession() {
+    localStorage.removeItem(SESSION_KEY);
+  }
+
+  async function registerUser(username, password) {
+    const users = getUsers();
+    const userKey = await sha256(username.toLowerCase());
+    if (users[userKey]) throw new Error('Позывной уже занят');
+    const salt = generateSalt();
+    const passHash = await sha256(password + salt);
+    users[userKey] = { passHash, salt, createdAt: Date.now() };
+    saveUsers(users);
+    return userKey;
+  }
+
+  async function loginUser(username, password) {
+    const users = getUsers();
+    const userKey = await sha256(username.toLowerCase());
+    const user = users[userKey];
+    if (!user) throw new Error('Пользователь не найден');
+    const passHash = await sha256(password + user.salt);
+    if (passHash !== user.passHash) throw new Error('Неверный пароль');
+    const now = Date.now();
+    return {
+      userKey,
+      username,
+      sessionStart: now,
+      sessionExpiry: now + SESSION_DURATION
+    };
+  }
+
+  function checkSession() {
+    const session = getSession();
+    if (!session) return null;
+    if (Date.now() > session.sessionExpiry) {
+      clearSession();
+      return null;
+    }
+    return session;
+  }
+
+  function setAuthMessage(text, type) {
+    const el = $('authMessage');
+    el.textContent = text;
+    el.className = 'auth-message' + (type ? ' ' + type : '');
+  }
+
   /* ─────────────── SHARE LINK ─────────────── */
   window.addEventListener('load', () => {
     const shareLink = $('shareLink');
@@ -698,10 +782,16 @@
       shareLink.href = window.location.href;
       shareLink.textContent = window.location.href;
     }
+
+    // Проверяем активную сессию
+    const session = checkSession();
+    if (session) {
+      startSession(session.username);
+    }
   });
   $('copyShareBtn').addEventListener('click', () => copyText(window.location.href));
 
-  /* ─────────────── AUTH ─────────────── */
+  /* ─────────────── AUTH FORMS ─────────────── */
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -709,10 +799,62 @@
       const target = tab.dataset.tab;
       $('loginForm').classList.toggle('hidden', target !== 'login');
       $('registerForm').classList.toggle('hidden', target !== 'register');
-      $('authMessage').textContent = '';
+      setAuthMessage('');
     });
   });
 
+  $('loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const user = $('loginUser').value.trim();
+    const pass = $('loginPass').value;
+    if (user.length < 2) return setAuthMessage('! позывной от 2 символов', 'error');
+    if (pass.length < 4) return setAuthMessage('! пароль от 4 символов', 'error');
+
+    const btn = $('loginBtn');
+    btn.disabled = true;
+    btn.textContent = 'ВХОД...';
+
+    try {
+      const session = await loginUser(user, pass);
+      saveSession(session);
+      setAuthMessage('вход выполнен', 'success');
+      startSession(session.username);
+    } catch (err) {
+      setAuthMessage('! ' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'ВОЙТИ';
+    }
+  });
+
+  $('registerForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const nick = $('regNick').value.trim();
+    const pass = $('regPass').value;
+    const pass2 = $('regPass2').value;
+    if (nick.length < 3) return setAuthMessage('! позывной от 3 символов', 'error');
+    if (pass.length < 6) return setAuthMessage('! пароль от 6 символов', 'error');
+    if (pass !== pass2) return setAuthMessage('! пароли не совпадают', 'error');
+
+    const btn = $('regBtn');
+    btn.disabled = true;
+    btn.textContent = 'СОЗДАНИЕ...';
+
+    try {
+      await registerUser(nick, pass);
+      const session = await loginUser(nick, pass);
+      saveSession(session);
+      setAuthMessage('аккаунт создан, вход выполнен', 'success');
+      startSession(session.username);
+    } catch (err) {
+      setAuthMessage('! ' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'СОЗДАТЬ АККАУНТ';
+    }
+  });
+
+  /* ─────────────── SESSION MANAGEMENT ─────────────── */
   function startSession(name) {
     currentUser = name;
     $('authScreen').classList.add('hidden');
@@ -725,25 +867,16 @@
     renderFilters();
     renderTools();
     graph.load();
+
+    const session = getSession();
+    if (session) {
+      const daysLeft = Math.ceil((session.sessionExpiry - Date.now()) / (24 * 60 * 60 * 1000));
+      log('session expires in ' + daysLeft + ' days');
+    }
   }
 
-  $('loginForm').addEventListener('submit', e => {
-    e.preventDefault();
-    const user = $('loginUser').value.trim();
-    if (user.length < 2) return $('authMessage').textContent = '! позывной от 2 символов';
-    startSession(user);
-  });
-
-  $('registerForm').addEventListener('submit', e => {
-    e.preventDefault();
-    const nick = $('regNick').value.trim();
-    if (nick.length < 3) return $('authMessage').textContent = '! позывной от 3 символов';
-    startSession(nick);
-  });
-
-  $('demoBtn').addEventListener('click', () => startSession('plx'));
-
   $('logoutBtn').addEventListener('click', () => {
+    clearSession();
     currentUser = null;
     if (clockInterval) clearInterval(clockInterval);
     $('appScreen').classList.add('hidden');
@@ -751,7 +884,25 @@
     $('loginForm').reset();
     $('registerForm').reset();
     $('consoleBox').innerHTML = '';
+    setAuthMessage('');
   });
+
+  // Периодическая проверка истечения сессии (раз в минуту)
+  setInterval(() => {
+    if (!currentUser) return;
+    const session = getSession();
+    if (session && Date.now() > session.sessionExpiry) {
+      clearSession();
+      currentUser = null;
+      if (clockInterval) clearInterval(clockInterval);
+      $('appScreen').classList.add('hidden');
+      $('authScreen').classList.remove('hidden');
+      $('loginForm').reset();
+      $('registerForm').reset();
+      $('consoleBox').innerHTML = '';
+      setAuthMessage('! сессия истекла, войдите снова', 'error');
+    }
+  }, 60000);
 
   /* ─────────────── VIEW ROUTING ─────────────── */
   document.querySelectorAll('.nav-tab').forEach(btn => {
@@ -869,7 +1020,7 @@
   $('closeRulesBtn').addEventListener('click', () => $('rulesModal').close());
 
   /* ════════════════════════════════════════════════════════════════════
-     ─── GRAPH ENGINE (без изменений, как в рабочей версии) ───
+     ─── GRAPH ENGINE (без изменений) ───
      ════════════════════════════════════════════════════════════════════ */
   const graph = (() => {
     const STORAGE_KEY = 'plx_osint_graph_v3';
@@ -878,7 +1029,6 @@
 
     let state = { nodes: [], edges: [] };
     let nextId = 1;
-
     let view = { x: 0, y: 0, scale: 1 };
     const MIN_SCALE = 0.2;
     const MAX_SCALE = 3;
@@ -891,9 +1041,7 @@
     let panning = false;
     let panStart = { x: 0, y: 0, viewX: 0, viewY: 0 };
     let clickStart = { x: 0, y: 0, time: 0, moved: false };
-
     const lastTapPos = { x: null, y: null };
-
     let touchState = { ids: [], dist: 0, center: { x: 0, y: 0 }, startScale: 1, startView: { x: 0, y: 0 } };
 
     const viewport = $('graphViewport');
@@ -924,11 +1072,7 @@
         }
       } catch (e) { state = { nodes: [], edges: [] }; }
 
-      if (!hasSavedView) {
-        fitToView();
-      } else {
-        applyTransform();
-      }
+      if (!hasSavedView) { fitToView(); } else { applyTransform(); }
       render();
     }
 
@@ -967,10 +1111,7 @@
     }
 
     function fitToNodes() {
-      if (state.nodes.length === 0) {
-        fitToView();
-        return;
-      }
+      if (state.nodes.length === 0) { fitToView(); return; }
       const r = viewport.getBoundingClientRect();
       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
       state.nodes.forEach(n => {
@@ -1043,13 +1184,7 @@
         y = center.y - 40 + (Math.random() * 60 - 30);
       }
 
-      const node = {
-        id: 'n' + (nextId++),
-        type,
-        label: label.trim(),
-        x: x,
-        y: y
-      };
+      const node = { id: 'n' + (nextId++), type, label: label.trim(), x, y };
       state.nodes.push(node);
       save();
       render();
@@ -1272,9 +1407,7 @@
     }, { passive: false });
 
     viewport.addEventListener('touchend', ev => {
-      if (ev.touches.length < 2) {
-        touchState.ids = [];
-      }
+      if (ev.touches.length < 2) touchState.ids = [];
       if (ev.touches.length === 0 && panning && !clickStart.moved && Date.now() - clickStart.time < 280) {
         handleEmptyTap(clickStart.x, clickStart.y);
       }
@@ -1379,9 +1512,7 @@
             render();
             showToast('граф импортирован');
             log('graph: imported');
-          } else {
-            showToast('неверный формат');
-          }
+          } else { showToast('неверный формат'); }
         } catch (err) { showToast('ошибка чтения'); }
       };
       reader.readAsText(file);
