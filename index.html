@@ -10,12 +10,16 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:"JetBrains Mono","Fira Code",Consolas,"Courier New",monospace}
 html,body{min-height:100%;touch-action:manipulation}
 body{color:var(--text);background:#000;overflow-x:hidden;position:relative}
-body::after,body::before{content:"";position:fixed;inset:-60%;pointer-events:none}
+body::after,body::before{content:"";position:fixed;inset:-60%;pointer-events:none;transition:opacity .5s}
 body::after{z-index:-2;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.05),transparent 45%),radial-gradient(circle at 70% 70%,rgba(255,255,255,.04),transparent 45%),radial-gradient(circle at 50% 90%,rgba(255,255,255,.03),transparent 50%);animation:waveDrift 40s ease-in-out infinite}
 body::before{z-index:-3;background:radial-gradient(circle at 80% 20%,rgba(255,255,255,.035),transparent 40%),radial-gradient(circle at 20% 80%,rgba(255,255,255,.03),transparent 40%);animation:waveDrift2 55s ease-in-out infinite}
+body.theme-terminal::after,body.theme-terminal::before{opacity:0}
+body.theme-void::after,body.theme-void::before{opacity:0}
+body.theme-terminal .scanlines{opacity:.6}
+body.theme-void .scanlines{opacity:0}
 @keyframes waveDrift{0%,100%{transform:translate(0,0) rotate(0) scale(1)}33%{transform:translate(6%,4%) rotate(3deg) scale(1.05)}66%{transform:translate(-5%,6%) rotate(-2deg) scale(.97)}}
 @keyframes waveDrift2{0%,100%{transform:translate(0,0) rotate(0) scale(1)}40%{transform:translate(-6%,-5%) rotate(-3deg) scale(1.04)}75%{transform:translate(4%,-3%) rotate(2deg) scale(.98)}}
-.scanlines{position:fixed;inset:0;pointer-events:none;z-index:9999;background:repeating-linear-gradient(0deg,rgba(255,255,255,.02),rgba(255,255,255,.02) 1px,transparent 2px,transparent 4px);opacity:.35}
+.scanlines{position:fixed;inset:0;pointer-events:none;z-index:9999;background:repeating-linear-gradient(0deg,rgba(255,255,255,.02),rgba(255,255,255,.02) 1px,transparent 2px,transparent 4px);opacity:.35;transition:opacity .5s}
 a{color:inherit;text-decoration:none}
 button,input,select{font:inherit}
 ::selection{background:#fff;color:#000}
@@ -62,10 +66,10 @@ input::placeholder{color:#555}
 .nav-tab{border:1px solid var(--border);background:rgba(255,255,255,.02);color:#aaa;padding:8px 14px;cursor:pointer;font-size:12px;letter-spacing:1px;transition:.18s}
 .nav-tab:hover{color:#fff;border-color:var(--border-hi)}
 .nav-tab.active{background:#eaeaea;color:#000;border-color:#eaeaea;font-weight:700}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .clock,.user-chip{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#cfcfcf;padding:9px 12px;font-size:12px;white-space:nowrap}
-.logout-btn{border:1px solid rgba(255,255,255,.12);background:transparent;color:#ddd;padding:9px 12px;cursor:pointer}
-.logout-btn:hover{background:rgba(255,255,255,.06);color:#fff}
+.logout-btn,.top-btn{border:1px solid rgba(255,255,255,.12);background:transparent;color:#ddd;padding:9px 12px;cursor:pointer;font-size:12px}
+.logout-btn:hover,.top-btn:hover{background:rgba(255,255,255,.06);color:#fff}
 .prompt-line{margin:22px 0;color:#b5b5b5;font-size:14px;line-height:1.7}
 .prompt-line strong{color:#fff;font-weight:600}
 .cursor{display:inline-block;width:9px;height:16px;background:#fff;vertical-align:middle;margin-left:4px;animation:blink 1.1s infinite}
@@ -82,6 +86,7 @@ input::placeholder{color:#555}
 .filter-btn{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);color:#aaa;padding:10px 12px;cursor:pointer;font-size:12px;letter-spacing:.5px}
 .filter-btn:hover{color:#fff;border-color:rgba(255,255,255,.2)}
 .filter-btn.active{background:#eaeaea;color:#000;font-weight:700;border-color:#eaeaea}
+.filter-btn.fav{color:#ffd700}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
 .card{border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));padding:16px;min-height:210px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;animation:cardIn .25s ease;transition:.18s}
 @keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -92,7 +97,9 @@ input::placeholder{color:#555}
 .card h3{font-size:18px;color:#fff;letter-spacing:.4px;line-height:1.35}
 .card p{color:#a7a7a7;font-size:12px;line-height:1.7;flex:1}
 .card-note{color:#7d7d7d;font-size:11px;border-top:1px dashed rgba(255,255,255,.09);padding-top:10px;line-height:1.6}
-.card-actions{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:4px}
+.card-actions{display:grid;grid-template-columns:auto 1fr auto;gap:8px;margin-top:4px}
+.fav-btn{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);color:#777;min-width:42px;cursor:pointer;font-size:16px}
+.fav-btn.active{color:#ffd700;border-color:#ffd700}
 .open-link{display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.85);background:linear-gradient(180deg,#f3f3f3,#d9d9d9);color:#000;min-height:42px;font-weight:700;letter-spacing:1px;font-size:12px;cursor:pointer}
 .open-link:hover{background:#fff}
 .copy-btn{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);color:#ccc;min-width:72px;cursor:pointer}
@@ -103,13 +110,19 @@ input::placeholder{color:#555}
 .graph-header{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:14px;border:1px solid var(--border);background:rgba(0,0,0,.3);margin-bottom:14px}
 .graph-title{font-size:14px;letter-spacing:2px;color:#fff}
 .graph-title em{color:#888;font-style:normal;font-weight:400}
-.graph-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
-.graph-btn{border:1px solid var(--border);background:rgba(255,255,255,.03);color:#ccc;padding:9px 12px;cursor:pointer;font-size:12px;letter-spacing:1px}
+.graph-actions{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.graph-btn{border:1px solid var(--border);background:rgba(255,255,255,.03);color:#ccc;padding:8px 10px;cursor:pointer;font-size:11px;letter-spacing:.5px}
 .graph-btn:hover{color:#fff;border-color:var(--border-hi);background:rgba(255,255,255,.06)}
 .graph-btn.primary{background:#eaeaea;color:#000;border-color:#eaeaea;font-weight:700}
 .graph-btn.primary:hover{background:#fff}
 .graph-btn.danger:hover{background:#3a1212;color:#fff;border-color:#5a1f1f}
 .graph-btn.active{background:#fff;color:#000;border-color:#fff}
+.graph-sub{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.graph-sub input{width:200px;padding:8px 10px;font-size:12px}
+.graph-sub select{width:auto;padding:8px 10px;font-size:12px;background:#0b0b0b;color:#ddd;border:1px solid var(--border)}
+.type-filter{display:flex;gap:4px;flex-wrap:wrap}
+.type-chip{border:1px solid var(--border);background:rgba(255,255,255,.02);color:#888;padding:4px 8px;cursor:pointer;font-size:10px;letter-spacing:.5px}
+.type-chip.active{background:#eaeaea;color:#000;border-color:#eaeaea;font-weight:700}
 .graph-hint{font-size:11px;color:#6a6a6a;padding:8px 14px;border-left:2px solid #333;margin-bottom:14px}
 .graph-viewport{position:relative;width:100%;height:70vh;min-height:500px;border:1px solid var(--border);background:rgba(5,5,5,.7);overflow:hidden;cursor:grab;touch-action:none}
 .graph-viewport.panning{cursor:grabbing}
@@ -117,14 +130,24 @@ input::placeholder{color:#555}
 .graph-world{position:absolute;top:0;left:0;width:6000px;height:6000px;transform-origin:0 0;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.02),transparent 70%),linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px) 0 0/40px 40px,linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px) 0 0/40px 40px;will-change:transform}
 .graph-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
 .graph-edge{stroke:#888;stroke-width:1.5}
+.edge-label{fill:#999;font-size:10px;letter-spacing:.5px}
 .graph-node{position:absolute;z-index:2;min-width:120px;border:1px solid var(--border);background:linear-gradient(180deg,#111,#080808);color:#eee;padding:10px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:grab;user-select:none;transition:border-color .18s;font-size:12px}
 .graph-node:hover{border-color:#888}
 .graph-node.selected{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.15)}
 .graph-node.dragging{cursor:grabbing;z-index:10}
+.graph-node.priority-high{border-color:#ddd;box-shadow:0 0 12px rgba(255,255,255,.2)}
+.graph-node.priority-low{opacity:.6}
+.graph-node.search-hit{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.4)}
+.graph-node.group-red{border-color:#c0392b}
+.graph-node.group-blue{border-color:#2980b9}
+.graph-node.group-green{border-color:#27ae60}
+.graph-node.group-yellow{border-color:#f39c12}
+.graph-node.group-purple{border-color:#8e44ad}
 .graph-node .node-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:rgba(255,255,255,.03);padding:4px}
 .graph-node .node-icon svg{width:22px;height:22px;stroke:#ddd;fill:none;stroke-width:1.5}
 .graph-node .node-type{font-size:9px;letter-spacing:1.5px;color:#888;text-transform:uppercase}
 .graph-node .node-label{font-size:12px;color:#fff;text-align:center;word-break:break-word;max-width:180px;line-height:1.35}
+.graph-node .node-meta{font-size:8px;color:#666;letter-spacing:.5px}
 .graph-node .node-remove{position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:#1a1a1a;border:1px solid #555;color:#ddd;font-size:14px;line-height:1;display:none;align-items:center;justify-content:center;cursor:pointer}
 .graph-node:hover .node-remove{display:flex}
 .graph-node .node-remove:hover{background:#3a1212;color:#fff;border-color:#777}
@@ -137,6 +160,8 @@ input::placeholder{color:#555}
 .zoom-btn.reset{font-size:10px;letter-spacing:1px}
 .zoom-label{text-align:center;color:#999;font-size:10px;padding:4px 0;letter-spacing:1px;border-top:1px solid var(--border);margin-top:2px}
 .zoom-help{position:absolute;top:14px;left:14px;background:rgba(0,0,0,.7);border:1px solid var(--border);color:#888;padding:8px 12px;font-size:10px;letter-spacing:1px;z-index:20;backdrop-filter:blur(4px);line-height:1.6}
+.minimap{position:absolute;bottom:14px;left:14px;width:160px;height:120px;background:rgba(0,0,0,.8);border:1px solid var(--border);z-index:20;cursor:crosshair}
+.minimap canvas{width:100%;height:100%;display:block}
 dialog{width:min(92vw,560px);border:1px solid #333;background:#0b0b0b;color:#ddd;padding:0}
 dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 .modal-inner{padding:22px}
@@ -144,7 +169,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 .modal-inner ul{padding-left:18px;color:#b7b7b7;line-height:1.8;font-size:13px}
 .modal-inner li+li{margin-top:10px}
 .modal-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
-.modal-actions .btn{flex:1;min-width:140px}
+.modal-actions .btn{flex:1;min-width:120px}
 .modal-actions .btn.cancel{background:transparent;color:#aaa;border:1px solid #444}
 .type-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin:14px 0}
 .type-btn{border:1px solid var(--border);background:rgba(255,255,255,.02);padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;color:#aaa;font-size:9px;letter-spacing:.5px;transition:.18s;text-align:center}
@@ -152,10 +177,44 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 .type-btn.selected{background:#eaeaea;color:#000;border-color:#eaeaea;font-weight:700}
 .type-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.5}
 .type-btn.selected svg{stroke:#000}
+.edge-type-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:14px 0}
+.edge-type-btn{border:1px solid var(--border);background:rgba(255,255,255,.02);padding:10px 6px;cursor:pointer;color:#aaa;font-size:10px;letter-spacing:.5px;text-align:center;transition:.18s}
+.edge-type-btn:hover{color:#fff;border-color:var(--border-hi)}
+.edge-type-btn.selected{background:#eaeaea;color:#000;border-color:#eaeaea;font-weight:700}
+.checklist-item{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid rgba(255,255,255,.06);margin-bottom:6px;cursor:pointer;transition:.18s}
+.checklist-item:hover{border-color:rgba(255,255,255,.15)}
+.checklist-item.done{opacity:.5}
+.checklist-item.done .check-label{text-decoration:line-through}
+.check-box{width:18px;height:18px;border:1px solid #666;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px}
+.checklist-item.done .check-box{background:#eaeaea;color:#000;border-color:#eaeaea}
+.check-label{font-size:12px;color:#ccc}
+.checklist-block{margin-bottom:24px;border:1px solid var(--border);padding:16px;background:rgba(255,255,255,.02)}
+.checklist-block h3{font-size:14px;color:#fff;letter-spacing:1px;margin-bottom:12px}
+.checklist-progress{font-size:11px;color:#888;margin-bottom:12px}
+.glossary-item{border:1px solid rgba(255,255,255,.08);padding:14px;margin-bottom:8px;background:rgba(255,255,255,.02)}
+.glossary-item h4{font-size:13px;color:#fff;margin-bottom:6px;letter-spacing:1px}
+.glossary-item p{font-size:12px;color:#a7a7a7;line-height:1.6}
+.note-sticky{border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);padding:14px;margin-bottom:10px;position:relative}
+.note-sticky .note-text{font-size:12px;color:#ddd;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.note-sticky .note-date{font-size:10px;color:#666;margin-top:8px}
+.note-sticky .note-remove{position:absolute;top:6px;right:6px;background:none;border:none;color:#777;cursor:pointer;font-size:14px}
+.note-sticky .note-remove:hover{color:#fff}
+.note-add{display:flex;gap:8px;margin-bottom:16px}
+.note-add textarea{flex:1;min-height:60px;resize:vertical;background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--text);padding:10px}
+.note-add button{align-self:flex-end;width:auto;padding:10px 16px}
+.report-output{background:#060606;border:1px solid var(--border);padding:14px;font-size:11px;color:#ccc;line-height:1.7;white-space:pre-wrap;max-height:50vh;overflow-y:auto;margin:14px 0}
+.template-card{border:1px solid var(--border);background:rgba(255,255,255,.02);padding:14px;margin-bottom:10px;cursor:pointer;transition:.18s}
+.template-card:hover{border-color:#666;background:rgba(255,255,255,.04)}
+.template-card h4{font-size:13px;color:#fff;margin-bottom:6px}
+.template-card p{font-size:11px;color:#888;line-height:1.5}
+.section-title{font-size:16px;color:#fff;letter-spacing:2px;margin-bottom:18px}
+.kbd{display:inline-block;border:1px solid #444;background:#1a1a1a;padding:2px 6px;font-size:10px;color:#ccc;border-radius:3px}
+.help-list{list-style:none;padding:0}
+.help-list li{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px;color:#aaa;display:flex;justify-content:space-between;gap:12px}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:#eaeaea;color:#000;padding:11px 14px;font-size:12px;font-weight:700;opacity:0;pointer-events:none;transition:.22s;z-index:10000}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(max-width:700px){
-.ascii{font-size:8px}.brand h1{font-size:22px}.terminal-body{padding:18px}.topbar{align-items:flex-start}.topbar-right{width:100%;justify-content:flex-start}.legal-banner{flex-direction:column}.legal-banner button{margin-left:0}.card-actions{grid-template-columns:1fr}.copy-btn{min-height:42px}.share-bar button{margin-left:0}.nav-tabs{margin:10px 0;width:100%}.nav-tab{flex:1;text-align:center}.graph-viewport{height:65vh;min-height:420px}.graph-node{min-width:100px;padding:8px}.graph-node .node-label{max-width:140px;font-size:11px}.zoom-help{display:none}.zoom-btn{width:44px;height:44px}
+.ascii{font-size:8px}.brand h1{font-size:22px}.terminal-body{padding:18px}.topbar{align-items:flex-start}.topbar-right{width:100%;justify-content:flex-start}.legal-banner{flex-direction:column}.legal-banner button{margin-left:0}.card-actions{grid-template-columns:auto 1fr auto}.copy-btn{min-height:42px}.share-bar button{margin-left:0}.nav-tabs{margin:10px 0;width:100%}.nav-tab{flex:1;text-align:center}.graph-viewport{height:65vh;min-height:420px}.graph-node{min-width:100px;padding:8px}.graph-node .node-label{max-width:140px;font-size:11px}.zoom-help{display:none}.zoom-btn{width:44px;height:44px}.graph-sub input{width:100%}
 }
 </style>
 </head>
@@ -185,15 +244,15 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       <div class="terminal-body">
         <div class="brand">
           <h1>OSINT TERMINAL</h1>
-          <p>cloud auth // v1.1</p>
+          <p>cloud auth // v2.0</p>
         </div>
         <div class="boot">
           [ ok ] open-web catalog<br>
           [ ok ] legal scope: public data only<br>
           [ ok ] auth: cloud (supabase)<br>
-          [ ok ] session: 7 days<br>
+          [ ok ] graph: 22 entities + edge types<br>
           [ ok ] tools + learning hub<br>
-          [ ok ] graph: 22 entity types<br>
+          [ ok ] templates, reports, minimap<br>
           [ -- ] login from any device
         </div>
         <div class="tabs">
@@ -231,8 +290,15 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
     <nav class="nav-tabs">
       <button class="nav-tab active" data-view="catalog">КАТАЛОГ</button>
       <button class="nav-tab" data-view="graph">ВИЗУАЛИЗАЦИЯ</button>
+      <button class="nav-tab" data-view="checklists">ЧЕК-ЛИСТЫ</button>
+      <button class="nav-tab" data-view="glossary">ГЛОССАРИЙ</button>
+      <button class="nav-tab" data-view="board">ДОСКА</button>
     </nav>
     <div class="topbar-right">
+      <button class="top-btn" id="themeBtn" type="button" title="сменить тему">◐</button>
+      <button class="top-btn" id="projExportBtn" type="button" title="экспорт проекта">⇩</button>
+      <button class="top-btn" id="projImportBtn" type="button" title="импорт проекта">⇧</button>
+      <button class="top-btn" id="helpBtn" type="button" title="горячие клавиши">?</button>
       <div class="clock" id="clock">--:--:--</div>
       <div class="user-chip" id="userChip">guest</div>
       <button class="logout-btn" id="logoutBtn" type="button">ВЫХОД</button>
@@ -240,16 +306,9 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   </header>
 
   <section id="catalogView">
-    <section class="prompt-line">
-      <span>operator@osint:~$</span>
-      <strong> ./open-sources --legal</strong><span class="cursor"></span>
-    </section>
+    <section class="prompt-line"><span>operator@osint:~$</span> <strong>./open-sources --legal</strong><span class="cursor"></span></section>
     <section class="legal-banner">
-      <div>
-        <strong>ТОЛЬКО ОТКРЫТЫЕ ИСТОЧНИКИ.</strong><br>
-        Разрешено: свои данные, публичные страницы, данные с согласия владельца.
-        Запрещено: слежка, чужие пароли, приватные базы, геолокация без согласия.
-      </div>
+      <div><strong>ТОЛЬКО ОТКРЫТЫЕ ИСТОЧНИКИ.</strong><br>Разрешено: свои данные, публичные страницы, данные с согласия владельца. Запрещено: слежка, чужие пароли, приватные базы, геолокация без согласия.</div>
       <button id="rulesBtn" type="button">ПРАВИЛА</button>
     </section>
     <section class="toolbar">
@@ -261,39 +320,34 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
     <section class="filters" id="filters"></section>
     <section class="grid" id="toolGrid"></section>
     <section class="console" id="consoleBox"></section>
-    <section class="statusline">
-      <span>OPEN SOURCES ONLY</span>
-      <span id="counter">0 tools</span>
-      <span>CLOUD AUTH</span>
-      <span>BUILD v1.1</span>
-    </section>
+    <section class="statusline"><span>OPEN SOURCES ONLY</span><span id="counter">0 tools</span><span>CLOUD AUTH</span><span>BUILD v2.0</span></section>
   </section>
 
   <section id="graphView" class="hidden">
-    <section class="prompt-line">
-      <span>operator@osint:~$</span>
-      <strong> ./visualizer --graph --persist --touch</strong><span class="cursor"></span>
-    </section>
+    <section class="prompt-line"><span>operator@osint:~$</span> <strong>./visualizer --graph --persist --touch</strong><span class="cursor"></span></section>
     <div class="graph-header">
       <div class="graph-title">Визуализация связей <em>// граф расследования</em></div>
       <div class="graph-actions">
         <button class="graph-btn primary" id="addNodeBtn">+ УЗЕЛ</button>
         <button class="graph-btn" id="connectBtn">СОЕДИНИТЬ</button>
+        <button class="graph-btn" id="templatesBtn">ШАБЛОНЫ</button>
+        <button class="graph-btn" id="reportBtn">ОТЧЁТ</button>
+        <button class="graph-btn" id="pngBtn">PNG</button>
         <button class="graph-btn" id="exportBtn">EXPORT</button>
         <button class="graph-btn" id="importBtn">IMPORT</button>
+        <button class="graph-btn" id="undoBtn">UNDO</button>
+        <button class="graph-btn" id="redoBtn">REDO</button>
         <button class="graph-btn danger" id="clearBtn">ОЧИСТИТЬ</button>
       </div>
     </div>
-    <div class="graph-hint" id="graphHint">
-      Пальцами: 1 палец — двигать поле, 2 пальца — зум. Колёсиком мыши — зум.
-      Тап по пустому месту — добавить узел.
+    <div class="graph-sub">
+      <input id="graphSearch" placeholder="поиск узла по подписи..." autocomplete="off">
+      <select id="edgeTypeSelect" title="тип связи"></select>
+      <div class="type-filter" id="typeFilter"></div>
     </div>
+    <div class="graph-hint" id="graphHint">Пальцами: 1 палец — двигать поле, 2 пальца — зум. Колёсиком мыши — зум. Тап по пустому месту — добавить узел. Двойной клик по узлу — редактировать.</div>
     <div class="graph-viewport" id="graphViewport">
-      <div class="zoom-help">
-        DRAG — ПАН<br>
-        PINCH / WHEEL — ZOOM<br>
-        TAP / DBL-CLICK — УЗЕЛ
-      </div>
+      <div class="zoom-help">DRAG — ПАН<br>PINCH / WHEEL — ZOOM<br>TAP — УЗЕЛ<br>2×TAP УЗЕЛ — РЕДАКТ.</div>
       <div class="graph-world" id="graphWorld">
         <svg class="graph-svg" id="graphSvg">
           <defs>
@@ -304,8 +358,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         </svg>
         <div class="graph-empty" id="graphEmpty">
           <h2>// ПУСТОЙ ГРАФ</h2>
-          <p>Нажми <strong>+ УЗЕЛ</strong> или тапни по пустому полю, чтобы добавить первую сущность.
-          Соединяй узлы стрелками, чтобы видеть направления связей.</p>
+          <p>Нажми <strong>+ УЗЕЛ</strong> или тапни по пустому полю, чтобы добавить первую сущность. Соединяй узлы стрелками, выбирай тип связи. Двойной клик по узлу — редактирование (приоритет, группа, дата).</p>
         </div>
       </div>
       <div class="zoom-controls">
@@ -315,8 +368,38 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <button class="zoom-btn reset" id="zoomResetBtn" type="button" title="сброс вида">RST</button>
         <div class="zoom-label" id="zoomLabel">100%</div>
       </div>
+      <div class="minimap" id="minimap"><canvas id="minimapCanvas" width="160" height="120"></canvas></div>
     </div>
     <input type="file" id="importFile" accept=".json" class="hidden">
+    <input type="file" id="projImportFile" accept=".json" class="hidden">
+  </section>
+
+  <section id="checklistsView" class="hidden">
+    <section class="prompt-line"><span>operator@osint:~$</span> <strong>./checklists</strong><span class="cursor"></span></section>
+    <div class="section-title">ЧЕК-ЛИСТЫ РАССЛЕДОВАНИЙ</div>
+    <div id="checklistsContainer"></div>
+  </section>
+
+  <section id="glossaryView" class="hidden">
+    <section class="prompt-line"><span>operator@osint:~$</span> <strong>./glossary</strong><span class="cursor"></span></section>
+    <div class="section-title">ГЛОССАРИЙ OSINT</div>
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">&gt;_</span>
+        <input id="glossarySearch" placeholder="поиск термина..." autocomplete="off">
+      </div>
+    </div>
+    <div id="glossaryContainer"></div>
+  </section>
+
+  <section id="boardView" class="hidden">
+    <section class="prompt-line"><span>operator@osint:~$</span> <strong>./board --notes</strong><span class="cursor"></span></section>
+    <div class="section-title">ДОСКА ЗАМЕТОК</div>
+    <div class="note-add">
+      <textarea id="noteInput" placeholder="быстрая мысль, идея, ссылка..."></textarea>
+      <button class="btn" id="noteAddBtn" type="button" style="margin-top:0">+</button>
+    </div>
+    <div id="boardContainer"></div>
   </section>
 </main>
 
@@ -325,13 +408,61 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
     <h2>ДОБАВИТЬ УЗЕЛ</h2>
     <label>ТИП СУЩНОСТИ</label>
     <div class="type-grid" id="typeGrid"></div>
-    <div class="field">
-      <label>ЗНАЧЕНИЕ / ПОДПИСЬ</label>
-      <input id="nodeLabel" placeholder="например: +7 900 000-00-00">
-    </div>
+    <div class="field"><label>ЗНАЧЕНИЕ / ПОДПИСЬ</label><input id="nodeLabel" placeholder="например: +7 900 000-00-00"></div>
     <div class="modal-actions">
       <button class="btn cancel" id="cancelNodeBtn" type="button">ОТМЕНА</button>
       <button class="btn" id="confirmNodeBtn" type="button">ДОБАВИТЬ</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="editNodeModal">
+  <div class="modal-inner">
+    <h2>РЕДАКТИРОВАТЬ УЗЕЛ</h2>
+    <div class="field"><label>ПОДПИСЬ</label><input id="editNodeLabel" placeholder="подпись узла"></div>
+    <div class="field"><label>ПРИОРИТЕТ (ВАЖНОСТЬ)</label>
+      <select id="editNodePriority">
+        <option value="low">низкий</option>
+        <option value="normal">обычный</option>
+        <option value="high">высокий</option>
+      </select>
+    </div>
+    <div class="field"><label>ГРУППА (КЛАСТЕР)</label>
+      <select id="editNodeGroup">
+        <option value="">без группы</option>
+        <option value="red">красная</option>
+        <option value="blue">синяя</option>
+        <option value="green">зелёная</option>
+        <option value="yellow">жёлтая</option>
+        <option value="purple">фиолетовая</option>
+      </select>
+    </div>
+    <div class="field"><label>ДАТА / ВРЕМЕННАЯ МЕТКА</label><input id="editNodeDate" type="date"></div>
+    <div class="modal-actions">
+      <button class="btn cancel" id="editCancelBtn" type="button">ОТМЕНА</button>
+      <button class="btn cancel" id="editDeleteBtn" type="button" style="color:#ff9a9a">УДАЛИТЬ</button>
+      <button class="btn" id="editSaveBtn" type="button">СОХРАНИТЬ</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="templatesModal">
+  <div class="modal-inner">
+    <h2>ШАБЛОНЫ РАССЛЕДОВАНИЙ</h2>
+    <p style="color:#888;font-size:12px;margin-bottom:14px;">Готовые каркасы графа. При выборе шаблон добавит узлы и связи в текущий граф.</p>
+    <div id="templatesContainer"></div>
+    <div class="modal-actions"><button class="btn cancel" id="templatesCancelBtn" type="button">ЗАКРЫТЬ</button></div>
+  </div>
+</dialog>
+
+<dialog id="reportModal">
+  <div class="modal-inner">
+    <h2>ОТЧЁТ ПО ГРАФУ</h2>
+    <div class="report-output" id="reportOutput"></div>
+    <div class="modal-actions">
+      <button class="btn cancel" id="reportCopyBtn" type="button">КОПИРОВАТЬ</button>
+      <button class="btn cancel" id="reportDownloadBtn" type="button">СКАЧАТЬ .TXT</button>
+      <button class="btn" id="reportCloseBtn" type="button">ЗАКРЫТЬ</button>
     </div>
   </div>
 </dialog>
@@ -358,9 +489,25 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       <li>Аккаунт хранится на сервере, граф — локально.</li>
       <li>Сторонние сервисы имеют свои правила.</li>
     </ul>
-    <div class="modal-actions">
-      <button class="btn" id="closeRulesBtn" type="button">ПРИНЯТО</button>
-    </div>
+    <div class="modal-actions"><button class="btn" id="closeRulesBtn" type="button">ПРИНЯТО</button></div>
+  </div>
+</dialog>
+
+<dialog id="helpModal">
+  <div class="modal-inner">
+    <h2>ГОРЯЧИЕ КЛАВИШИ</h2>
+    <ul class="help-list">
+      <li><span>Новый узел</span><span class="kbd">N</span></li>
+      <li><span>Режим соединения</span><span class="kbd">C</span></li>
+      <li><span>Отмена</span><span class="kbd">Ctrl+Z</span></li>
+      <li><span>Повтор</span><span class="kbd">Ctrl+Shift+Z</span></li>
+      <li><span>Удалить выбранный узел</span><span class="kbd">Delete</span></li>
+      <li><span>Найти узел (фокус на поиск)</span><span class="kbd">F</span></li>
+      <li><span>Экспорт в PNG</span><span class="kbd">P</span></li>
+      <li><span>Отчёт</span><span class="kbd">R</span></li>
+    </ul>
+    <p style="color:#888;font-size:11px;margin-top:12px;">Работают только на вкладке ВИЗУАЛИЗАЦИЯ.</p>
+    <div class="modal-actions"><button class="btn" id="helpCloseBtn" type="button">ЗАКРЫТЬ</button></div>
   </div>
 </dialog>
 
@@ -409,27 +556,27 @@ const NODE_TYPES = [
   {id:'dns',label:'DNS / ДОМЕН'}
 ];
 
-/* ═══════════ КАТЕГОРИИ ═══════════ */
+/* ═══════════ ТИПЫ СВЯЗЕЙ ═══════════ */
+const EDGE_TYPES = [
+  {id:'related',label:'связан с',dash:''},
+  {id:'owner',label:'владелец',dash:''},
+  {id:'uses',label:'использует',dash:'6,4'},
+  {id:'registered',label:'зарегистрирован на',dash:'3,3'},
+  {id:'mentioned',label:'упоминается в',dash:'2,2'},
+  {id:'contact',label:'контакт',dash:'10,4'},
+  {id:'location',label:'находится в',dash:'8,3'},
+  {id:'author',label:'автор',dash:''}
+];
+
+/* ═══════════ КАТЕГОРИИ КАТАЛОГА ═══════════ */
 const CATS = {
-  all:'ВСЁ',
-  framework:'ФРЕЙМВОРКИ',
-  github:'GITHUB',
-  learn:'ОБУЧЕНИЕ',
-  dorks:'GOOGLE DORKS',
-  phone:'НОМЕР',
-  email:'ПОЧТА',
-  social:'СОЦСЕТИ',
-  meta:'МЕТАДАННЫЕ',
-  image:'ФОТО ПОИСК',
-  web:'ВЕБ / АРХИВ',
-  domain:'ДОМЕНЫ / IP',
-  transport:'ТРАНСПОРТ',
-  maps:'КАРТЫ'
+  all:'ВСЁ',framework:'ФРЕЙМВОРКИ',github:'GITHUB',learn:'ОБУЧЕНИЕ',dorks:'GOOGLE DORKS',
+  phone:'НОМЕР',email:'ПОЧТА',social:'СОЦСЕТИ',meta:'МЕТАДАННЫЕ',image:'ФОТО ПОИСК',
+  web:'ВЕБ / АРХИВ',domain:'ДОМЕНЫ / IP',transport:'ТРАНСПОРТ',maps:'КАРТЫ'
 };
 
 /* ═══════════ ИНСТРУМЕНТЫ (68) ═══════════ */
 const TOOLS = [
-  // ФРЕЙМВОРКИ (10)
   {cat:'framework',name:'OSINT Framework',url:'https://osintframework.com/',desc:'Интерактивное дерево из сотен OSINT-инструментов и источников, разложенных по категориям.',note:'Главная карта для разведки. Начинай отсюда.'},
   {cat:'framework',name:'SpiderFoot',url:'https://www.spiderfoot.net/',desc:'Автоматизация разведки: 200+ модулей для сбора данных по доменам, IP, почте, никам.',note:'Есть бесплатная версия и self-hosted.'},
   {cat:'framework',name:'Recon-ng',url:'https://github.com/lanmaster53/recon-ng',desc:'Модульный фреймворк веб-разведки, похожий на Metasploit, но для OSINT.',note:'Устанавливается через Python. См. раздел ОБУЧЕНИЕ.'},
@@ -440,8 +587,6 @@ const TOOLS = [
   {cat:'framework',name:'Sn0int',url:'https://github.com/kpcyrd/sn0int',desc:'Полуавтоматический фреймворк разведки на Rust с системой скриптов.',note:'Лёгкий и быстрый.'},
   {cat:'framework',name:'ReconFTW',url:'https://github.com/six2dez/reconftw',desc:'Полная автоматизация разведки домена: субдомены, скриншоты, утечки.',note:'Для аудита безопасности своих проектов.'},
   {cat:'framework',name:'OSINT Combine Tools',url:'https://www.osintcombine.com/tools',desc:'Подборка онлайн-инструментов для разведки по соцсетям, почтам, доменам.',note:'Бесплатно, без установки.'},
-
-  // GITHUB (9)
   {cat:'github',name:'Awesome OSINT',url:'https://github.com/jivoi/awesome-osint',desc:'Главная подборка OSINT-инструментов и ресурсов на GitHub.',note:'Начни с этого списка.'},
   {cat:'github',name:'OSINT Collection',url:'https://github.com/Ph055a/OSINT_Collection',desc:'Большая коллекция инструментов, методов и источников для разведки.',note:'Регулярно обновляется.'},
   {cat:'github',name:'Sherlock',url:'https://github.com/sherlock-project/sherlock',desc:'Поиск публичных аккаунтов по нику на 400+ сайтах.',note:'Проверяй свой ник.'},
@@ -451,8 +596,6 @@ const TOOLS = [
   {cat:'github',name:'PhoneInfoga',url:'https://github.com/sundowndev/phoneinfoga',desc:'Сбор информации о номерах из открытых источников.',note:'Для проверки своих номеров.'},
   {cat:'github',name:'Awesome Forensics',url:'https://github.com/cugu/awesome-forensics',desc:'Подборка инструментов для цифровой форензики.',note:'Полезно для анализа файлов.'},
   {cat:'github',name:'Awesome Threat Intel',url:'https://github.com/hslatman/awesome-threat-intelligence',desc:'Подборка ресурсов по киберразведке и анализу угроз.',note:'Для изучения кибербезопасности.'},
-
-  // ОБУЧЕНИЕ (8)
   {cat:'learn',name:'IntelTechniques',url:'https://inteltechniques.com/',desc:'Ресурсы Майкла Баззелла: книги, подкаст, курсы по приватности и разведке.',note:'Один из главных экспертов в теме.'},
   {cat:'learn',name:'OSINT Dojo',url:'https://osintdojo.com/',desc:'Обучающие материалы, статьи и практические задания по разведке.',note:'Хорошо для старта.'},
   {cat:'learn',name:'Bellingcat Guides',url:'https://www.bellingcat.com/resources/how-tos/',desc:'Пошаговые руководства по расследованиям от Bellingcat.',note:'Реальные методики.'},
@@ -461,8 +604,6 @@ const TOOLS = [
   {cat:'learn',name:'TryHackMe OSINT',url:'https://tryhackme.com/',desc:'Интерактивные комнаты с заданиями по разведке.',note:'Есть бесплатные комнаты.'},
   {cat:'learn',name:'SpiderFoot Docs',url:'https://www.spiderfoot.net/documentation/',desc:'Официальная документация: установка, настройка, использование.',note:'Туториал по SpiderFoot.'},
   {cat:'learn',name:'Recon-ng Wiki',url:'https://github.com/lanmaster53/recon-ng/wiki',desc:'Вики с инструкциями по установке и работе с модулями.',note:'Туториал по Recon-ng.'},
-
-  // GOOGLE DORKS (12)
   {cat:'dorks',name:'Поиск по сайту: site:',url:'https://ahrefs.com/blog/google-advanced-search/',desc:'site:домен — ищет страницы только внутри указанного сайта. Пример: site:github.com osint',note:'Поиск своих упоминаний и индексации.'},
   {cat:'dorks',name:'Тип файла: filetype:',url:'https://ahrefs.com/blog/google-advanced-search/',desc:'filetype:расширение — поиск файлов конкретного типа. Пример: filetype:pdf отчёт',note:'Поиск открытых документов и публикаций.'},
   {cat:'dorks',name:'В заголовке: intitle:',url:'https://ahrefs.com/blog/google-advanced-search/',desc:'intitle:фраза — поиск по тексту в заголовке страницы. Пример: intitle:фотоальбом',note:'Поиск публичных страниц с нужным заголовком.'},
@@ -475,65 +616,100 @@ const TOOLS = [
   {cat:'dorks',name:'Кэш и архивы',url:'https://web.archive.org/',desc:'cache:домен — кэш страницы. Для истории используй web.archive.org',note:'Просмотр сохранённых копий страниц.'},
   {cat:'dorks',name:'Поиск своих упоминаний',url:'https://ahrefs.com/blog/google-advanced-search/',desc:'Комбинация: "имя" | "ник" site:соцсеть — поиск своих упоминаний на площадках.',note:'Для контроля своего цифрового следа.'},
   {cat:'dorks',name:'Поиск открытых документов',url:'https://ahrefs.com/blog/google-advanced-search/',desc:'Комбинация: filetype:pdf | filetype:doc "название проекта" — поиск публичных документов.',note:'Для поиска своих опубликованных файлов.'},
-
-  // НОМЕР (2)
   {cat:'phone',name:'Google Dork: номер',url:'https://www.google.com/',desc:'Поиск публичных упоминаний номера в вебе через кавычки.',note:'Только проиндексированные страницы.'},
   {cat:'phone',name:'Yandex Dork: номер',url:'https://yandex.ru/',desc:'Поиск упоминаний номера в русскоязычном сегменте.',note:'Открытая выдача.'},
-
-  // ПОЧТА (4)
   {cat:'email',name:'Have I Been Pwned',url:'https://haveibeenpwned.com/',desc:'Проверка своего e-mail по спискам утечек без раскрытия паролей.',note:'Аудит своей безопасности.'},
   {cat:'email',name:'EmailRep',url:'https://emailrep.io/',desc:'Открытая репутация адреса: подозрительность, возраст, активность.',note:'Против фишинга.'},
   {cat:'email',name:'Hunter Verifier',url:'https://hunter.io/email-verifier',desc:'Проверка существования и доставляемости деловых адресов.',note:'Есть лимиты.'},
   {cat:'email',name:'Yandex Dork: почта',url:'https://yandex.ru/',desc:'Поиск публичных упоминаний почты в кавычках.',note:'Открытая выдача.'},
-
-  // СОЦСЕТИ (4)
   {cat:'social',name:'WhatsMyName',url:'https://whatsmyname.app/',desc:'Поиск публичных профилей по одному нику на сотнях площадок.',note:'Проверяем свой ник.'},
   {cat:'social',name:'Sherlock Project',url:'https://github.com/sherlock-project/sherlock',desc:'Open-source поиск аккаунтов по нику на 400+ сайтах.',note:'Требует Python.'},
   {cat:'social',name:'Maigret',url:'https://github.com/soxoj/maigret',desc:'Мощный поисковик профилей по 3000+ сайтам.',note:'Только открытые профили.'},
   {cat:'social',name:'Namechk',url:'https://namechk.com/',desc:'Проверка занятости ника и домена на популярных площадках.',note:'Для брендинга.'},
-
-  // МЕТАДАННЫЕ (4)
   {cat:'meta',name:'Exif Regex Viewer',url:'https://exif.regex.info/exif.cgi',desc:'Просмотр EXIF: камера, время, софт, GPS-координаты.',note:'Только свои фото.'},
   {cat:'meta',name:'ExifTool',url:'https://exiftool.org/',desc:'Эталонный инструмент чтения и очистки метаданных.',note:'Есть веб-демо.'},
   {cat:'meta',name:'FotoForensics',url:'https://fotoforensics.com/',desc:'Анализ изображения на монтаж и артефакты.',note:'Проверка подлинности.'},
   {cat:'meta',name:'Forensically',url:'https://29a.ch/photo-forensics/',desc:'ELA, шум, клоны — всё в браузере без отправки файла.',note:'Локально.'},
-
-  // ФОТО ПОИСК (3)
   {cat:'image',name:'Google Lens',url:'https://lens.google/',desc:'Поиск по изображению: где кадр встречается в открытом вебе.',note:'Публичные изображения.'},
   {cat:'image',name:'Yandex Images',url:'https://yandex.ru/images/',desc:'Сильный обратный поиск картинок для ру-сегмента.',note:'Открытая выдача.'},
   {cat:'image',name:'TinEye',url:'https://tineye.com/',desc:'Обратный поиск изображения и история распространения кадра.',note:'Открытые индексы.'},
-
-  // ВЕБ / АРХИВ (4)
   {cat:'web',name:'Wayback Machine',url:'https://web.archive.org/',desc:'История публичных веб-страниц: как сайты выглядели раньше.',note:'Архивные копии.'},
   {cat:'web',name:'Archive.today',url:'https://archive.ph/',desc:'Мгновенные снимки веб-страниц и архивирование.',note:'Публичные страницы.'},
   {cat:'web',name:'OSINT Framework',url:'https://osintframework.com/',desc:'Дерево сотен легальных открытых OSINT-ресурсов.',note:'Карта для расширения.'},
   {cat:'web',name:'Google Cache',url:'https://www.google.com/',desc:'Кэшированные копии страниц через поиск.',note:'Если сайт недоступен.'},
-
-  // ДОМЕНЫ / IP (4)
   {cat:'domain',name:'Who.is',url:'https://who.is/',desc:'Whois-данные домена: регистратор, даты, статус.',note:'Открытый реестр.'},
   {cat:'domain',name:'IPinfo.io',url:'https://ipinfo.io/',desc:'Информация об IP-адресе: геолокация, провайдер, организация.',note:'Технические данные.'},
   {cat:'domain',name:'Shodan',url:'https://www.shodan.io/',desc:'Поисковик по подключённым к интернету устройствам.',note:'Для исследования инфраструктуры.'},
   {cat:'domain',name:'Censys',url:'https://search.censys.io/',desc:'Анализ сертификатов и хостов в интернете.',note:'Открытые данные.'},
-
-  // ТРАНСПОРТ (2)
   {cat:'transport',name:'FlightRadar24',url:'https://www.flightradar24.com/',desc:'Отслеживание самолётов в реальном времени по открытым данным.',note:'Публичные рейсы.'},
   {cat:'transport',name:'MarineTraffic',url:'https://www.marinetraffic.com/',desc:'Отслеживание судов по AIS-сигналам.',note:'Открытые данные.'},
-
-  // КАРТЫ (2)
   {cat:'maps',name:'Google Maps',url:'https://www.google.com/maps',desc:'Поиск мест, панорамы улиц, фотографии локаций.',note:'Открытые данные.'},
   {cat:'maps',name:'OpenStreetMap',url:'https://www.openstreetmap.org/',desc:'Свободная карта мира с детальными данными.',note:'Открытые данные.'}
+];
+
+/* ═══════════ ЧЕК-ЛИСТЫ ═══════════ */
+const CHECKLISTS = [
+  {id:'person',title:'ПРОВЕРКА ЧЕЛОВЕКА',items:['Определить все известные ники и варианты написания','Проверить ники через Sherlock / Maigret','Найти профили в соцсетях','Проверить почту на утечки (Have I Been Pwned)','Поискать упоминания имени через дорки','Проверить фото через обратный поиск','Собрать все найденные связи в граф']},
+  {id:'domain',title:'ПРОВЕРКА ДОМЕНА',items:['Получить whois-данные домена','Определить IP-адрес и хостинг','Проверить историю домена через Wayback Machine','Найти субдомены (theHarvester)','Проверить сертификаты (Censys)','Поискать упоминания домена в вебе','Проверить связанные домены']},
+  {id:'phone',title:'ПРОВЕРКА ТЕЛЕФОНА',items:['Определить оператора и регион','Поискать номер в вебе через кавычки','Проверить упоминания в соцсетях','Проверить мессенджеры','Собрать найденные данные в граф']},
+  {id:'photo',title:'ПРОВЕРКА ФОТО',items:['Извлечь метаданные (EXIF)','Проверить наличие GPS-координат','Выполнить обратный поиск (Google, Yandex, TinEye)','Проверить на монтаж (FotoForensics)','Найти первоисточник изображения','Определить время и место съёмки']},
+  {id:'email',title:'ПРОВЕРКА ПОЧТЫ',items:['Проверить на утечки (Have I Been Pwned)','Проверить репутацию (EmailRep)','Поискать упоминания почты в вебе','Проверить связанные аккаунты','Определить домен и его владельца']}
+];
+
+/* ═══════════ ГЛОССАРИЙ ═══════════ */
+const GLOSSARY = [
+  {term:'OSINT',def:'Open Source Intelligence — разведка по открытым источникам. Сбор и анализ информации из публично доступных источников.'},
+  {term:'Дорк (Dork)',def:'Специальный оператор поискового запроса (например, site:, filetype:, intitle:), позволяющий уточнить поиск и найти специфическую информацию.'},
+  {term:'Метаданные',def:'Данные о данных. Например, в фото — это дата съёмки, модель камеры, GPS-координаты, встроенные в файл.'},
+  {term:'Рекогносцировка (Recon)',def:'Предварительный сбор информации о цели перед основным анализом. Определение инфраструктуры, связей, присутствия в сети.'},
+  {term:'Граф связей',def:'Визуальное представление сущностей (узлов) и связей между ними. Используется для анализа отношений и структур.'},
+  {term:'Сущность (Entity)',def:'Объект в графе: человек, телефон, почта, домен, организация и т.д. В нашем сервисе — это узлы графа.'},
+  {term:'Цифровой след',def:'Совокупность информации, которую человек оставляет в интернете: аккаунты, комментарии, фото, упоминания.'},
+  {term:'Утечка данных (Data Breach)',def:'Компрометация базы данных, в результате которой информация попадает в открытый доступ или к злоумышленникам.'},
+  {term:'Whois',def:'Протокол и сервис для получения регистрационных данных о доменах: владелец, регистратор, даты регистрации.'},
+  {term:'Субдомен',def:'Дочерний домен относительно основного. Например, blog.example.com — субдомен домена example.com.'},
+  {term:'Обратный поиск изображений',def:'Поиск по картинке: находит, где ещё в интернете встречается это изображение, и его первоисточник.'},
+  {term:'Социальная инженерия',def:'Метод получения информации через психологическое воздействие на людей, а не через технические средства.'},
+  {term:'Пассивная разведка',def:'Сбор информации без прямого взаимодействия с целью. Например, изучение открытых источников, без захода на сайт цели.'},
+  {term:'Активная разведка',def:'Сбор информации с прямым взаимодействием с целью. Например, отправка запросов на сервер цели.'},
+  {term:'Кэш поисковика',def:'Сохранённая поисковиком копия страницы. Позволяет увидеть страницу, даже если оригинал удалён или недоступен.'},
+  {term:'Веб-архив',def:'Сервис, сохраняющий копии веб-страниц с течением времени. Пример: Wayback Machine. Позволяет посмотреть историю сайта.'},
+  {term:'Ник (Username)',def:'Псевдоним пользователя в интернете. Используется для поиска аккаунтов на разных площадках.'},
+  {term:'Деанонимизация',def:'Установление реальной личности по анонимным или псевдонимным данным в сети.'},
+  {term:'Геолокация (по фото)',def:'Определение места съёмки фотографии по метаданным (GPS) или визуальным признакам.'},
+  {term:'Скрейпинг',def:'Автоматизированный сбор данных с веб-страниц. В контексте OSINT — парсинг открытой информации.'}
+];
+
+/* ═══════════ ШАБЛОНЫ РАССЛЕДОВАНИЙ ═══════════ */
+const TEMPLATES = [
+  {id:'person',title:'ПРОВЕРКА ЧЕЛОВЕКА',desc:'Каркас для разведки по человеку: ник, соцсети, почта, упоминания.',nodes:[{type:'person',label:'ЦЕЛЬ: человек'},{type:'username',label:'ник'},{type:'email',label:'почта'},{type:'social',label:'соцсеть'},{type:'keyword',label:'упоминания'}],edges:[[0,1,'owner'],[0,2,'registered'],[1,3,'uses'],[0,4,'mentioned']]},
+  {id:'domain',title:'ПРОВЕРКА ДОМЕНА',desc:'Каркас для разведки по домену: whois, IP, субдомены, сертификаты.',nodes:[{type:'website',label:'ЦЕЛЬ: домен'},{type:'ip',label:'IP-адрес'},{type:'company',label:'владелец'},{type:'dns',label:'субдомен'}],edges:[[0,1,'related'],[0,2,'owner'],[0,3,'related']]},
+  {id:'phone',title:'ПРОВЕРКА ТЕЛЕФОНА',desc:'Каркас для разведки по номеру: оператор, упоминания, мессенджеры.',nodes:[{type:'phone',label:'ЦЕЛЬ: номер'},{type:'keyword',label:'упоминания'},{type:'social',label:'мессенджер'}],edges:[[0,1,'mentioned'],[0,2,'registered']]},
+  {id:'photo',title:'ПРОВЕРКА ФОТО',desc:'Каркас для разведки по изображению: метаданные, обратный поиск, место.',nodes:[{type:'image',label:'ЦЕЛЬ: фото'},{type:'gps',label:'место съёмки'},{type:'date',label:'дата съёмки'},{type:'website',label:'первоисточник'}],edges:[[0,1,'location'],[0,2,'related'],[0,3,'related']]},
+  {id:'email',title:'ПРОВЕРКА ПОЧТЫ',desc:'Каркас для разведки по почте: утечки, аккаунты, домен.',nodes:[{type:'email',label:'ЦЕЛЬ: почта'},{type:'dns',label:'домен'},{type:'social',label:'аккаунт'}],edges:[[0,1,'related'],[0,2,'registered']]}
+];
+
+/* ═══════════ ТЕМЫ ═══════════ */
+const THEMES = [
+  {id:'depth',label:'ГЛУБИНА'},
+  {id:'terminal',label:'ТЕРМИНАЛ'},
+  {id:'void',label:'ПУСТОТА'}
 ];
 
 /* ═══════════ УТИЛИТЫ ═══════════ */
 const $ = id => document.getElementById(id);
 const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-/* Кэш всех DOM-элементов */
 const el = {};
-['shareLink','copyShareBtn','authScreen','appScreen','loginForm','registerForm','loginEmail','loginPass','loginBtn','regNick','regEmail','regPass','regPass2','regBtn','authMessage','userChip','logoutBtn','catalogView','graphView','searchInput','filters','toolGrid','consoleBox','counter','clock','addNodeBtn','connectBtn','exportBtn','importBtn','clearBtn','graphHint','graphViewport','graphWorld','graphSvg','graphEmpty','zoomInBtn','zoomOutBtn','zoomFitBtn','zoomResetBtn','zoomLabel','importFile','addNodeModal','typeGrid','nodeLabel','cancelNodeBtn','confirmNodeBtn','confirmModal','confirmOkBtn','confirmCancelBtn','rulesModal','rulesBtn','closeRulesBtn','toast'].forEach(id => el[id] = $(id));
+['shareLink','copyShareBtn','authScreen','appScreen','loginForm','registerForm','loginEmail','loginPass','loginBtn','regNick','regEmail','regPass','regPass2','regBtn','authMessage','userChip','logoutBtn','catalogView','graphView','checklistsView','glossaryView','boardView','searchInput','filters','toolGrid','consoleBox','counter','clock','addNodeBtn','connectBtn','templatesBtn','reportBtn','pngBtn','exportBtn','importBtn','undoBtn','redoBtn','clearBtn','graphSearch','edgeTypeSelect','typeFilter','graphHint','graphViewport','graphWorld','graphSvg','graphEmpty','zoomInBtn','zoomOutBtn','zoomFitBtn','zoomResetBtn','zoomLabel','minimap','minimapCanvas','importFile','projExportBtn','projImportBtn','projImportFile','helpBtn','themeBtn','addNodeModal','typeGrid','nodeLabel','cancelNodeBtn','confirmNodeBtn','editNodeModal','editNodeLabel','editNodePriority','editNodeGroup','editNodeDate','editCancelBtn','editDeleteBtn','editSaveBtn','templatesModal','templatesContainer','templatesCancelBtn','reportModal','reportOutput','reportCopyBtn','reportDownloadBtn','reportCloseBtn','confirmModal','confirmOkBtn','confirmCancelBtn','rulesModal','rulesBtn','closeRulesBtn','helpModal','helpCloseBtn','checklistsContainer','glossaryContainer','glossarySearch','boardContainer','noteInput','noteAddBtn','toast'].forEach(id => el[id] = $(id));
 
 /* ═══════════ STATE ═══════════ */
 let currentUser = null, currentCat = 'all', searchQuery = '', clockInterval = null, currentView = 'catalog';
+let favorites = new Set();
+let activeTheme = 'depth';
+let activeNodeTypes = new Set(NODE_TYPES.map(t => t.id));
+let checklistState = {};
+let boardNotes = [];
 
 /* ═══════════ ОБЩИЕ ФУНКЦИИ ═══════════ */
 function showToast(text) {
@@ -541,30 +717,24 @@ function showToast(text) {
   el.toast.classList.add('show');
   setTimeout(() => el.toast.classList.remove('show'), 1600);
 }
-
 async function copyText(text) {
   try { await navigator.clipboard.writeText(text); showToast('скопировано'); }
   catch { fallbackCopy(text); }
 }
-
 function fallbackCopy(text) {
   const a = document.createElement('textarea');
-  a.value = text;
-  a.style.cssText = 'position:fixed;opacity:0';
-  document.body.appendChild(a);
-  a.select();
+  a.value = text; a.style.cssText = 'position:fixed;opacity:0';
+  document.body.appendChild(a); a.select();
   try { document.execCommand('copy'); showToast('скопировано'); }
   catch { showToast('не удалось'); }
   a.remove();
 }
-
 function log(text) {
   const line = document.createElement('div');
   line.textContent = `[${new Date().toLocaleTimeString('ru-RU')}] ${text}`;
   el.consoleBox.appendChild(line);
   while (el.consoleBox.children.length > 7) el.consoleBox.removeChild(el.consoleBox.firstChild);
 }
-
 function openTool(url) {
   try { const w = window.open(url, '_blank', 'noopener,noreferrer'); if (w) return; } catch {}
   try {
@@ -574,11 +744,44 @@ function openTool(url) {
   } catch {}
   setTimeout(() => { if (!document.hidden) window.location.href = url; }, 350);
 }
-
 function setAuthMessage(text, type) {
   el.authMessage.textContent = text;
   el.authMessage.className = 'auth-message' + (type ? ' ' + type : '');
 }
+function downloadText(filename, text) {
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+function downloadJSON(filename, obj) {
+  const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ═══════════ LOCAL STORAGE HELPERS ═══════════ */
+const LS = {
+  get(key, def) { try { return JSON.parse(localStorage.getItem(key)) ?? def; } catch { return def; } },
+  set(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
+};
+
+/* ═══════════ ТЕМЫ ═══════════ */
+function applyTheme(themeId) {
+  document.body.className = themeId === 'depth' ? '' : `theme-${themeId}`;
+  activeTheme = themeId;
+  LS.set('osint_theme', themeId);
+  el.themeBtn.textContent = THEMES.find(t => t.id === themeId)?.label.charAt(0) || '◐';
+}
+el.themeBtn.addEventListener('click', () => {
+  const idx = THEMES.findIndex(t => t.id === activeTheme);
+  const next = THEMES[(idx + 1) % THEMES.length].id;
+  applyTheme(next);
+  showToast('тема: ' + THEMES.find(t => t.id === next).label);
+});
 
 /* ═══════════ АВТОРИЗАЦИЯ ═══════════ */
 document.querySelectorAll('.tab').forEach(tab => {
@@ -598,20 +801,15 @@ el.loginForm.addEventListener('submit', async e => {
   const pass = el.loginPass.value;
   if (!email) return setAuthMessage('! введи e-mail', 'error');
   if (!pass) return setAuthMessage('! введи пароль', 'error');
-  el.loginBtn.disabled = true;
-  el.loginBtn.textContent = 'ВХОД...';
+  el.loginBtn.disabled = true; el.loginBtn.textContent = 'ВХОД...';
   try {
     const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
     if (error) throw error;
     const nickname = data.user.user_metadata?.nickname || data.user.email;
     setAuthMessage('вход выполнен', 'success');
     startSession(nickname);
-  } catch (err) {
-    setAuthMessage('! ' + err.message, 'error');
-  } finally {
-    el.loginBtn.disabled = false;
-    el.loginBtn.textContent = 'ВОЙТИ';
-  }
+  } catch (err) { setAuthMessage('! ' + err.message, 'error'); }
+  finally { el.loginBtn.disabled = false; el.loginBtn.textContent = 'ВОЙТИ'; }
 });
 
 el.registerForm.addEventListener('submit', async e => {
@@ -624,13 +822,9 @@ el.registerForm.addEventListener('submit', async e => {
   if (!email) return setAuthMessage('! введи e-mail', 'error');
   if (pass.length < 6) return setAuthMessage('! пароль от 6 символов', 'error');
   if (pass !== pass2) return setAuthMessage('! пароли не совпадают', 'error');
-  el.regBtn.disabled = true;
-  el.regBtn.textContent = 'СОЗДАНИЕ...';
+  el.regBtn.disabled = true; el.regBtn.textContent = 'СОЗДАНИЕ...';
   try {
-    const { data, error } = await supabaseClient.auth.signUp({
-      email, password: pass,
-      options: { data: { nickname: nick } }
-    });
+    const { data, error } = await supabaseClient.auth.signUp({ email, password: pass, options: { data: { nickname: nick } } });
     if (error) throw error;
     if (data.session) {
       const nickname = data.user.user_metadata?.nickname || data.user.email;
@@ -639,12 +833,8 @@ el.registerForm.addEventListener('submit', async e => {
     } else {
       setAuthMessage('аккаунт создан! проверь почту для подтверждения', 'success');
     }
-  } catch (err) {
-    setAuthMessage('! ' + err.message, 'error');
-  } finally {
-    el.regBtn.disabled = false;
-    el.regBtn.textContent = 'СОЗДАТЬ АККАУНТ';
-  }
+  } catch (err) { setAuthMessage('! ' + err.message, 'error'); }
+  finally { el.regBtn.disabled = false; el.regBtn.textContent = 'СОЗДАТЬ АККАУНТ'; }
 });
 
 function startSession(name) {
@@ -681,6 +871,9 @@ document.querySelectorAll('.nav-tab').forEach(btn => {
     currentView = btn.dataset.view;
     el.catalogView.classList.toggle('hidden', currentView !== 'catalog');
     el.graphView.classList.toggle('hidden', currentView !== 'graph');
+    el.checklistsView.classList.toggle('hidden', currentView !== 'checklists');
+    el.glossaryView.classList.toggle('hidden', currentView !== 'glossary');
+    el.boardView.classList.toggle('hidden', currentView !== 'board');
     if (currentView === 'graph') { graph.render(); graph.fitToView(); }
   });
 });
@@ -692,15 +885,16 @@ function startClock() {
   clockInterval = setInterval(tick, 1000);
 }
 
-/* ═══════════ КАТАЛОГ (оптимизированный рендеринг) ═══════════ */
+/* ═══════════ КАТАЛОГ + ИЗБРАННОЕ ═══════════ */
 function renderFilters() {
-  el.filters.innerHTML = Object.entries(CATS).map(([key, label]) => {
+  let html = Object.entries(CATS).map(([key, label]) => {
     const count = key === 'all' ? TOOLS.length : TOOLS.filter(t => t.cat === key).length;
     return `<button type="button" class="filter-btn${currentCat === key ? ' active' : ''}" data-cat="${key}">${label} · ${count}</button>`;
   }).join('');
+  html += `<button type="button" class="filter-btn fav${currentCat === 'fav' ? ' active' : ''}" data-cat="fav">★ ИЗБРАННОЕ · ${favorites.size}</button>`;
+  el.filters.innerHTML = html;
 }
 
-/* Делегирование событий для фильтров */
 el.filters.addEventListener('click', e => {
   const btn = e.target.closest('.filter-btn');
   if (!btn) return;
@@ -712,9 +906,10 @@ el.filters.addEventListener('click', e => {
 function renderTools() {
   const q = searchQuery.toLowerCase().trim();
   const items = TOOLS.filter(t => {
-    const byCat = currentCat === 'all' || t.cat === currentCat;
+    const byFav = currentCat === 'fav' ? favorites.has(t.name) : true;
+    const byCat = currentCat === 'all' || currentCat === 'fav' || t.cat === currentCat;
     const text = (t.name + ' ' + t.desc + ' ' + t.note + ' ' + CATS[t.cat]).toLowerCase();
-    return byCat && (q === '' || text.includes(q));
+    return byFav && byCat && (q === '' || text.includes(q));
   });
   el.counter.textContent = items.length + ' / ' + TOOLS.length + ' tools';
   if (!items.length) {
@@ -722,7 +917,7 @@ function renderTools() {
     return;
   }
   el.toolGrid.innerHTML = items.map(tool => `
-    <article class="card" data-url="${escapeHtml(tool.url)}">
+    <article class="card" data-url="${escapeHtml(tool.url)}" data-name="${escapeHtml(tool.name)}">
       <div class="card-top">
         <div class="category">${CATS[tool.cat]}</div>
         <div class="index-num">#${String(TOOLS.indexOf(tool)+1).padStart(2,'0')}</div>
@@ -731,6 +926,7 @@ function renderTools() {
       <p>${escapeHtml(tool.desc)}</p>
       <div class="card-note">⚑ ${escapeHtml(tool.note)}</div>
       <div class="card-actions">
+        <button class="fav-btn${favorites.has(tool.name) ? ' active' : ''}" type="button" data-action="fav" title="в избранное">★</button>
         <button class="open-link" type="button" data-action="open">ОТКРЫТЬ ↗</button>
         <button class="copy-btn" type="button" data-action="copy">COPY</button>
       </div>
@@ -738,18 +934,23 @@ function renderTools() {
   `).join('');
 }
 
-/* Делегирование событий для карточек */
 el.toolGrid.addEventListener('click', e => {
   const btn = e.target.closest('button[data-action]');
   if (!btn) return;
   const card = btn.closest('.card');
   if (!card) return;
   const url = card.dataset.url;
+  const name = card.dataset.name;
   if (btn.dataset.action === 'open') {
     openTool(url);
   } else if (btn.dataset.action === 'copy') {
     copyText(url);
     log('copied: ' + url);
+  } else if (btn.dataset.action === 'fav') {
+    if (favorites.has(name)) { favorites.delete(name); btn.classList.remove('active'); }
+    else { favorites.add(name); btn.classList.add('active'); }
+    LS.set('osint_favorites', [...favorites]);
+    renderFilters();
   }
 });
 
@@ -763,6 +964,14 @@ el.closeRulesBtn.addEventListener('click', () => el.rulesModal.close());
 window.addEventListener('load', async () => {
   el.shareLink.href = window.location.href;
   el.shareLink.textContent = window.location.href;
+  // Загрузка настроек
+  favorites = new Set(LS.get('osint_favorites', []));
+  applyTheme(LS.get('osint_theme', 'depth'));
+  checklistState = LS.get('osint_checklists', {});
+  boardNotes = LS.get('osint_notes', []);
+  renderChecklists();
+  renderGlossary();
+  renderBoard();
   try {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (session) {
@@ -774,11 +983,79 @@ window.addEventListener('load', async () => {
 });
 el.copyShareBtn.addEventListener('click', () => copyText(window.location.href));
 
+/* ═══════════ ЧЕК-ЛИСТЫ ═══════════ */
+function renderChecklists() {
+  el.checklistsContainer.innerHTML = CHECKLISTS.map(cl => {
+    const done = cl.items.filter((_, i) => checklistState[cl.id]?.[i]).length;
+    const itemsHtml = cl.items.map((item, i) => {
+      const isDone = checklistState[cl.id]?.[i];
+      return `<div class="checklist-item${isDone ? ' done' : ''}" data-cl="${cl.id}" data-idx="${i}">
+        <div class="check-box">${isDone ? '✓' : ''}</div>
+        <div class="check-label">${escapeHtml(item)}</div>
+      </div>`;
+    }).join('');
+    return `<div class="checklist-block">
+      <h3>${escapeHtml(cl.title)}</h3>
+      <div class="checklist-progress">выполнено: ${done} / ${cl.items.length}</div>
+      ${itemsHtml}
+    </div>`;
+  }).join('');
+}
+
+el.checklistsContainer.addEventListener('click', e => {
+  const item = e.target.closest('.checklist-item');
+  if (!item) return;
+  const clId = item.dataset.cl;
+  const idx = parseInt(item.dataset.idx);
+  if (!checklistState[clId]) checklistState[clId] = {};
+  checklistState[clId][idx] = !checklistState[clId][idx];
+  LS.set('osint_checklists', checklistState);
+  renderChecklists();
+});
+
+/* ═══════════ ГЛОССАРИЙ ═══════════ */
+function renderGlossary(query = '') {
+  const q = query.toLowerCase().trim();
+  const items = GLOSSARY.filter(g => q === '' || g.term.toLowerCase().includes(q) || g.def.toLowerCase().includes(q));
+  el.glossaryContainer.innerHTML = items.length
+    ? items.map(g => `<div class="glossary-item"><h4>${escapeHtml(g.term)}</h4><p>${escapeHtml(g.def)}</p></div>`).join('')
+    : '<div class="empty-state">// ничего не найдено</div>';
+}
+el.glossarySearch.addEventListener('input', e => renderGlossary(e.target.value));
+
+/* ═══════════ ДОСКА ЗАМЕТОК ═══════════ */
+function renderBoard() {
+  el.boardContainer.innerHTML = boardNotes.length
+    ? boardNotes.map((n, i) => `<div class="note-sticky">
+        <button class="note-remove" data-idx="${i}" type="button">×</button>
+        <div class="note-text">${escapeHtml(n.text)}</div>
+        <div class="note-date">${escapeHtml(n.date)}</div>
+      </div>`).join('')
+    : '<div class="empty-state">// заметок пока нет. добавь первую выше.</div>';
+}
+el.noteAddBtn.addEventListener('click', () => {
+  const text = el.noteInput.value.trim();
+  if (!text) return;
+  boardNotes.unshift({ text, date: new Date().toLocaleString('ru-RU') });
+  el.noteInput.value = '';
+  LS.set('osint_notes', boardNotes);
+  renderBoard();
+  showToast('заметка добавлена');
+});
+el.boardContainer.addEventListener('click', e => {
+  const btn = e.target.closest('.note-remove');
+  if (!btn) return;
+  boardNotes.splice(parseInt(btn.dataset.idx), 1);
+  LS.set('osint_notes', boardNotes);
+  renderBoard();
+});
+
 /* ═══════════ GRAPH ENGINE ═══════════ */
 const graph = (() => {
   const STORAGE_KEY = 'osint_graph_v1';
   const WORLD_SIZE = 6000;
   const WORLD_CENTER = WORLD_SIZE / 2;
+  const MAX_HISTORY = 50;
 
   let state = { nodes: [], edges: [] };
   let nextId = 1;
@@ -791,9 +1068,41 @@ const graph = (() => {
   let clickStart = { x: 0, y: 0, time: 0, moved: false };
   const lastTapPos = { x: null, y: null };
   let touchState = { ids: [], dist: 0, center: { x: 0, y: 0 }, startScale: 1, startView: { x: 0, y: 0 } };
+  let editingNode = null;
+
+  // История для undo/реdo
+  let history = [];
+  let historyIndex = -1;
+
+  function pushHistory() {
+    // Обрезаем историю после текущей позиции (если были отмены, а потом новое действие)
+    history = history.slice(0, historyIndex + 1);
+    history.push(JSON.stringify(state));
+    if (history.length > MAX_HISTORY) history.shift();
+    historyIndex = history.length - 1;
+  }
+
+  function undo() {
+    if (historyIndex <= 0) { showToast('нечего отменять'); return; }
+    historyIndex--;
+    state = JSON.parse(history[historyIndex]);
+    save();
+    render();
+    showToast('отменено');
+  }
+
+  function redo() {
+    if (historyIndex >= history.length - 1) { showToast('нечего повторить'); return; }
+    historyIndex++;
+    state = JSON.parse(history[historyIndex]);
+    save();
+    render();
+    showToast('повторено');
+  }
 
   function save() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ state, nextId, view })); } catch {}
+    renderMinimap();
   }
 
   function load() {
@@ -811,12 +1120,17 @@ const graph = (() => {
       }
     } catch { state = { nodes: [], edges: [] }; }
     if (!hasSavedView) { fitToView(); } else { applyTransform(); }
+    // Инициализация истории
+    history = [JSON.stringify(state)];
+    historyIndex = 0;
     render();
+    renderMinimap();
   }
 
   function applyTransform() {
     el.graphWorld.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.scale})`;
     el.zoomLabel.textContent = Math.round(view.scale * 100) + '%';
+    renderMinimap();
   }
 
   const clampScale = s => Math.max(MIN_SCALE, Math.min(MAX_SCALE, s));
@@ -867,32 +1181,9 @@ const graph = (() => {
     return { x: (px - view.x) / view.scale, y: (py - view.y) / view.scale };
   }
 
-  let clearResolver = null;
-  el.confirmOkBtn.addEventListener('click', () => {
-    el.confirmModal.close();
-    if (clearResolver) { clearResolver(true); clearResolver = null; }
-  });
-  el.confirmCancelBtn.addEventListener('click', () => {
-    el.confirmModal.close();
-    if (clearResolver) { clearResolver(false); clearResolver = null; }
-  });
-
-  async function clear() {
-    const ok = await new Promise(resolve => { clearResolver = resolve; el.confirmModal.showModal(); });
-    if (!ok) return;
-    state = { nodes: [], edges: [] };
-    nextId = 1;
-    selectedNode = null;
-    pendingConnect = null;
-    save();
-    render();
-    log('graph: cleared');
-    showToast('граф очищен');
-  }
-
-  function addNode(type, label, wx, wy) {
-    if (!type) return;
-    if (!label || !label.trim()) label = NODE_TYPES.find(t => t.id === type).label;
+  function addNode(type, label, wx, wy, extra = {}) {
+    if (!type) return null;
+    if (!label || !label.trim()) label = NODE_TYPES.find(t => t.id === type)?.label || type;
     let x, y;
     if (typeof wx === 'number' && typeof wy === 'number' && !isNaN(wx) && !isNaN(wy)) {
       x = wx - 60; y = wy - 40;
@@ -902,11 +1193,13 @@ const graph = (() => {
       x = center.x - 60 + (Math.random() * 60 - 30);
       y = center.y - 40 + (Math.random() * 60 - 30);
     }
-    const node = { id: 'n' + (nextId++), type, label: label.trim(), x, y };
+    const node = { id: 'n' + (nextId++), type, label: label.trim(), x, y, priority: extra.priority || 'normal', group: extra.group || '', date: extra.date || '' };
     state.nodes.push(node);
+    pushHistory();
     save();
     render();
     log('graph: +node [' + type + '] ' + label);
+    return node;
   }
 
   function removeNode(id) {
@@ -914,36 +1207,60 @@ const graph = (() => {
     state.edges = state.edges.filter(e => e.from !== id && e.to !== id);
     if (selectedNode === id) selectedNode = null;
     if (pendingConnect === id) pendingConnect = null;
+    pushHistory();
     save();
     render();
   }
 
-  function addEdge(from, to) {
+  function addEdge(from, to, type = 'related') {
     if (from === to) return;
     const exists = state.edges.some(e =>
       (e.from === from && e.to === to) || (e.from === to && e.to === from));
     if (exists) return;
-    state.edges.push({ from, to });
+    state.edges.push({ from, to, type });
+    pushHistory();
     save();
     render();
-    log('graph: edge ' + from + ' → ' + to);
+    log('graph: edge ' + from + ' → ' + to + ' [' + type + ']');
+  }
+
+  function clearGraph(skipConfirm = false) {
+    state = { nodes: [], edges: [] };
+    nextId = 1;
+    selectedNode = null;
+    pendingConnect = null;
+    pushHistory();
+    save();
+    render();
+    log('graph: cleared');
   }
 
   function render() {
     el.graphWorld.querySelectorAll('.graph-node').forEach(n => n.remove());
-    el.graphEmpty.classList.toggle('hidden', state.nodes.length > 0);
+    const visibleNodes = state.nodes.filter(n => activeNodeTypes.has(n.type));
+    el.graphEmpty.classList.toggle('hidden', visibleNodes.length > 0);
 
-    state.nodes.forEach(node => {
+    visibleNodes.forEach(node => {
       const div = document.createElement('div');
-      div.className = 'graph-node' + (selectedNode === node.id ? ' selected' : '');
+      let cls = 'graph-node';
+      if (selectedNode === node.id) cls += ' selected';
+      if (node.priority === 'high') cls += ' priority-high';
+      if (node.priority === 'low') cls += ' priority-low';
+      if (node.group) cls += ' group-' + node.group;
+      div.className = cls;
       div.dataset.id = node.id;
       div.style.left = node.x + 'px';
       div.style.top = node.y + 'px';
+      const metaParts = [];
+      if (node.date) metaParts.push('📅 ' + node.date);
+      if (node.priority === 'high') metaParts.push('⚑ high');
+      if (node.group) metaParts.push('● ' + node.group);
       div.innerHTML = `
         <div class="node-remove" title="удалить">×</div>
         <div class="node-icon">${ICONS[node.type] || ICONS.note}</div>
         <div class="node-type">${NODE_TYPES.find(t => t.id === node.type)?.label || ''}</div>
-        <div class="node-label">${escapeHtml(node.label)}</div>`;
+        <div class="node-label">${escapeHtml(node.label)}</div>
+        ${metaParts.length ? `<div class="node-meta">${metaParts.join(' · ')}</div>` : ''}`;
       el.graphWorld.appendChild(div);
 
       div.querySelector('.node-remove').addEventListener('click', ev => {
@@ -956,17 +1273,24 @@ const graph = (() => {
 
       div.addEventListener('mousedown', ev => startNodeDrag(ev, node, div));
       div.addEventListener('touchstart', ev => startNodeDrag(ev, node, div), { passive: false });
+      div.addEventListener('dblclick', ev => {
+        ev.stopPropagation(); ev.preventDefault();
+        openEditNode(node.id);
+      });
     });
 
     renderEdges();
+    renderMinimap();
   }
 
   function renderEdges() {
-    el.graphSvg.querySelectorAll('.graph-edge').forEach(n => n.remove());
+    el.graphSvg.querySelectorAll('.graph-edge, .edge-label').forEach(n => n.remove());
     state.edges.forEach(edge => {
       const a = state.nodes.find(n => n.id === edge.from);
       const b = state.nodes.find(n => n.id === edge.to);
       if (!a || !b) return;
+      // Если один из узлов скрыт фильтром — не рисуем связь
+      if (!activeNodeTypes.has(a.type) || !activeNodeTypes.has(b.type)) return;
       const nodeA = el.graphWorld.querySelector(`[data-id="${a.id}"]`);
       const nodeB = el.graphWorld.querySelector(`[data-id="${b.id}"]`);
       if (!nodeA || !nodeB) return;
@@ -986,14 +1310,26 @@ const graph = (() => {
       const sy1 = y1 + uy * offsetA;
       const sx2 = x2 - ux * offsetB;
       const sy2 = y2 - uy * offsetB;
+      const edgeType = EDGE_TYPES.find(t => t.id === edge.type) || EDGE_TYPES[0];
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       line.setAttribute('x1', sx1);
       line.setAttribute('y1', sy1);
       line.setAttribute('x2', sx2);
       line.setAttribute('y2', sy2);
       line.setAttribute('class', 'graph-edge');
+      if (edgeType.dash) line.setAttribute('stroke-dasharray', edgeType.dash);
       line.setAttribute('marker-end', 'url(#arrowhead)');
       el.graphSvg.appendChild(line);
+      // Подпись связи
+      const midX = (sx1 + sx2) / 2;
+      const midY = (sy1 + sy2) / 2;
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', midX);
+      text.setAttribute('y', midY - 6);
+      text.setAttribute('class', 'edge-label');
+      text.setAttribute('text-anchor', 'middle');
+      text.textContent = edgeType.label;
+      el.graphSvg.appendChild(text);
     });
   }
 
@@ -1050,9 +1386,13 @@ const graph = (() => {
       if (div) div.classList.remove('dragging');
       if (!clickStart.moved && Date.now() - clickStart.time < 400) {
         handleNodeClick(dragging.id);
+      } else if (clickStart.moved) {
+        // Если было перемещение — сохраняем и добавляем в историю
+        pushHistory();
+        save();
       }
       dragging = null;
-      save();
+      renderMinimap();
     }
     if (panning) {
       panning = false;
@@ -1072,7 +1412,7 @@ const graph = (() => {
 
   el.graphViewport.addEventListener('touchstart', ev => {
     if (ev.target.closest('.graph-node')) return;
-    if (ev.target.closest('.zoom-controls') || ev.target.closest('.zoom-help')) return;
+    if (ev.target.closest('.zoom-controls') || ev.target.closest('.zoom-help') || ev.target.closest('.minimap')) return;
     if (ev.touches.length === 2) {
       ev.preventDefault();
       touchState.ids = [ev.touches[0].identifier, ev.touches[1].identifier];
@@ -1120,7 +1460,7 @@ const graph = (() => {
 
   el.graphViewport.addEventListener('mousedown', ev => {
     if (ev.target.closest('.graph-node')) return;
-    if (ev.target.closest('.zoom-controls') || ev.target.closest('.zoom-help')) return;
+    if (ev.target.closest('.zoom-controls') || ev.target.closest('.zoom-help') || ev.target.closest('.minimap')) return;
     if (connectMode) return;
     panning = true;
     el.graphViewport.classList.add('panning');
@@ -1131,7 +1471,7 @@ const graph = (() => {
 
   el.graphViewport.addEventListener('dblclick', ev => {
     if (ev.target.closest('.graph-node')) return;
-    if (ev.target.closest('.zoom-controls') || ev.target.closest('.zoom-help')) return;
+    if (ev.target.closest('.zoom-controls') || ev.target.closest('.zoom-help') || ev.target.closest('.minimap')) return;
     handleEmptyTap(ev.clientX, ev.clientY);
   });
 
@@ -1164,7 +1504,10 @@ const graph = (() => {
       selectedNode = id;
       render();
     } else {
-      if (pendingConnect !== id) addEdge(pendingConnect, id);
+      if (pendingConnect !== id) {
+        const edgeType = el.edgeTypeSelect.value || 'related';
+        addEdge(pendingConnect, id, edgeType);
+      }
       pendingConnect = null;
       selectedNode = null;
       toggleConnect(false);
@@ -1182,22 +1525,375 @@ const graph = (() => {
     el.connectBtn.classList.toggle('active', connectMode);
     if (connectMode) {
       pendingConnect = null;
-      el.graphHint.textContent = 'Режим соединения: выбери первый узел (откуда), затем второй (куда).';
+      el.graphHint.textContent = 'Режим соединения: выбери первый узел (откуда), затем второй (куда). Тип связи выбирается в списке выше.';
     } else {
       pendingConnect = null;
-      el.graphHint.textContent = 'Пальцами: 1 — двигать, 2 — зум. Тап по пустому месту — узел.';
+      el.graphHint.textContent = 'Пальцами: 1 палец — двигать поле, 2 пальца — зум. Колёсиком мыши — зум. Тап по пустому месту — добавить узел. Двойной клик по узлу — редактировать.';
     }
   }
 
+  /* ─── РЕДАКТИРОВАНИЕ УЗЛА ─── */
+  function openEditNode(id) {
+    const node = state.nodes.find(n => n.id === id);
+    if (!node) return;
+    editingNode = id;
+    el.editNodeLabel.value = node.label;
+    el.editNodePriority.value = node.priority || 'normal';
+    el.editNodeGroup.value = node.group || '';
+    el.editNodeDate.value = node.date || '';
+    el.editNodeModal.showModal();
+  }
+
+  el.editSaveBtn.addEventListener('click', () => {
+    const node = state.nodes.find(n => n.id === editingNode);
+    if (!node) { el.editNodeModal.close(); return; }
+    node.label = el.editNodeLabel.value.trim() || node.label;
+    node.priority = el.editNodePriority.value;
+    node.group = el.editNodeGroup.value;
+    node.date = el.editNodeDate.value;
+    pushHistory();
+    save();
+    render();
+    el.editNodeModal.close();
+    showToast('узел обновлён');
+  });
+
+  el.editDeleteBtn.addEventListener('click', () => {
+    if (editingNode) removeNode(editingNode);
+    el.editNodeModal.close();
+  });
+
+  el.editCancelBtn.addEventListener('click', () => el.editNodeModal.close());
+
+  /* ─── ПОИСК ПО ГРАФУ ─── */
+  function searchGraph(query) {
+    const q = query.toLowerCase().trim();
+    el.graphWorld.querySelectorAll('.graph-node.search-hit').forEach(n => n.classList.remove('search-hit'));
+    if (!q) return;
+    const found = state.nodes.find(n => n.label.toLowerCase().includes(q));
+    if (!found) { showToast('узел не найден'); return; }
+    // Центрируем вид на узле
+    const r = el.graphViewport.getBoundingClientRect();
+    view.x = -(found.x + 60) + r.width / 2;
+    view.y = -(found.y + 40) + r.height / 2;
+    applyTransform();
+    save();
+    // Подсвечиваем
+    const div = el.graphWorld.querySelector(`[data-id="${found.id}"]`);
+    if (div) div.classList.add('search-hit');
+    showToast('найден: ' + found.label);
+  }
+
+  /* ─── МИНИ-КАРТА ─── */
+  function renderMinimap() {
+    const canvas = el.minimapCanvas;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(0,0,0,0.8)';
+    ctx.fillRect(0, 0, W, H);
+    if (state.nodes.length === 0) return;
+    // Находим границы узлов
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    state.nodes.forEach(n => {
+      minX = Math.min(minX, n.x); minY = Math.min(minY, n.y);
+      maxX = Math.max(maxX, n.x); maxY = Math.max(maxY, n.y);
+    });
+    const pad = 100;
+    minX -= pad; minY -= pad; maxX += pad + 120; maxY += pad + 80;
+    const worldW = maxX - minX;
+    const worldH = maxY - minY;
+    const scale = Math.min(W / worldW, H / worldH);
+    // Рисуем узлы
+    state.nodes.forEach(n => {
+      const x = (n.x - minX) * scale;
+      const y = (n.y - minY) * scale;
+      ctx.fillStyle = n.priority === 'high' ? '#fff' : '#999';
+      ctx.fillRect(x, y, 3, 3);
+    });
+    // Рисуем связи
+    ctx.strokeStyle = 'rgba(150,150,150,0.4)';
+    ctx.lineWidth = 0.5;
+    state.edges.forEach(edge => {
+      const a = state.nodes.find(n => n.id === edge.from);
+      const b = state.nodes.find(n => n.id === edge.to);
+      if (!a || !b) return;
+      ctx.beginPath();
+      ctx.moveTo((a.x - minX) * scale, (a.y - minY) * scale);
+      ctx.lineTo((b.x - minX) * scale, (b.y - minY) * scale);
+      ctx.stroke();
+    });
+    // Рамка видимой области
+    const vp = el.graphViewport.getBoundingClientRect();
+    const viewTopLeft = screenToWorld(vp.left + vp.left, vp.top + vp.top);
+    // Пересчитываем видимую область в координаты миникарты
+    const vx = (-view.x / view.scale - minX) * scale;
+    const vy = (-view.y / view.scale - minY) * scale;
+    const vw = (vp.width / view.scale) * scale;
+    const vh = (vp.height / view.scale) * scale;
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(vx, vy, vw, vh);
+  }
+
+  // Клик по миникарте для навигации
+  el.minimap.addEventListener('click', ev => {
+    if (state.nodes.length === 0) return;
+    const rect = el.minimap.getBoundingClientRect();
+    const mx = ev.clientX - rect.left;
+    const my = ev.clientY - rect.top;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    state.nodes.forEach(n => {
+      minX = Math.min(minX, n.x); minY = Math.min(minY, n.y);
+      maxX = Math.max(maxX, n.x); maxY = Math.max(maxY, n.y);
+    });
+    const pad = 100;
+    minX -= pad; minY -= pad; maxX += pad + 120; maxY += pad + 80;
+    const W = el.minimapCanvas.width;
+    const H = el.minimapCanvas.height;
+    const scale = Math.min(W / (maxX - minX), H / (maxY - minY));
+    const worldX = mx / scale + minX;
+    const worldY = my / scale + minY;
+    const r = el.graphViewport.getBoundingClientRect();
+    view.x = -worldX + r.width / 2;
+    view.y = -worldY + r.height / 2;
+    applyTransform();
+    save();
+  });
+
+  /* ─── ЭКСПОРТ В PNG ─── */
+  function exportPNG() {
+    if (state.nodes.length === 0) { showToast('граф пуст'); return; }
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    state.nodes.forEach(n => {
+      minX = Math.min(minX, n.x); minY = Math.min(minY, n.y);
+      maxX = Math.max(maxX, n.x); maxY = Math.max(maxY, n.y);
+    });
+    const pad = 80;
+    const width = (maxX - minX) + pad * 2 + 240;
+    const height = (maxY - minY) + pad * 2 + 160;
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    // Фон
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(0, 0, width, height);
+    // Сетка
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < width; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke(); }
+    for (let y = 0; y < height; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke(); }
+    const ox = -minX + pad;
+    const oy = -minY + pad;
+    // Связи
+    state.edges.forEach(edge => {
+      const a = state.nodes.find(n => n.id === edge.from);
+      const b = state.nodes.find(n => n.id === edge.to);
+      if (!a || !b) return;
+      const x1 = a.x + ox + 60;
+      const y1 = a.y + oy + 40;
+      const x2 = b.x + ox + 60;
+      const y2 = b.y + oy + 40;
+      ctx.strokeStyle = '#888';
+      ctx.lineWidth = 1.5;
+      const edgeType = EDGE_TYPES.find(t => t.id === edge.type) || EDGE_TYPES[0];
+      if (edgeType.dash) {
+        ctx.setLineDash(edgeType.dash.split(',').map(Number));
+      } else {
+        ctx.setLineDash([]);
+      }
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      // Стрелка
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+      const ax = x2 - Math.cos(angle) * 40;
+      const ay = y2 - Math.sin(angle) * 40;
+      ctx.fillStyle = '#aaa';
+      ctx.beginPath();
+      ctx.moveTo(ax, ay);
+      ctx.lineTo(ax - 12 * Math.cos(angle - 0.4), ay - 12 * Math.sin(angle - 0.4));
+      ctx.lineTo(ax - 12 * Math.cos(angle + 0.4), ay - 12 * Math.sin(angle + 0.4));
+      ctx.closePath();
+      ctx.fill();
+      // Подпись связи
+      ctx.fillStyle = '#999';
+      ctx.font = '10px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(edgeType.label, (x1 + x2) / 2, (y1 + y2) / 2 - 6);
+    });
+    // Узлы
+    state.nodes.forEach(node => {
+      const x = node.x + ox;
+      const y = node.y + oy;
+      const w = 120;
+      const h = 80;
+      ctx.fillStyle = '#111';
+      ctx.strokeStyle = node.priority === 'high' ? '#ddd' : (node.group ? '#666' : '#444');
+      ctx.lineWidth = node.priority === 'high' ? 2 : 1;
+      ctx.fillRect(x, y, w, h);
+      ctx.strokeRect(x, y, w, h);
+      // Тип
+      ctx.fillStyle = '#888';
+      ctx.font = '8px monospace';
+      ctx.textAlign = 'center';
+      const typeLabel = NODE_TYPES.find(t => t.id === node.type)?.label || node.type;
+      ctx.fillText(typeLabel, x + w / 2, y + 20);
+      // Подпись
+      ctx.fillStyle = '#fff';
+      ctx.font = '11px monospace';
+      const label = node.label.length > 16 ? node.label.slice(0, 15) + '…' : node.label;
+      ctx.fillText(label, x + w / 2, y + 45);
+      // Дата
+      if (node.date) {
+        ctx.fillStyle = '#666';
+        ctx.font = '8px monospace';
+        ctx.fillText(node.date, x + w / 2, y + 62);
+      }
+    });
+    // Скачивание
+    canvas.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'osint-graph-' + Date.now() + '.png';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('PNG сохранён');
+      log('graph: exported as PNG');
+    });
+  }
+
+  /* ─── ОТЧЁТ ─── */
+  function generateReport() {
+    const lines = [];
+    lines.push('═══════════════════════════════════════');
+    lines.push('         ОТЧЁТ ПО ГРАФУ РАССЛЕДОВАНИЯ');
+    lines.push('═══════════════════════════════════════');
+    lines.push('Дата создания отчёта: ' + new Date().toLocaleString('ru-RU'));
+    lines.push('Всего узлов: ' + state.nodes.length);
+    lines.push('Всего связей: ' + state.edges.length);
+    lines.push('');
+    if (state.nodes.length === 0) {
+      lines.push('Граф пуст.');
+    } else {
+      lines.push('─── УЗЛЫ ───────────────────────────────');
+      // Сортируем по дате для таймлайна
+      const sortedNodes = [...state.nodes].sort((a, b) => {
+        if (a.date && b.date) return a.date.localeCompare(b.date);
+        if (a.date) return -1;
+        if (b.date) return 1;
+        return 0;
+      });
+      sortedNodes.forEach((node, i) => {
+        const typeLabel = NODE_TYPES.find(t => t.id === node.type)?.label || node.type;
+        const priorityMark = node.priority === 'high' ? ' ⚑' : (node.priority === 'low' ? ' ▽' : '');
+        const groupMark = node.group ? ' [группа: ' + node.group + ']' : '';
+        const dateMark = node.date ? ' 📅 ' + node.date : '';
+        lines.push(`${i + 1}. [${typeLabel}] "${node.label}"${priorityMark}${groupMark}${dateMark}`);
+        // Связи этого узла
+        const nodeEdges = state.edges.filter(e => e.from === node.id || e.to === node.id);
+        nodeEdges.forEach(edge => {
+          const isFrom = edge.from === node.id;
+          const otherId = isFrom ? edge.to : edge.from;
+          const other = state.nodes.find(n => n.id === otherId);
+          if (!other) return;
+          const edgeType = EDGE_TYPES.find(t => t.id === edge.type) || EDGE_TYPES[0];
+          const arrow = isFrom ? '→' : '←';
+          lines.push(`   ${arrow} ${edgeType.label}: "${other.label}"`);
+        });
+      });
+      // Таймлайн, если есть даты
+      const datedNodes = state.nodes.filter(n => n.date).sort((a, b) => a.date.localeCompare(b.date));
+      if (datedNodes.length > 0) {
+        lines.push('');
+        lines.push('─── ТАЙМЛАЙН ───────────────────────────');
+        datedNodes.forEach(node => {
+          const typeLabel = NODE_TYPES.find(t => t.id === node.type)?.label || node.type;
+          lines.push(`${node.date}  [${typeLabel}] "${node.label}"`);
+        });
+      }
+    }
+    lines.push('');
+    lines.push('═══════════════════════════════════════');
+    lines.push('Сгенерировано: OSINT Terminal');
+    lines.push('═══════════════════════════════════════');
+    return lines.join('\n');
+  }
+
+  function showReport() {
+    const report = generateReport();
+    el.reportOutput.textContent = report;
+    el.reportModal.showModal();
+  }
+
+  el.reportCopyBtn.addEventListener('click', () => copyText(el.reportOutput.textContent));
+  el.reportDownloadBtn.addEventListener('click', () => downloadText('osint-report-' + Date.now() + '.txt', el.reportOutput.textContent));
+  el.reportCloseBtn.addEventListener('click', () => el.reportModal.close());
+
+  /* ─── ШАБЛОНЫ ─── */
+  function renderTemplates() {
+    el.templatesContainer.innerHTML = TEMPLATES.map(t =>
+      `<div class="template-card" data-tpl="${t.id}">
+        <h4>${escapeHtml(t.title)}</h4>
+        <p>${escapeHtml(t.desc)}</p>
+      </div>`
+    ).join('');
+  }
+
+  el.templatesContainer.addEventListener('click', e => {
+    const card = e.target.closest('.template-card');
+    if (!card) return;
+    const tpl = TEMPLATES.find(t => t.id === card.dataset.tpl);
+    if (!tpl) return;
+    applyTemplate(tpl);
+    el.templatesModal.close();
+    showToast('шаблон применён');
+  });
+
+  function applyTemplate(tpl) {
+    const r = el.graphViewport.getBoundingClientRect();
+    const center = screenToWorld(r.left + r.width / 2, r.top + r.height / 2);
+    const idMap = [];
+    // Создаём узлы по кругу вокруг центра
+    tpl.nodes.forEach((nodeDef, i) => {
+      const angle = (i / tpl.nodes.length) * 2 * Math.PI;
+      const radius = i === 0 ? 0 : 200;
+      const x = center.x + Math.cos(angle) * radius - 60;
+      const y = center.y + Math.sin(angle) * radius - 40;
+      const node = {
+        id: 'n' + (nextId++),
+        type: nodeDef.type,
+        label: nodeDef.label,
+        x, y,
+        priority: i === 0 ? 'high' : 'normal',
+        group: '',
+        date: ''
+      };
+      state.nodes.push(node);
+      idMap.push(node.id);
+    });
+    // Создаём связи
+    tpl.edges.forEach(([fromIdx, toIdx, type]) => {
+      if (idMap[fromIdx] && idMap[toIdx]) {
+        state.edges.push({ from: idMap[fromIdx], to: idMap[toIdx], type: type || 'related' });
+      }
+    });
+    pushHistory();
+    save();
+    render();
+    fitToNodes();
+    log('graph: template applied [' + tpl.title + ']');
+  }
+
+  /* ─── ЭКСПОРТ / ИМПОРТ ГРАФА (JSON) ─── */
   function exportGraph() {
     const data = JSON.stringify({ state, nextId, view, exported: new Date().toISOString() }, null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'osint-graph-' + Date.now() + '.json';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadJSON('osint-graph-' + Date.now() + '.json', JSON.parse(data));
     showToast('граф экспортирован');
     log('graph: exported');
   }
@@ -1211,6 +1907,7 @@ const graph = (() => {
           state = data.state;
           nextId = data.nextId || state.nodes.length + 1;
           if (data.view) view = { ...view, ...data.view };
+          pushHistory();
           save();
           applyTransform();
           render();
@@ -1223,9 +1920,13 @@ const graph = (() => {
   }
 
   return {
-    render, load, save, addNode, removeNode, clear,
+    render, load, save, addNode, removeNode,
+    clear: clearGraph,
     toggleConnect, exportGraph, importGraph,
-    fitToView, fitToNodes,
+    fitToView, fitToNodes, undo, redo,
+    searchGraph, exportPNG, showReport, renderTemplates,
+    getState: () => ({ state, nextId, view }),
+    setState: (s, n, v) => { state = s; nextId = n; if (v) view = { ...view, ...v }; pushHistory(); save(); applyTransform(); render(); },
     zoomIn: () => { const r = el.graphViewport.getBoundingClientRect(); zoomAt(1.25, r.width / 2, r.height / 2); },
     zoomOut: () => { const r = el.graphViewport.getBoundingClientRect(); zoomAt(1 / 1.25, r.width / 2, r.height / 2); },
     getLastTapPos: () => ({ x: lastTapPos.x, y: lastTapPos.y }),
@@ -1242,7 +1943,6 @@ function buildTypeGrid() {
   ).join('');
 }
 
-/* Делегирование событий для типов узлов */
 el.typeGrid.addEventListener('click', e => {
   const btn = e.target.closest('.type-btn');
   if (!btn) return;
@@ -1279,7 +1979,17 @@ el.confirmNodeBtn.addEventListener('click', () => {
 
 /* ═══════════ КНОПКИ ГРАФА ═══════════ */
 el.connectBtn.addEventListener('click', () => graph.toggleConnect());
-el.clearBtn.addEventListener('click', () => graph.clear());
+el.clearBtn.addEventListener('click', () => {
+  const ok = confirm ? undefined : null; // используем кастомный модал через graph
+  el.confirmModal.showModal();
+});
+el.confirmOkBtn.addEventListener('click', () => {
+  el.confirmModal.close();
+  graph.clear();
+  showToast('граф очищен');
+});
+el.confirmCancelBtn.addEventListener('click', () => el.confirmModal.close());
+
 el.exportBtn.addEventListener('click', () => graph.exportGraph());
 el.importBtn.addEventListener('click', () => el.importFile.click());
 el.importFile.addEventListener('change', ev => {
@@ -1287,13 +1997,171 @@ el.importFile.addEventListener('change', ev => {
   if (file) graph.importGraph(file);
   ev.target.value = '';
 });
+el.undoBtn.addEventListener('click', () => graph.undo());
+el.redoBtn.addEventListener('click', () => graph.redo());
+el.pngBtn.addEventListener('click', () => graph.exportPNG());
+el.reportBtn.addEventListener('click', () => graph.showReport());
+el.templatesBtn.addEventListener('click', () => {
+  graph.renderTemplates();
+  el.templatesModal.showModal();
+});
+el.templatesCancelBtn.addEventListener('click', () => el.templatesModal.close());
+
 el.zoomInBtn.addEventListener('click', () => graph.zoomIn());
 el.zoomOutBtn.addEventListener('click', () => graph.zoomOut());
 el.zoomFitBtn.addEventListener('click', () => graph.fitToNodes());
 el.zoomResetBtn.addEventListener('click', () => graph.fitToView());
 
+/* ═══════════ ПОИСК ПО ГРАФУ ═══════════ */
+el.graphSearch.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    graph.searchGraph(el.graphSearch.value);
+  }
+});
+
+/* ═══════════ ВЫБОР ТИПА СВЯЗИ ═══════════ */
+function buildEdgeTypeSelect() {
+  el.edgeTypeSelect.innerHTML = EDGE_TYPES.map(t =>
+    `<option value="${t.id}">${t.label}</option>`
+  ).join('');
+}
+
+/* ═══════════ ФИЛЬТР ПО ТИПАМ УЗЛОВ ═══════════ */
+function buildTypeFilter() {
+  el.typeFilter.innerHTML = NODE_TYPES.map(t =>
+    `<button type="button" class="type-chip active" data-type="${t.id}" title="${t.label}">${ICONS[t.id]}</button>`
+  ).join('');
+}
+
+el.typeFilter.addEventListener('click', e => {
+  const chip = e.target.closest('.type-chip');
+  if (!chip) return;
+  const type = chip.dataset.type;
+  if (activeNodeTypes.has(type)) {
+    activeNodeTypes.delete(type);
+    chip.classList.remove('active');
+  } else {
+    activeNodeTypes.add(type);
+    chip.classList.add('active');
+  }
+  graph.render();
+});
+
+/* ═══════════ ГОРЯЧИЕ КЛАВИШИ ═══════════ */
+document.addEventListener('keydown', e => {
+  if (currentView !== 'graph') return;
+  const target = e.target;
+  const isTyping = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT';
+  if (isTyping) return;
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
+    e.preventDefault();
+    graph.undo();
+    return;
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && e.shiftKey) {
+    e.preventDefault();
+    graph.redo();
+    return;
+  }
+  switch (e.key.toLowerCase()) {
+    case 'n':
+      e.preventDefault();
+      graph.resetLastTapPos();
+      openAddNodeModal();
+      break;
+    case 'c':
+      e.preventDefault();
+      graph.toggleConnect();
+      break;
+    case 'f':
+      e.preventDefault();
+      el.graphSearch.focus();
+      break;
+    case 'p':
+      e.preventDefault();
+      graph.exportPNG();
+      break;
+    case 'r':
+      e.preventDefault();
+      graph.showReport();
+      break;
+    case 'delete':
+    case 'backspace':
+      // Удаление выбранного узла
+      const selectedEl = el.graphWorld.querySelector('.graph-node.selected');
+      if (selectedEl) {
+        e.preventDefault();
+        graph.removeNode(selectedEl.dataset.id);
+      }
+      break;
+  }
+});
+
+/* ═══════════ ПОМОЩЬ ═══════════ */
+el.helpBtn.addEventListener('click', () => el.helpModal.showModal());
+el.helpCloseBtn.addEventListener('click', () => el.helpModal.close());
+
+/* ═══════════ ЭКСПОРТ / ИМПОРТ ПРОЕКТА ═══════════ */
+el.projExportBtn.addEventListener('click', () => {
+  const g = graph.getState();
+  const project = {
+    version: '2.0',
+    exported: new Date().toISOString(),
+    graph: { state: g.state, nextId: g.nextId, view: g.view },
+    favorites: [...favorites],
+    checklists: checklistState,
+    notes: boardNotes,
+    theme: activeTheme
+  };
+  downloadJSON('osint-project-' + Date.now() + '.json', project);
+  showToast('проект экспортирован');
+  log('project: exported');
+});
+
+el.projImportBtn.addEventListener('click', () => el.projImportFile.click());
+el.projImportFile.addEventListener('change', ev => {
+  const file = ev.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const project = JSON.parse(e.target.result);
+      if (!project || !project.graph) { showToast('неверный формат проекта'); return; }
+      // Восстанавливаем граф
+      graph.setState(project.graph.state, project.graph.nextId, project.graph.view);
+      // Восстанавливаем избранное
+      if (project.favorites) {
+        favorites = new Set(project.favorites);
+        LS.set('osint_favorites', [...favorites]);
+      }
+      // Восстанавливаем чек-листы
+      if (project.checklists) {
+        checklistState = project.checklists;
+        LS.set('osint_checklists', checklistState);
+        renderChecklists();
+      }
+      // Восстанавливаем заметки
+      if (project.notes) {
+        boardNotes = project.notes;
+        LS.set('osint_notes', boardNotes);
+        renderBoard();
+      }
+      // Восстанавливаем тему
+      if (project.theme) applyTheme(project.theme);
+      renderFilters();
+      renderTools();
+      showToast('проект импортирован');
+      log('project: imported');
+    } catch { showToast('ошибка чтения проекта'); }
+  };
+  reader.readAsText(file);
+  ev.target.value = '';
+});
+
 /* ═══════════ ИНИЦИАЛИЗАЦИЯ ═══════════ */
 buildTypeGrid();
+buildEdgeTypeSelect();
+buildTypeFilter();
 </script>
 </body>
-</html>
+                                                   </html>
