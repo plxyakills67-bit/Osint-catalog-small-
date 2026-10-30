@@ -79,7 +79,7 @@ input::placeholder,textarea::placeholder{color:#555}
 .progress-panel{border:1px solid var(--border);background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.01));padding:18px;margin-bottom:22px}
 .progress-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px}
 .progress-level{font-size:14px;color:#fff;letter-spacing:1px}
-.progress-rank{font-size:12px;color:#ffd700;letter-spacing:1px}
+.progress-rank{font-size:12px;color:#fff;letter-spacing:1px}
 .progress-bar-wrap{height:12px;background:#1a1a1a;border:1px solid var(--border);margin-bottom:12px;overflow:hidden}
 .progress-bar{height:100%;background:linear-gradient(90deg,#555,#fff);transition:width .5s ease}
 .progress-stats{display:flex;gap:18px;flex-wrap:wrap;font-size:11px;color:#888}
@@ -88,21 +88,22 @@ input::placeholder,textarea::placeholder{color:#555}
 .module-card:hover{border-color:var(--border-hi)}
 .module-head{display:flex;align-items:center;gap:12px;padding:16px;cursor:pointer}
 .module-head:hover{background:rgba(255,255,255,.03)}
-.module-icon{font-size:24px;flex-shrink:0}
+.module-icon{flex-shrink:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:rgba(255,255,255,.03);padding:5px}
+.module-icon svg{width:22px;height:22px;stroke:#ddd;fill:none;stroke-width:1.5}
 .module-info{flex:1}
 .module-title{font-size:14px;color:#fff;letter-spacing:1px;margin-bottom:4px}
 .module-desc{font-size:11px;color:#888;line-height:1.5}
-.module-status{font-size:11px;padding:4px 10px;border:1px solid var(--border);white-space:nowrap}
-.module-status.done{color:#9aff9a;border-color:#4a7a4a}
-.module-status.progress{color:#ffd700;border-color:#7a6a3a}
-.module-status.locked{color:#666}
+.module-status{font-size:11px;padding:4px 10px;border:1px solid var(--border);white-space:nowrap;color:#888}
+.module-status.done{color:#fff;border-color:#888}
+.module-status.progress{color:#ccc;border-color:#666}
+.module-status.locked{color:#555}
 .module-body{display:none;padding:0 16px 16px;border-top:1px solid rgba(255,255,255,.05)}
 .module-card.open .module-body{display:block}
 .lesson-item{border:1px solid rgba(255,255,255,.06);padding:14px;margin-bottom:10px;background:rgba(255,255,255,.02)}
 .lesson-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .lesson-title{font-size:13px;color:#fff;flex:1}
 .lesson-badge{font-size:10px;padding:3px 8px;border:1px solid var(--border);color:#888}
-.lesson-badge.done{color:#9aff9a;border-color:#4a7a4a}
+.lesson-badge.done{color:#fff;border-color:#888}
 .lesson-content{font-size:12px;color:#bbb;line-height:1.8;margin-bottom:12px;white-space:pre-wrap}
 .lesson-materials{margin-bottom:12px}
 .lesson-materials a{display:inline-block;color:#aaa;font-size:11px;border:1px solid var(--border);padding:6px 10px;margin:4px 4px 4px 0;transition:.18s}
@@ -115,7 +116,7 @@ input::placeholder,textarea::placeholder{color:#555}
 .lesson-btn:hover{color:#fff;border-color:#666}
 .lesson-btn.primary{background:#eaeaea;color:#000;border-color:#eaeaea;font-weight:700}
 .lesson-btn.primary:hover{background:#fff}
-.lesson-btn.done{background:#2a4a2a;color:#9aff9a;border-color:#4a7a4a}
+.lesson-btn.done{background:#2a2a2a;color:#fff;border-color:#666}
 .quiz-block{border:1px solid rgba(255,255,255,.08);padding:16px;margin-top:14px;background:rgba(255,255,255,.02)}
 .quiz-title{font-size:13px;color:#fff;margin-bottom:12px;letter-spacing:1px}
 .quiz-question{font-size:12px;color:#ccc;margin-bottom:10px;line-height:1.6}
@@ -123,18 +124,17 @@ input::placeholder,textarea::placeholder{color:#555}
 .quiz-opt{border:1px solid var(--border);background:rgba(255,255,255,.02);color:#aaa;padding:10px 12px;cursor:pointer;font-size:12px;transition:.18s;text-align:left}
 .quiz-opt:hover{border-color:#666;color:#fff}
 .quiz-opt.selected{border-color:#fff;color:#fff;background:rgba(255,255,255,.06)}
-.quiz-opt.correct{border-color:#4a7a4a;color:#9aff9a;background:rgba(74,122,74,.15)}
-.quiz-opt.wrong{border-color:#7a4a4a;color:#ff9a9a;background:rgba(122,74,74,.15)}
 .quiz-result{font-size:12px;margin-top:10px;padding:10px;border:1px solid var(--border)}
-.quiz-result.pass{color:#9aff9a;border-color:#4a7a4a}
-.quiz-result.fail{color:#ff9a9a;border-color:#7a4a4a}
-.skillmap{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:16px}
+.quiz-result.pass{color:#fff;border-color:#888}
+.quiz-result.fail{color:#aaa;border-color:#555}
+.skillmap{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:16px}
 .skill-node{border:1px solid var(--border);background:rgba(255,255,255,.02);padding:12px;text-align:center}
-.skill-node .skill-icon{font-size:20px;margin-bottom:6px}
-.skill-node .skill-name{font-size:10px;color:#aaa;letter-spacing:.5px;margin-bottom:6px}
+.skill-node .skill-icon{width:24px;height:24px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center}
+.skill-node .skill-icon svg{width:20px;height:20px;stroke:#ddd;fill:none;stroke-width:1.5}
+.skill-node .skill-name{font-size:9px;color:#aaa;letter-spacing:.5px;margin-bottom:6px}
 .skill-node .skill-bar{height:4px;background:#1a1a1a;overflow:hidden}
 .skill-node .skill-fill{height:100%;background:#fff;transition:width .3s}
-.skill-node.done{border-color:#4a7a4a}
+.skill-node.done{border-color:#888}
 .trainer-card{border:1px solid var(--border);background:rgba(255,255,255,.02);padding:18px;margin-bottom:14px}
 .trainer-task{font-size:13px;color:#ddd;line-height:1.7;margin-bottom:12px}
 .trainer-input{display:flex;gap:8px;margin-bottom:10px}
@@ -146,10 +146,10 @@ input::placeholder,textarea::placeholder{color:#555}
 .trainer-hint.open .trainer-hint-text{display:block}
 .trainer-feedback{font-size:12px;padding:10px;border:1px solid var(--border);margin-top:10px;display:none}
 .trainer-feedback.show{display:block}
-.trainer-feedback.ok{color:#9aff9a;border-color:#4a7a4a}
-.trainer-feedback.fail{color:#ff9a9a;border-color:#7a4a4a}
+.trainer-feedback.ok{color:#fff;border-color:#888}
+.trainer-feedback.fail{color:#aaa;border-color:#555}
 .trainer-status{font-size:11px;color:#888;margin-bottom:8px}
-.trainer-status.done{color:#9aff9a}
+.trainer-status.done{color:#fff}
 .glossary-item{border:1px solid rgba(255,255,255,.08);padding:14px;margin-bottom:8px;background:rgba(255,255,255,.02)}
 .glossary-item h4{font-size:13px;color:#fff;margin-bottom:6px;letter-spacing:1px}
 .glossary-item p{font-size:12px;color:#a7a7a7;line-height:1.6}
@@ -183,7 +183,6 @@ input::placeholder,textarea::placeholder{color:#555}
 .graph-world{position:absolute;top:0;left:0;width:6000px;height:6000px;transform-origin:0 0;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.02),transparent 70%),linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px) 0 0/40px 40px,linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px) 0 0/40px 40px;will-change:transform}
 .graph-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
 .graph-edge{stroke:#888;stroke-width:1.5}
-.edge-label{fill:#999;font-size:10px;letter-spacing:.5px}
 .graph-node{position:absolute;z-index:2;min-width:120px;border:1px solid var(--border);background:linear-gradient(180deg,#111,#080808);color:#eee;padding:10px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:grab;user-select:none;transition:border-color .18s;font-size:12px}
 .graph-node:hover{border-color:#888}
 .graph-node.selected{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.15)}
@@ -249,13 +248,14 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       <div class="terminal-body">
         <div class="brand">
           <h1>OSINT ACADEMY</h1>
-          <p>interactive learning // v3.0</p>
+          <p>interactive learning // v3.1 // monochrome</p>
         </div>
-        <div class="boot" id="authBoot">
+        <div class="boot">
           [ ok ] open-source learning<br>
           [ ok ] legal scope: public data only<br>
           [ ok ] auth: cloud (supabase)<br>
-          [ ok ] modules + trainer + tests<br>
+          [ ok ] 10 modules / 20 lessons<br>
+          [ ok ] dork trainer: 12 tasks<br>
           [ ok ] progress & levels<br>
           [ -- ] login from any device
         </div>
@@ -294,13 +294,13 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
     </nav>
     <div class="topbar-right">
       <select class="lang-select" id="langSelect">
-        <option value="ru">🇷🇺 RU</option>
-        <option value="en">🇬🇧 EN</option>
-        <option value="uk">🇺🇦 UK</option>
-        <option value="zh">🇨🇳 中文</option>
-        <option value="ja">🇯🇵 日本語</option>
-        <option value="hy">🇦🇲 ՀԱՅ</option>
-        <option value="ko">🇰🇷 한국어</option>
+        <option value="ru">RU</option>
+        <option value="en">EN</option>
+        <option value="uk">UK</option>
+        <option value="zh">ZH</option>
+        <option value="ja">JA</option>
+        <option value="hy">HY</option>
+        <option value="ko">KO</option>
       </select>
       <button class="top-btn" id="themeBtn" type="button" title="theme">◐</button>
       <div class="clock" id="clock">--:--:--</div>
@@ -420,15 +420,15 @@ const SUPABASE_URL = 'https://ltjxlwcuoxhoerngseym.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0anhsd2N1b3hob2VybmdzZXltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxOTUzODQsImV4cCI6MjEwODc3MTM4NH0.twVAE5geFigiCMHtHUXA0HZH1uTntAJynPEOR3L6_LI';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* ═══════════ ЛОКАЛИЗАЦИЯ ИНТЕРФЕЙСА (7 языков) ═══════════ */
+/* ═══════════ ЛОКАЛИЗАЦИЯ ИНТЕРФЕЙСА ═══════════ */
 const UI = {
-  ru:{nav_academy:'АКАДЕМИЯ',nav_trainer:'ТРЕНАЖЁР',nav_graph:'ГРАФ',nav_glossary:'ГЛОССАРИЙ',nav_board:'ДОСКА',btn_logout:'ВЫХОД',tab_login:'ВХОД',tab_register:'РЕГИСТРАЦИЯ',lbl_email:'E-mail',lbl_password:'Пароль',lbl_password2:'Подтверждение пароля',lbl_callsign:'Позывной',btn_login:'ВОЙТИ',btn_register:'СОЗДАТЬ АККАУНТ',auth_note:'Облачная авторизация. Аккаунт хранится на сервере, вход с любого устройства. Сессия 7 дней.',academy_title:'УЧЕБНЫЕ МОДУЛИ',trainer_title:'ТРЕНАЖЁР ДОРКОВ',trainer_desc:'Составь правильный поисковый запрос для каждой задачи. Используй операторы: site:, filetype:, intitle:, intext:, inurl:, кавычки, -, |, *',graph_title:'Визуализация связей',graph_empty:'Нажми + УЗЕЛ или тапни по пустому полю, чтобы добавить сущность.',glossary_title:'ГЛОССАРИЙ',board_title:'ДОСКА ЗАМЕТОК',btn_add_node:'+ УЗЕЛ',btn_connect:'СОЕДИНИТЬ',btn_clear:'ОЧИСТИТЬ',modal_add_node:'ДОБАВИТЬ УЗЕЛ',lbl_node_type:'ТИП СУЩНОСТИ',lbl_node_label:'ПОДПИСЬ',btn_cancel:'ОТМЕНА',btn_add:'ДОБАВИТЬ',modal_confirm:'ПОДТВЕРЖДЕНИЕ',confirm_text:'Удалить весь граф? Это нельзя отменить.',btn_yes_delete:'ДА, УДАЛИТЬ',progress_level:'Уровень',lessons_done:'уроков пройдено',tasks_done:'заданий выполнено',quizzes_passed:'тестов сдано',rank_novice:'НОВИЧОК',rank_explorer:'ИССЛЕДОВАТЕЛЬ',rank_analyst:'АНАЛИТИК',rank_expert:'ЭКСПЕРТ',status_done:'пройден',status_progress:'в процессе',status_locked:'не начат',lesson_task:'ПРАКТИЧЕСКОЕ ЗАДАНИЕ',btn_mark_done:'Отметить выполненным',btn_done:'Выполнено ✓',btn_start_lesson:'Начать урок',btn_check:'ПРОВЕРИТЬ',btn_show_hint:'Подсказка',btn_show_answer:'Показать ответ',quiz_title:'ТЕСТ ПО МОДУЛЮ',quiz_submit:'СДАТЬ ТЕСТ',quiz_passed:'Тест сдан! Отличная работа.',quiz_failed:'Есть ошибки. Попробуй ещё раз после повторения урока.',question:'Вопрос',correct_answer:'Правильный ответ',share_label:'Поделись с другом:',graph_hint:'Пальцами: 1 — двигать, 2 — зум. Тап — добавить узел. Двойной клик по узлу — удалить.'},
-  en:{nav_academy:'ACADEMY',nav_trainer:'TRAINER',nav_graph:'GRAPH',nav_glossary:'GLOSSARY',nav_board:'BOARD',btn_logout:'LOGOUT',tab_login:'LOGIN',tab_register:'REGISTER',lbl_email:'E-mail',lbl_password:'Password',lbl_password2:'Confirm password',lbl_callsign:'Callsign',btn_login:'LOGIN',btn_register:'CREATE ACCOUNT',auth_note:'Cloud auth. Account stored on server, login from any device. Session 7 days.',academy_title:'LEARNING MODULES',trainer_title:'DORK TRAINER',trainer_desc:'Compose the correct search query for each task. Use operators: site:, filetype:, intitle:, intext:, inurl:, quotes, -, |, *',graph_title:'Link Visualization',graph_empty:'Press + NODE or tap empty space to add an entity.',glossary_title:'GLOSSARY',board_title:'NOTES BOARD',btn_add_node:'+ NODE',btn_connect:'CONNECT',btn_clear:'CLEAR',modal_add_node:'ADD NODE',lbl_node_type:'ENTITY TYPE',lbl_node_label:'LABEL',btn_cancel:'CANCEL',btn_add:'ADD',modal_confirm:'CONFIRMATION',confirm_text:'Delete entire graph? This cannot be undone.',btn_yes_delete:'YES, DELETE',progress_level:'Level',lessons_done:'lessons done',tasks_done:'tasks done',quizzes_passed:'tests passed',rank_novice:'NOVICE',rank_explorer:'EXPLORER',rank_analyst:'ANALYST',rank_expert:'EXPERT',status_done:'completed',status_progress:'in progress',status_locked:'not started',lesson_task:'PRACTICAL TASK',btn_mark_done:'Mark as done',btn_done:'Done ✓',btn_start_lesson:'Start lesson',btn_check:'CHECK',btn_show_hint:'Hint',btn_show_answer:'Show answer',quiz_title:'MODULE TEST',quiz_submit:'SUBMIT TEST',quiz_passed:'Test passed! Great job.',quiz_failed:'There are errors. Review the lesson and try again.',question:'Question',correct_answer:'Correct answer',share_label:'Share with a friend:',graph_hint:'Fingers: 1 — pan, 2 — zoom. Tap — add node. Double click node — delete.'},
-  uk:{nav_academy:'АКАДЕМІЯ',nav_trainer:'ТРЕНАЖЕР',nav_graph:'ГРАФ',nav_glossary:'ГЛОСАРІЙ',nav_board:'ДОШКА',btn_logout:'ВИХІД',tab_login:'ВХІД',tab_register:'РЕЄСТРАЦІЯ',lbl_email:'E-mail',lbl_password:'Пароль',lbl_password2:'Підтвердження пароля',lbl_callsign:'Позивний',btn_login:'УВІЙТИ',btn_register:'СТВОРИТИ АКАУНТ',auth_note:'Хмарна авторизація. Акаунт зберігається на сервері, вхід з будь-якого пристрою. Сесія 7 днів.',academy_title:'НАВЧАЛЬНІ МОДУЛІ',trainer_title:'ТРЕНАЖЕР ДОРКІВ',trainer_desc:'Склади правильний пошуковий запит для кожного завдання. Використовуй оператори: site:, filetype:, intitle:, intext:, inurl:, лапки, -, |, *',graph_title:'Візуалізація звʼязків',graph_empty:'Натисни + ВУЗОЛ або тапни по порожньому полю, щоб додати сутність.',glossary_title:'ГЛОСАРІЙ',board_title:'ДОШКА НОТАТОК',btn_add_node:'+ ВУЗОЛ',btn_connect:'ЗʼЄДНАТИ',btn_clear:'ОЧИСТИТИ',modal_add_node:'ДОДАТИ ВУЗОЛ',lbl_node_type:'ТИП СУТНОСТІ',lbl_node_label:'ПІДПИС',btn_cancel:'СКАСУВАТИ',btn_add:'ДОДАТИ',modal_confirm:'ПІДТВЕРДЖЕННЯ',confirm_text:'Видалити весь граф? Це не можна скасувати.',btn_yes_delete:'ТАК, ВИДАЛИТИ',progress_level:'Рівень',lessons_done:'уроків пройдено',tasks_done:'завдань виконано',quizzes_passed:'тестів складено',rank_novice:'НОВАЧОК',rank_explorer:'ДОСЛІДНИК',rank_analyst:'АНАЛІТИК',rank_expert:'ЕКСПЕРТ',status_done:'пройдено',status_progress:'у процесі',status_locked:'не почато',lesson_task:'ПРАКТИЧНЕ ЗАВДАННЯ',btn_mark_done:'Позначити виконаним',btn_done:'Виконано ✓',btn_start_lesson:'Почати урок',btn_check:'ПЕРЕВІРИТИ',btn_show_hint:'Підказка',btn_show_answer:'Показати відповідь',quiz_title:'ТЕСТ ПО МОДУЛЮ',quiz_submit:'СКЛАСТИ ТЕСТ',quiz_passed:'Тест складено! Чудова робота.',quiz_failed:'Є помилки. Спробуй ще раз після повторення уроку.',question:'Питання',correct_answer:'Правильна відповідь',share_label:'Поділися з другом:',graph_hint:'Пальцями: 1 — рухати, 2 — зум. Тап — додати вузол. Подвійний клік по вузлу — видалити.'},
-  zh:{nav_academy:'学院',nav_trainer:'训练器',nav_graph:'图表',nav_glossary:'术语表',nav_board:'笔记板',btn_logout:'退出',tab_login:'登录',tab_register:'注册',lbl_email:'邮箱',lbl_password:'密码',lbl_password2:'确认密码',lbl_callsign:'代号',btn_login:'登录',btn_register:'创建账户',auth_note:'云认证。账户存储在服务器，可从任何设备登录。会话7天。',academy_title:'学习模块',trainer_title:'DORK 训练器',trainer_desc:'为每个任务编写正确的搜索查询。使用运算符：site:, filetype:, intitle:, intext:, inurl:, 引号, -, |, *',graph_title:'链接可视化',graph_empty:'点击 + 节点 或点击空白处添加实体。',glossary_title:'术语表',board_title:'笔记板',btn_add_node:'+ 节点',btn_connect:'连接',btn_clear:'清除',modal_add_node:'添加节点',lbl_node_type:'实体类型',lbl_node_label:'标签',btn_cancel:'取消',btn_add:'添加',modal_confirm:'确认',confirm_text:'删除整个图表？无法撤销。',btn_yes_delete:'是，删除',progress_level:'等级',lessons_done:'已完成课程',tasks_done:'已完成任务',quizzes_passed:'已通过测试',rank_novice:'新手',rank_explorer:'探索者',rank_analyst:'分析师',rank_expert:'专家',status_done:'已完成',status_progress:'进行中',status_locked:'未开始',lesson_task:'实践任务',btn_mark_done:'标记完成',btn_done:'已完成 ✓',btn_start_lesson:'开始课程',btn_check:'检查',btn_show_hint:'提示',btn_show_answer:'显示答案',quiz_title:'模块测试',quiz_submit:'提交测试',quiz_passed:'测试通过！干得好。',quiz_failed:'有错误。复习课程后再试。',question:'问题',correct_answer:'正确答案',share_label:'分享给朋友：',graph_hint:'手指：1 — 平移，2 — 缩放。点击 — 添加节点。双击节点 — 删除。'},
-  ja:{nav_academy:'アカデミー',nav_trainer:'トレーナー',nav_graph:'グラフ',nav_glossary:'用語集',nav_board:'ボード',btn_logout:'ログアウト',tab_login:'ログイン',tab_register:'登録',lbl_email:'メール',lbl_password:'パスワード',lbl_password2:'パスワード確認',lbl_callsign:'コールサイン',btn_login:'ログイン',btn_register:'アカウント作成',auth_note:'クラウド認証。アカウントはサーバーに保存、どのデバイスからもログイン可能。セッション7日間。',academy_title:'学習モジュール',trainer_title:'DORKトレーナー',trainer_desc:'各タスクに正しい検索クエリを作成。演算子を使用：site:, filetype:, intitle:, intext:, inurl:, 引用符, -, |, *',graph_title:'リンク可視化',graph_empty:'+ ノード を押すか、空白をタップしてエンティティを追加。',glossary_title:'用語集',board_title:'メモボード',btn_add_node:'+ ノード',btn_connect:'接続',btn_clear:'クリア',modal_add_node:'ノード追加',lbl_node_type:'エンティティタイプ',lbl_node_label:'ラベル',btn_cancel:'キャンセル',btn_add:'追加',modal_confirm:'確認',confirm_text:'グラフ全体を削除？元に戻せません。',btn_yes_delete:'はい、削除',progress_level:'レベル',lessons_done:'レッスン完了',tasks_done:'タスク完了',quizzes_passed:'テスト合格',rank_novice:'初心者',rank_explorer:'探索者',rank_analyst:'アナリスト',rank_expert:'エキスパート',status_done:'完了',status_progress:'進行中',status_locked:'未開始',lesson_task:'実践タスク',btn_mark_done:'完了にする',btn_done:'完了 ✓',btn_start_lesson:'レッスン開始',btn_check:'チェック',btn_show_hint:'ヒント',btn_show_answer:'答えを見る',quiz_title:'モジュールテスト',quiz_submit:'テスト提出',quiz_passed:'テスト合格！素晴らしい。',quiz_failed:'エラーあり。レッスンを復習して再挑戦。',question:'質問',correct_answer:'正解',share_label:'友達にシェア：',graph_hint:'指：1本 — 移動、2本 — ズーム。タップ — ノード追加。ノードをダブルクリック — 削除。'},
-  hy:{nav_academy:'ԱԿԱԴԵՄԻԱ',nav_trainer:'ՄԱՐԶԻՉ',nav_graph:'ԳՐԱՖ',nav_glossary:'ԲԱՌԱՐԱՆ',nav_board:'ՏԱԽՏԱԿ',btn_logout:'ԵԼՔ',tab_login:'ՄՈՒՏՔ',tab_register:'ԳՐԱՆՑՈՒՄ',lbl_email:'Էլ. հասցե',lbl_password:'Գաղտնաբառ',lbl_password2:'Հաստատել գաղտնաբառը',lbl_callsign:'Կանչանուն',btn_login:'ՄՈՒՏՔ ԳՈՐԾԵԼ',btn_register:'ՍՏԵՂԾԵԼ ՀԱՇԻՎ',auth_note:'Ամպային նույնականացում։ Հաշիվը պահվում է սերվերում, մուտքը՝ ցանկացած սարքից։ Սեսիա՝ 7 օր։',academy_title:'ՈՒՍՈՒՄՆԱԿԱՆ ՄՈԴՈՒԼՆԵՐ',trainer_title:'DORK ՄԱՐԶԻՉ',trainer_desc:'Կազմեք ճիշտ որոնման հարցում յուրաքանչյուր առաջադրանքի համար։ Օգտագործեք օպերատորներ՝ site:, filetype:, intitle:, intext:, inurl:, չակերտներ, -, |, *',graph_title:'Կապերի վիզուալիզացիա',graph_empty:'Սեղմեք + ՀԱՆԳՈՒՅՑ կամ հպեք դատարկ տեղում՝ էություն ավելացնելու համար։',glossary_title:'ԲԱՌԱՐԱՆ',board_title:'ՆՇՈՒՄՆԵՐԻ ՏԱԽՏԱԿ',btn_add_node:'+ ՀԱՆԳՈՒՅՑ',btn_connect:'ԿԱՊԵԼ',btn_clear:'ՄԱՔՐԵԼ',modal_add_node:'ԱՎԵԼԱՑՆԵԼ ՀԱՆԳՈՒՅՑ',lbl_node_type:'ԷՈՒԹՅԱՆ ՏԵՍԱԿ',lbl_node_label:'ՊԻՏԱԿ',btn_cancel:'ՉԵՂԱՐԿԵԼ',btn_add:'ԱՎԵԼԱՑՆԵԼ',modal_confirm:'ՀԱՍՏԱՏՈՒՄ',confirm_text:'Ջնջե՞լ ամբողջ գրաֆը։ Սա չի կարելի հետարկել։',btn_yes_delete:'ԱՅՈ, ՋՆՋԵԼ',progress_level:'Մակարդակ',lessons_done:'դասեր ավարտված',tasks_done:'առաջադրանքներ կատարված',quizzes_passed:'թեստեր հանձնված',rank_novice:'ՆՈՐԵԿ',rank_explorer:'ՀԵՏԱԶՈՏՈՂ',rank_analyst:'ՎԵՐԼՈՒԾԱԲԱՆ',rank_expert:'ՓՈՐՁԱԳԵՏ',status_done:'ավարտված',status_progress:'ընթացքում',status_locked:'չսկսված',lesson_task:'ԳՈՐԾՆԱԿԱՆ ԱՌԱՋԱԴՐԱՆՔ',btn_mark_done:'Նշել որպես կատարված',btn_done:'Կատարված ✓',btn_start_lesson:'Սկսել դասը',btn_check:'ՍՏՈՒԳԵԼ',btn_show_hint:'Հուշում',btn_show_answer:'Ցույց տալ պատասխանը',quiz_title:'ՄՈԴՈՒԼԻ ԹԵՍՏ',quiz_submit:'ՀԱՆՁՆԵԼ ԹԵՍՏԸ',quiz_passed:'Թեստը հանձնված է! Հիանալի աշխատանք։',quiz_failed:'Կան սխալներ։ Կրկնեք դասը և փորձեք նորից։',question:'Հարց',correct_answer:'Ճիշտ պատասխան',share_label:'Կիսվեք ընկերոջ հետ՝',graph_hint:'Մատներով՝ 1 — տեղաշարժ, 2 — խոշորացում։ Հպում — ավելացնել հանգույց։ Կրկնակի հպում — ջնջել։'},
-  ko:{nav_academy:'아카데미',nav_trainer:'트레이너',nav_graph:'그래프',nav_glossary:'용어집',nav_board:'보드',btn_logout:'로그아웃',tab_login:'로그인',tab_register:'회원가입',lbl_email:'이메일',lbl_password:'비밀번호',lbl_password2:'비밀번호 확인',lbl_callsign:'콜사인',btn_login:'로그인',btn_register:'계정 생성',auth_note:'클라우드 인증. 계정은 서버에 저장, 모든 기기에서 로그인 가능. 세션 7일.',academy_title:'학습 모듈',trainer_title:'DORK 트레이너',trainer_desc:'각 작업에 맞는 올바른 검색 쿼리를 작성하세요. 연산자 사용: site:, filetype:, intitle:, intext:, inurl:, 따옴표, -, |, *',graph_title:'링크 시각화',graph_empty:'+ 노드 를 누르거나 빈 공간을 탭하여 엔티티를 추가하세요.',glossary_title:'용어집',board_title:'노트 보드',btn_add_node:'+ 노드',btn_connect:'연결',btn_clear:'지우기',modal_add_node:'노드 추가',lbl_node_type:'엔티티 유형',lbl_node_label:'라벨',btn_cancel:'취소',btn_add:'추가',modal_confirm:'확인',confirm_text:'전체 그래프를 삭제할까요? 되돌릴 수 없습니다.',btn_yes_delete:'예, 삭제',progress_level:'레벨',lessons_done:'레슨 완료',tasks_done:'작업 완료',quizzes_passed:'테스트 통과',rank_novice:'초보자',rank_explorer:'탐험가',rank_analyst:'분석가',rank_expert:'전문가',status_done:'완료',status_progress:'진행 중',status_locked:'시작 안 함',lesson_task:'실습 과제',btn_mark_done:'완료 표시',btn_done:'완료 ✓',btn_start_lesson:'레슨 시작',btn_check:'확인',btn_show_hint:'힌트',btn_show_answer:'답 보기',quiz_title:'모듈 테스트',quiz_submit:'테스트 제출',quiz_passed:'테스트 통과! 훌륭합니다.',quiz_failed:'오류가 있습니다. 레슨을 복습하고 다시 시도하세요.',question:'질문',correct_answer:'정답',share_label:'친구와 공유:',graph_hint:'손가락: 1개 — 이동, 2개 — 줌. 탭 — 노드 추가. 노드 더블클릭 — 삭제.'}
+  ru:{nav_academy:'АКАДЕМИЯ',nav_trainer:'ТРЕНАЖЁР',nav_graph:'ГРАФ',nav_glossary:'ГЛОССАРИЙ',nav_board:'ДОСКА',btn_logout:'ВЫХОД',tab_login:'ВХОД',tab_register:'РЕГИСТРАЦИЯ',lbl_email:'E-mail',lbl_password:'Пароль',lbl_password2:'Подтверждение пароля',lbl_callsign:'Позывной',btn_login:'ВОЙТИ',btn_register:'СОЗДАТЬ АККАУНТ',auth_note:'Облачная авторизация. Аккаунт хранится на сервере, вход с любого устройства. Сессия 7 дней.',academy_title:'УЧЕБНЫЕ МОДУЛИ',trainer_title:'ТРЕНАЖЁР ДОРКОВ',trainer_desc:'Составь правильный поисковый запрос для каждой задачи. Используй операторы: site:, filetype:, intitle:, intext:, inurl:, кавычки, -, |, *',graph_title:'Визуализация связей',graph_empty:'Нажми + УЗЕЛ или тапни по пустому полю, чтобы добавить сущность.',glossary_title:'ГЛОССАРИЙ',board_title:'ДОСКА ЗАМЕТОК',btn_add_node:'+ УЗЕЛ',btn_connect:'СОЕДИНИТЬ',btn_clear:'ОЧИСТИТЬ',modal_add_node:'ДОБАВИТЬ УЗЕЛ',lbl_node_type:'ТИП СУЩНОСТИ',lbl_node_label:'ПОДПИСЬ',btn_cancel:'ОТМЕНА',btn_add:'ДОБАВИТЬ',modal_confirm:'ПОДТВЕРЖДЕНИЕ',confirm_text:'Удалить весь граф? Это нельзя отменить.',btn_yes_delete:'ДА, УДАЛИТЬ',progress_level:'Уровень',lessons_done:'уроков пройдено',tasks_done:'заданий выполнено',quizzes_passed:'тестов сдано',rank_novice:'НОВИЧОК',rank_explorer:'ИССЛЕДОВАТЕЛЬ',rank_analyst:'АНАЛИТИК',rank_expert:'ЭКСПЕРТ',status_done:'пройден',status_progress:'в процессе',status_locked:'не начат',lesson_task:'ПРАКТИЧЕСКОЕ ЗАДАНИЕ',btn_mark_done:'Отметить выполненным',btn_done:'Выполнено ✓',btn_start_lesson:'Завершить урок',btn_check:'ПРОВЕРИТЬ',btn_show_hint:'Подсказка [?]',quiz_title:'ТЕСТ ПО МОДУЛЮ',quiz_submit:'СДАТЬ ТЕСТ',quiz_passed:'Тест сдан! Отличная работа.',quiz_failed:'Есть ошибки. Повтори урок и попробуй ещё раз.',question:'Вопрос',correct_answer:'Правильный ответ',share_label:'Поделись с другом:',graph_hint:'Пальцами: 1 — двигать, 2 — зум. Тап — добавить узел. Двойной клик по узлу — удалить.',hint_label:'[?] Подсказка'},
+  en:{nav_academy:'ACADEMY',nav_trainer:'TRAINER',nav_graph:'GRAPH',nav_glossary:'GLOSSARY',nav_board:'BOARD',btn_logout:'LOGOUT',tab_login:'LOGIN',tab_register:'REGISTER',lbl_email:'E-mail',lbl_password:'Password',lbl_password2:'Confirm password',lbl_callsign:'Callsign',btn_login:'LOGIN',btn_register:'CREATE ACCOUNT',auth_note:'Cloud auth. Account stored on server, login from any device. Session 7 days.',academy_title:'LEARNING MODULES',trainer_title:'DORK TRAINER',trainer_desc:'Compose the correct search query for each task. Use operators: site:, filetype:, intitle:, intext:, inurl:, quotes, -, |, *',graph_title:'Link Visualization',graph_empty:'Press + NODE or tap empty space to add an entity.',glossary_title:'GLOSSARY',board_title:'NOTES BOARD',btn_add_node:'+ NODE',btn_connect:'CONNECT',btn_clear:'CLEAR',modal_add_node:'ADD NODE',lbl_node_type:'ENTITY TYPE',lbl_node_label:'LABEL',btn_cancel:'CANCEL',btn_add:'ADD',modal_confirm:'CONFIRMATION',confirm_text:'Delete entire graph? This cannot be undone.',btn_yes_delete:'YES, DELETE',progress_level:'Level',lessons_done:'lessons done',tasks_done:'tasks done',quizzes_passed:'tests passed',rank_novice:'NOVICE',rank_explorer:'EXPLORER',rank_analyst:'ANALYST',rank_expert:'EXPERT',status_done:'completed',status_progress:'in progress',status_locked:'not started',lesson_task:'PRACTICAL TASK',btn_mark_done:'Mark as done',btn_done:'Done ✓',btn_start_lesson:'Complete lesson',btn_check:'CHECK',btn_show_hint:'Hint [?]',quiz_title:'MODULE TEST',quiz_submit:'SUBMIT TEST',quiz_passed:'Test passed! Great job.',quiz_failed:'There are errors. Review the lesson and try again.',question:'Question',correct_answer:'Correct answer',share_label:'Share with a friend:',graph_hint:'Fingers: 1 — pan, 2 — zoom. Tap — add node. Double click node — delete.',hint_label:'[?] Hint'},
+  uk:{nav_academy:'АКАДЕМІЯ',nav_trainer:'ТРЕНАЖЕР',nav_graph:'ГРАФ',nav_glossary:'ГЛОСАРІЙ',nav_board:'ДОШКА',btn_logout:'ВИХІД',tab_login:'ВХІД',tab_register:'РЕЄСТРАЦІЯ',lbl_email:'E-mail',lbl_password:'Пароль',lbl_password2:'Підтвердження пароля',lbl_callsign:'Позивний',btn_login:'УВІЙТИ',btn_register:'СТВОРИТИ АКАУНТ',auth_note:'Хмарна авторизація. Акаунт зберігається на сервері, вхід з будь-якого пристрою. Сесія 7 днів.',academy_title:'НАВЧАЛЬНІ МОДУЛІ',trainer_title:'ТРЕНАЖЕР ДОРКІВ',trainer_desc:'Склади правильний пошуковий запит для кожного завдання. Використовуй оператори: site:, filetype:, intitle:, intext:, inurl:, лапки, -, |, *',graph_title:'Візуалізація звʼязків',graph_empty:'Натисни + ВУЗОЛ або тапни по порожньому полю, щоб додати сутність.',glossary_title:'ГЛОСАРІЙ',board_title:'ДОШКА НОТАТОК',btn_add_node:'+ ВУЗОЛ',btn_connect:'ЗʼЄДНАТИ',btn_clear:'ОЧИСТИТИ',modal_add_node:'ДОДАТИ ВУЗОЛ',lbl_node_type:'ТИП СУТНОСТІ',lbl_node_label:'ПІДПИС',btn_cancel:'СКАСУВАТИ',btn_add:'ДОДАТИ',modal_confirm:'ПІДТВЕРДЖЕННЯ',confirm_text:'Видалити весь граф? Це не можна скасувати.',btn_yes_delete:'ТАК, ВИДАЛИТИ',progress_level:'Рівень',lessons_done:'уроків пройдено',tasks_done:'завдань виконано',quizzes_passed:'тестів складено',rank_novice:'НОВАЧОК',rank_explorer:'ДОСЛІДНИК',rank_analyst:'АНАЛІТИК',rank_expert:'ЕКСПЕРТ',status_done:'пройдено',status_progress:'у процесі',status_locked:'не почато',lesson_task:'ПРАКТИЧНЕ ЗАВДАННЯ',btn_mark_done:'Позначити виконаним',btn_done:'Виконано ✓',btn_start_lesson:'Завершити урок',btn_check:'ПЕРЕВІРИТИ',btn_show_hint:'Підказка [?]',quiz_title:'ТЕСТ ПО МОДУЛЮ',quiz_submit:'СКЛАСТИ ТЕСТ',quiz_passed:'Тест складено! Чудова робота.',quiz_failed:'Є помилки. Повтори урок і спробуй ще раз.',question:'Питання',correct_answer:'Правильна відповідь',share_label:'Поділися з другом:',graph_hint:'Пальцями: 1 — рухати, 2 — зум. Тап — додати вузол. Подвійний клік по вузлу — видалити.',hint_label:'[?] Підказка'},
+  zh:{nav_academy:'学院',nav_trainer:'训练器',nav_graph:'图表',nav_glossary:'术语表',nav_board:'笔记板',btn_logout:'退出',tab_login:'登录',tab_register:'注册',lbl_email:'邮箱',lbl_password:'密码',lbl_password2:'确认密码',lbl_callsign:'代号',btn_login:'登录',btn_register:'创建账户',auth_note:'云认证。账户存储在服务器，可从任何设备登录。会话7天。',academy_title:'学习模块',trainer_title:'DORK 训练器',trainer_desc:'为每个任务编写正确的搜索查询。使用运算符：site:, filetype:, intitle:, intext:, inurl:, 引号, -, |, *',graph_title:'链接可视化',graph_empty:'点击 + 节点 或点击空白处添加实体。',glossary_title:'术语表',board_title:'笔记板',btn_add_node:'+ 节点',btn_connect:'连接',btn_clear:'清除',modal_add_node:'添加节点',lbl_node_type:'实体类型',lbl_node_label:'标签',btn_cancel:'取消',btn_add:'添加',modal_confirm:'确认',confirm_text:'删除整个图表？无法撤销。',btn_yes_delete:'是，删除',progress_level:'等级',lessons_done:'已完成课程',tasks_done:'已完成任务',quizzes_passed:'已通过测试',rank_novice:'新手',rank_explorer:'探索者',rank_analyst:'分析师',rank_expert:'专家',status_done:'已完成',status_progress:'进行中',status_locked:'未开始',lesson_task:'实践任务',btn_mark_done:'标记完成',btn_done:'已完成 ✓',btn_start_lesson:'完成课程',btn_check:'检查',btn_show_hint:'提示 [?]',quiz_title:'模块测试',quiz_submit:'提交测试',quiz_passed:'测试通过！干得好。',quiz_failed:'有错误。复习课程后再试。',question:'问题',correct_answer:'正确答案',share_label:'分享给朋友：',graph_hint:'手指：1 — 平移，2 — 缩放。点击 — 添加节点。双击节点 — 删除。',hint_label:'[?] 提示'},
+  ja:{nav_academy:'アカデミー',nav_trainer:'トレーナー',nav_graph:'グラフ',nav_glossary:'用語集',nav_board:'ボード',btn_logout:'ログアウト',tab_login:'ログイン',tab_register:'登録',lbl_email:'メール',lbl_password:'パスワード',lbl_password2:'パスワード確認',lbl_callsign:'コールサイン',btn_login:'ログイン',btn_register:'アカウント作成',auth_note:'クラウド認証。アカウントはサーバーに保存、どのデバイスからもログイン可能。セッション7日間。',academy_title:'学習モジュール',trainer_title:'DORKトレーナー',trainer_desc:'各タスクに正しい検索クエリを作成。演算子を使用：site:, filetype:, intitle:, intext:, inurl:, 引用符, -, |, *',graph_title:'リンク可視化',graph_empty:'+ ノード を押すか、空白をタップしてエンティティを追加。',glossary_title:'用語集',board_title:'メモボード',btn_add_node:'+ ノード',btn_connect:'接続',btn_clear:'クリア',modal_add_node:'ノード追加',lbl_node_type:'エンティティタイプ',lbl_node_label:'ラベル',btn_cancel:'キャンセル',btn_add:'追加',modal_confirm:'確認',confirm_text:'グラフ全体を削除？元に戻せません。',btn_yes_delete:'はい、削除',progress_level:'レベル',lessons_done:'レッスン完了',tasks_done:'タスク完了',quizzes_passed:'テスト合格',rank_novice:'初心者',rank_explorer:'探索者',rank_analyst:'アナリスト',rank_expert:'エキスパート',status_done:'完了',status_progress:'進行中',status_locked:'未開始',lesson_task:'実践タスク',btn_mark_done:'完了にする',btn_done:'完了 ✓',btn_start_lesson:'レッスン完了',btn_check:'チェック',btn_show_hint:'ヒント [?]',quiz_title:'モジュールテスト',quiz_submit:'テスト提出',quiz_passed:'テスト合格！素晴らしい。',quiz_failed:'エラーあり。レッスンを復習して再挑戦。',question:'質問',correct_answer:'正解',share_label:'友達にシェア：',graph_hint:'指：1本 — 移動、2本 — ズーム。タップ — ノード追加。ノードをダブルクリック — 削除。',hint_label:'[?] ヒント'},
+  hy:{nav_academy:'ԱԿԱԴԵՄԻԱ',nav_trainer:'ՄԱՐԶԻՉ',nav_graph:'ԳՐԱՖ',nav_glossary:'ԲԱՌԱՐԱՆ',nav_board:'ՏԱԽՏԱԿ',btn_logout:'ԵԼՔ',tab_login:'ՄՈՒՏՔ',tab_register:'ԳՐԱՆՑՈՒՄ',lbl_email:'Էլ. հասցե',lbl_password:'Գաղտնաբառ',lbl_password2:'Հաստատել գախտնաբառը',lbl_callsign:'Կանչանուն',btn_login:'ՄՈՒՏՔ ԳՈՐԾԵԼ',btn_register:'ՍՏԵՂԾԵԼ ՀԱՇԻՎ',auth_note:'Ամպային նույնականացում։ Հաշիվը պահվում է սերվերում, մուտքը՝ ցանկացած սարքից։ Սեսիա՝ 7 օր։',academy_title:'ՈՒՍՈՒՄՆԱԿԱՆ ՄՈԴՈՒԼՆԵՐ',trainer_title:'DORK ՄԱՐԶԻՉ',trainer_desc:'Կազմեք ճիշտ որոնման հարցում։ Օգտագործեք օպերատորներ՝ site:, filetype:, intitle:, intext:, inurl:, չակերտներ, -, |, *',graph_title:'Կապերի վիզուալիզացիա',graph_empty:'Սեղմեք + ՀԱՆԳՈՒՅՑ կամ հպեք դատարկ տեղում։',glossary_title:'ԲԱՌԱՐԱՆ',board_title:'ՆՇՈՒՄՆԵՐԻ ՏԱԽՏԱԿ',btn_add_node:'+ ՀԱՆԳՈՒՅՑ',btn_connect:'ԿԱՊԵԼ',btn_clear:'ՄԱՔՐԵԼ',modal_add_node:'ԱՎԵԼԱՑՆԵԼ ՀԱՆԳՈՒՅՑ',lbl_node_type:'ԷՈՒԹՅԱՆ ՏԵՍԱԿ',lbl_node_label:'ՊԻՏԱԿ',btn_cancel:'ՉԵՂԱՐԿԵԼ',btn_add:'ԱՎԵԼԱՑՆԵԼ',modal_confirm:'ՀԱՍՏԱՏՈՒՄ',confirm_text:'Ջնջե՞լ ամբողջ գրաֆը։',btn_yes_delete:'ԱՅՈ, ՋՆՋԵԼ',progress_level:'Մակարդակ',lessons_done:'դասեր ավարտված',tasks_done:'առաջադրանքներ կատարված',quizzes_passed:'թեստեր հանձնված',rank_novice:'ՆՈՐԵԿ',rank_explorer:'ՀԵՏԱԶՈՏՈՂ',rank_analyst:'ՎԵՐԼՈՒԾԱԲԱՆ',rank_expert:'ՓՈՐՁԱԳԵՏ',status_done:'ավարտված',status_progress:'ընթացքում',status_locked:'չսկսված',lesson_task:'ԳՈՐԾՆԱԿԱՆ ԱՌԱՋԱԴՐԱՆՔ',btn_mark_done:'Նշել որպես կատարված',btn_done:'Կատարված ✓',btn_start_lesson:'Ավարտել դասը',btn_check:'ՍՏՈՒԳԵԼ',btn_show_hint:'Հուշում [?]',quiz_title:'ՄՈԴՈՒԼԻ ԹԵՍՏ',quiz_submit:'ՀԱՆՁՆԵԼ ԹԵՍՏԸ',quiz_passed:'Թեստը հանձնված է։',quiz_failed:'Կան սխալներ։ Կրկնեք դասը։',question:'Հարց',correct_answer:'Ճիշտ պատասխան',share_label:'Կիսվեք ընկերոջ հետ՝',graph_hint:'Մատներով՝ 1 — տեղաշարժ, 2 — խոշորացում։ Հպում — հանգույց։ Կրկնակի հպում — ջնջել։',hint_label:'[?] Հուշում'},
+  ko:{nav_academy:'아카데미',nav_trainer:'트레이너',nav_graph:'그래프',nav_glossary:'용어집',nav_board:'보드',btn_logout:'로그아웃',tab_login:'로그인',tab_register:'회원가입',lbl_email:'이메일',lbl_password:'비밀번호',lbl_password2:'비밀번호 확인',lbl_callsign:'콜사인',btn_login:'로그인',btn_register:'계정 생성',auth_note:'클라우드 인증. 계정은 서버에 저장, 모든 기기에서 로그인 가능. 세션 7일.',academy_title:'학습 모듈',trainer_title:'DORK 트레이너',trainer_desc:'각 작업에 맞는 올바른 검색 쿼리를 작성하세요. 연산자 사용: site:, filetype:, intitle:, intext:, inurl:, 따옴표, -, |, *',graph_title:'링크 시각화',graph_empty:'+ 노드 를 누르거나 빈 공간을 탭하여 엔티티를 추가하세요.',glossary_title:'용어집',board_title:'노트 보드',btn_add_node:'+ 노드',btn_connect:'연결',btn_clear:'지우기',modal_add_node:'노드 추가',lbl_node_type:'엔티티 유형',lbl_node_label:'라벨',btn_cancel:'취소',btn_add:'추가',modal_confirm:'확인',confirm_text:'전체 그래프를 삭제할까요?',btn_yes_delete:'예, 삭제',progress_level:'레벨',lessons_done:'레슨 완료',tasks_done:'작업 완료',quizzes_passed:'테스트 통과',rank_novice:'초보자',rank_explorer:'탐험가',rank_analyst:'분석가',rank_expert:'전문가',status_done:'완료',status_progress:'진행 중',status_locked:'시작 안 함',lesson_task:'실습 과제',btn_mark_done:'완료 표시',btn_done:'완료 ✓',btn_start_lesson:'레슨 완료',btn_check:'확인',btn_show_hint:'힌트 [?]',quiz_title:'모듈 테스트',quiz_submit:'테스트 제출',quiz_passed:'테스트 통과! 훌륭합니다.',quiz_failed:'오류가 있습니다. 레슨을 복습하세요.',question:'질문',correct_answer:'정답',share_label:'친구와 공유:',graph_hint:'손가락: 1개 — 이동, 2개 — 줌. 탭 — 노드 추가. 노드 더블클릭 — 삭제.',hint_label:'[?] 힌트'}
 };
 
 let currentLang = 'ru';
@@ -444,12 +444,26 @@ function applyI18n() {
   $('graphHint').textContent = t('graph_hint');
 }
 
-/* ═══════════ АКАДЕМИЯ: КОНТЕНТ (RU + EN, fallback EN) ═══════════ */
+/* ═══════════ МОНОХРОМНЫЕ ИКОНКИ МОДУЛЕЙ ═══════════ */
+const MODULE_ICONS = {
+  book:'<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+  search:'<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  footprint:'<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v3a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M8 14h8v2a4 4 0 0 1-8 0v-2z"/><path d="M10 20h4"/></svg>',
+  image:'<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>',
+  globe:'<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>',
+  folder:'<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>',
+  users:'<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  mail:'<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>',
+  phone:'<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z"/></svg>',
+  map:'<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>'
+};
+
+/* ═══════════ АКАДЕМИЯ: 10 МОДУЛЕЙ / 20 УРОКОВ ═══════════ */
 const L = (obj, lang) => obj[lang] || obj.en || obj.ru || '';
 
 const ACADEMY = [
   {
-    id:'basics', icon:'📚',
+    id:'basics', icon:'book',
     title:{ru:'Основы разведки',en:'OSINT Fundamentals',uk:'Основи розвідки'},
     desc:{ru:'Что такое разведка по открытым источникам, этика, безопасность, закон.',en:'What OSINT is, ethics, security, law.',uk:'Що таке розвідка з відкритих джерел, етика, безпека, закон.'},
     lessons:[
@@ -459,10 +473,10 @@ const ACADEMY = [
         content:{
           ru:'Разведка по открытым источникам (OSINT) — это сбор и анализ информации из публично доступных источников. Это НЕ взлом, НЕ кража данных и НЕ слежка.\n\nЛегальные источники: поисковики, соцсети (публичные профили), архивы сайтов, открытые реестры, новости, форумы.\n\nГлавное правило: работай только с тем, что и так доступно всем. Не обходи защиту, не используй утечки, не собирай приватные данные без согласия.',
           en:'Open Source Intelligence (OSINT) is collecting and analyzing info from publicly available sources. It is NOT hacking, NOT data theft, NOT surveillance.\n\nLegal sources: search engines, social media (public profiles), web archives, public registries, news, forums.\n\nGolden rule: work only with what is already public. Do not bypass protection, do not use leaks, do not collect private data without consent.',
-          uk:'Розвідка з відкритих джерел (OSINT) — це збір та аналіз інформації з публічно доступних джерел. Це НЕ злом, НЕ крадіжка даних і НЕ стеження.\n\nЛегальні джерела: пошуковики, соцмережі (публічні профілі), архіви сайтів, відкриті реєстри, новини, форуми.\n\nГоловне правило: працюй лише з тим, що й так доступне всім. Не обходь захист, не використовуй витоки, не збирай приватні дані без згоди.'
+          uk:'Розвідка з відкритих джерел (OSINT) — це збір та аналіз інформації з публічно доступних джерел. Це НЕ злом, НЕ крадіжка даних і НЕ стеження.\n\nЛегальні джерела: пошуковики, соцмережі (публічні профілі), архіви сайтів, відкриті реєстри, новини, форуми.\n\nГоловне правило: працюй лише з тим, що й так доступне всім.'
         },
         materials:[{label:{ru:'OSINT Framework',en:'OSINT Framework'},url:'https://osintframework.com/'},{label:{ru:'Bellingcat Guides',en:'Bellingcat Guides'},url:'https://www.bellingcat.com/resources/how-tos/'}],
-        task:{ru:'Сформулируй своими словами: чем разведка по открытым источникам отличается от взлома? Запиши на Доске заметок.',en:'In your own words: how does OSINT differ from hacking? Write it on the Notes Board.',uk:'Сформулюй своїми словами: чим розвідка з відкритих джерел відрізняється від зламу? Запиши на Дошці нотаток.'}
+        task:{ru:'Сформулируй своими словами: чем разведка по открытым источникам отличается от взлома? Запиши на Доске заметок.',en:'In your own words: how does OSINT differ from hacking? Write it on the Notes Board.',uk:'Сформулюй своїми словами: чим розвідка з відкритих джерел відрізняється від зламу?'}
       },
       {
         id:'safety',
@@ -470,10 +484,10 @@ const ACADEMY = [
         content:{
           ru:'Прежде чем искать других — защити себя.\n\n1. Цифровой след: всё, что ты публикуешь, остаётся. Проверь свои старые посты и фото.\n2. Приватность: закрой лишнее в настройках соцсетей.\n3. Пароли: не используй один пароль везде. Проверь свою почту на утечки через Have I Been Pwned.\n4. Анонимность при исследовании: не заходи на подозрительные сайты с основного аккаунта.',
           en:'Before investigating others — protect yourself.\n\n1. Digital footprint: everything you publish stays. Check your old posts and photos.\n2. Privacy: close unnecessary things in social media settings.\n3. Passwords: do not use one password everywhere. Check your email for leaks via Have I Been Pwned.\n4. Anonymity during research: do not visit suspicious sites from your main account.',
-          uk:'Перш ніж шукати інших — захисти себе.\n\n1. Цифровий слід: все, що ти публікуєш, залишається. Перевір свої старі пости та фото.\n2. Приватність: закрий зайве в налаштуваннях соцмереж.\n3. Паролі: не використовуй один пароль скрізь. Перевір свою пошту на витоки через Have I Been Pwned.\n4. Анонімність при дослідженні: не заходь на підозрілі сайти з основного акаунта.'
+          uk:'Перш ніж шукати інших — захисти себе.\n\n1. Цифровий слід: все, що ти публікуєш, залишається.\n2. Приватність: закрий зайве в налаштуваннях соцмереж.\n3. Паролі: не використовуй один пароль скрізь.\n4. Анонімність при дослідженні: не заходь на підозрілі сайти з основного акаунта.'
         },
-        materials:[{label:{ru:'Have I Been Pwned',en:'Have I Been Pwned'},url:'https://haveibeenpwned.com/'}],
-        task:{ru:'Проверь свою почту на утечки через Have I Been Pwned. Запиши результат на Доске.',en:'Check your email for leaks via Have I Been Pwned. Write the result on the Board.',uk:'Перевір свою пошту на витоки через Have I Been Pwned. Запиши результат на Дошці.'}
+        materials:[{label:'Have I Been Pwned',url:'https://haveibeenpwned.com/'}],
+        task:{ru:'Проверь свою почту на утечки через Have I Been Pwned. Запиши результат на Доске.',en:'Check your email for leaks via Have I Been Pwned. Write the result on the Board.',uk:'Перевір свою пошту на витоки через Have I Been Pwned.'}
       }
     ],
     quiz:[
@@ -483,7 +497,7 @@ const ACADEMY = [
     ]
   },
   {
-    id:'dorks', icon:'🔍',
+    id:'dorks', icon:'search',
     title:{ru:'Поисковые операторы (дорки)',en:'Search Operators (Dorks)',uk:'Пошукові оператори (дорки)'},
     desc:{ru:'Специальные операторы поиска для точного нахождения информации.',en:'Special search operators for precise information finding.',uk:'Спеціальні оператори пошуку для точного знаходження інформації.'},
     lessons:[
@@ -493,10 +507,10 @@ const ACADEMY = [
         content:{
           ru:'Поисковые операторы уточняют запрос и находят то, что обычный поиск не показывает.\n\n• site:домен — поиск только внутри сайта. Пример: site:github.com osint\n• filetype:тип — поиск файлов. Пример: filetype:pdf\n• intitle:фраза — поиск по заголовку страницы\n• intext:фраза — поиск по тексту страницы\n• inurl:слово — поиск по адресу страницы',
           en:'Search operators refine queries and find what normal search does not show.\n\n• site:domain — search only within a site. Example: site:github.com osint\n• filetype:type — search for files. Example: filetype:pdf\n• intitle:phrase — search in page title\n• intext:phrase — search in page text\n• inurl:word — search in page URL',
-          uk:'Пошукові оператори уточнюють запит і знаходять те, що звичайний пошук не показує.\n\n• site:домен — пошук лише всередині сайту. Приклад: site:github.com osint\n• filetype:тип — пошук файлів. Приклад: filetype:pdf\n• intitle:фраза — пошук за заголовком сторінки\n• intext:фраза — пошук за текстом сторінки\n• inurl:слово — пошук за адресою сторінки'
+          uk:'Пошукові оператори уточнюють запит і знаходять те, що звичайний пошук не показує.\n\n• site:домен — пошук лише всередині сайту\n• filetype:тип — пошук файлів\n• intitle:фраза — пошук за заголовком сторінки\n• intext:фраза — пошук за текстом сторінки\n• inurl:слово — пошук за адресою сторінки'
         },
         materials:[{label:{ru:'Гид по операторам',en:'Operators Guide'},url:'https://ahrefs.com/blog/google-advanced-search/'}],
-        task:{ru:'Найди через site: все страницы своего любимого сайта. Попробуй filetype:pdf для поиска открытых документов.',en:'Use site: to find all pages of your favorite site. Try filetype:pdf to find open documents.',uk:'Знайди через site: всі сторінки свого улюбленого сайту. Спробуй filetype:pdf для пошуку відкритих документів.'}
+        task:{ru:'Найди через site: все страницы своего любимого сайта. Попробуй filetype:pdf для поиска открытых документов.',en:'Use site: to find all pages of your favorite site. Try filetype:pdf to find open documents.',uk:'Знайди через site: всі сторінки свого улюбленого сайту.'}
       },
       {
         id:'advanced_operators',
@@ -504,10 +518,10 @@ const ACADEMY = [
         content:{
           ru:'• "фраза" — точное совпадение. Пример: "иван иванов"\n• -слово — исключить слово. Пример: ягуар -автомобиль\n• A | B — или то, или другое. Пример: ник1 | ник2\n• * — подстановка неизвестного слова. Пример: "лучший * 2026"\n• cache:домен — кэш страницы (если сайт недоступен)\n• Комбинируй операторы для точного поиска.',
           en:'• "phrase" — exact match. Example: "john smith"\n• -word — exclude a word. Example: jaguar -car\n• A | B — either/or. Example: nick1 | nick2\n• * — wildcard for unknown word. Example: "best * 2026"\n• cache:domain — cached page (if site is down)\n• Combine operators for precise search.',
-          uk:'• "фраза" — точний збіг. Приклад: "іван іванов"\n• -слово — виключити слово. Приклад: ягуар -автомобіль\n• A | B — або те, або інше. Приклад: нік1 | нік2\n• * — підстановка невідомого слова. Приклад: "кращий * 2026"\n• cache:домен — кеш сторінки (якщо сайт недоступний)\n• Комбінуй оператори для точного пошуку.'
+          uk:'• "фраза" — точний збіг. Приклад: "іван іванов"\n• -слово — виключити слово. Приклад: ягуар -автомобіль\n• A | B — або те, або інше. Приклад: нік1 | нік2\n• * — підстановка невідомого слова. Приклад: "кращий * 2026"\n• cache:домен — кеш сторінки (якщо сайт недоступний)'
         },
         materials:[{label:{ru:'Практика в Google',en:'Practice in Google'},url:'https://www.google.com/'}],
-        task:{ru:'Составь запрос с кавычками для поиска точного упоминания своего ника. Добавь исключение через минус.',en:'Compose a query with quotes to find exact mention of your nickname. Add exclusion with minus.',uk:'Склади запит з лапками для пошуку точної згадки свого ніка. Додай виключення через мінус.'}
+        task:{ru:'Составь запрос с кавычками для поиска точного упоминания своего ника. Добавь исключение через минус.',en:'Compose a query with quotes to find exact mention of your nickname. Add exclusion with minus.',uk:'Склади запит з лапками для пошуку точної згадки свого ніка.'}
       }
     ],
     quiz:[
@@ -517,7 +531,7 @@ const ACADEMY = [
     ]
   },
   {
-    id:'digital_footprint', icon:'👣',
+    id:'digital_footprint', icon:'footprint',
     title:{ru:'Цифровой след',en:'Digital Footprint',uk:'Цифровий слід'},
     desc:{ru:'Как искать упоминания, профили в соцсетях, никнеймы.',en:'How to find mentions, social media profiles, nicknames.',uk:'Як шукати згадки, профілі в соцмережах, нікнейми.'},
     lessons:[
@@ -527,10 +541,10 @@ const ACADEMY = [
         content:{
           ru:'Один ник часто используется на многих площадках. Это позволяет найти связанные аккаунты.\n\nИнструменты:\n• Sherlock — поиск ника на 400+ сайтах (нужен Python)\n• Maigret — поиск на 3000+ сайтах (нужен Python)\n• WhatsMyName — веб-версия поиска ника\n\nКак использовать: вводишь ник — получаешь список площадок, где он зарегистрирован. Проверяем ТОЛЬКО свой ник или с разрешения владельца.',
           en:'One nickname is often used on many platforms. This allows finding linked accounts.\n\nTools:\n• Sherlock — nickname search on 400+ sites (needs Python)\n• Maigret — search on 3000+ sites (needs Python)\n• WhatsMyName — web version of nickname search\n\nHow to use: enter nickname — get a list of platforms where it is registered. Check ONLY your own nickname or with owner\'s consent.',
-          uk:'Один нік часто використовується на багатьох майданчиках. Це дозволяє знайти повʼязані акаунти.\n\nІнструменти:\n• Sherlock — пошук ніка на 400+ сайтах (потрібен Python)\n• Maigret — пошук на 3000+ сайтах (потрібен Python)\n• WhatsMyName — веб-версія пошуку ніка\n\nЯк використовувати: вводиш нік — отримуєш список майданчиків, де він зареєстрований. Перевіряємо ЛИШЕ свій нік або з дозволу власника.'
+          uk:'Один нік часто використовується на багатьох майданчиках. Це дозволяє знайти повʼязані акаунти.\n\nІнструменти:\n• Sherlock — пошук ніка на 400+ сайтах (потрібен Python)\n• Maigret — пошук на 3000+ сайтах (потрібен Python)\n• WhatsMyName — веб-версія пошуку ніка'
         },
-        materials:[{label:{ru:'WhatsMyName',en:'WhatsMyName'},url:'https://whatsmyname.app/'},{label:'Sherlock',url:'https://github.com/sherlock-project/sherlock'},{label:'Maigret',url:'https://github.com/soxoj/maigret'}],
-        task:{ru:'Проверь свой ник через WhatsMyName. Посмотри, на скольких площадках он занят.',en:'Check your nickname via WhatsMyName. See how many platforms it is taken on.',uk:'Перевір свій нік через WhatsMyName. Подивись, на скількох майданчиках він зайнятий.'}
+        materials:[{label:'WhatsMyName',url:'https://whatsmyname.app/'},{label:'Sherlock',url:'https://github.com/sherlock-project/sherlock'},{label:'Maigret',url:'https://github.com/soxoj/maigret'}],
+        task:{ru:'Проверь свой ник через WhatsMyName. Посмотри, на скольких площадках он занят.',en:'Check your nickname via WhatsMyName. See how many platforms it is taken on.',uk:'Перевір свій нік через WhatsMyName.'}
       },
       {
         id:'mentions',
@@ -538,10 +552,10 @@ const ACADEMY = [
         content:{
           ru:'Чтобы найти упоминания человека, проекта или фразы в интернете:\n\n1. Точная фраза в кавычках: "имя фамилия"\n2. Варианты через ИЛИ: "имя" | "ник"\n3. Поиск по конкретным площадкам: "ник" site:twitter.com\n4. Поиск по доменам и форумам.\n5. Проверь архивные копии через web.archive.org.\n\nВсегда проверяй контекст найденного.',
           en:'To find mentions of a person, project or phrase on the internet:\n\n1. Exact phrase in quotes: "first name last name"\n2. Variants with OR: "name" | "nickname"\n3. Search on specific platforms: "nickname" site:twitter.com\n4. Search domains and forums.\n5. Check archived copies via web.archive.org.\n\nAlways verify the context of what you find.',
-          uk:'Щоб знайти згадки людини, проєкту чи фрази в інтернеті:\n\n1. Точна фраза в лапках: "імʼя прізвище"\n2. Варіанти через АБО: "імʼя" | "нік"\n3. Пошук по конкретних майданчиках: "нік" site:twitter.com\n4. Пошук по доменах і форумах.\n5. Перевір архівні копії через web.archive.org.\n\nЗавжди перевіряй контекст знайденого.'
+          uk:'Щоб знайти згадки людини, проєкту чи фрази в інтернеті:\n\n1. Точна фраза в лапках: "імʼя прізвище"\n2. Варіанти через АБО: "імʼя" | "нік"\n3. Пошук по конкретних майданчиках: "нік" site:twitter.com\n4. Пошук по доменах і форумах.\n5. Перевір архівні копії через web.archive.org.'
         },
-        materials:[{label:{ru:'Wayback Machine',en:'Wayback Machine'},url:'https://web.archive.org/'}],
-        task:{ru:'Найди упоминание любого публичного бренда через точный запрос в кавычках. Попробуй с исключением лишних слов.',en:'Find a mention of any public brand using exact quoted query. Try with exclusion of extra words.',uk:'Знайди згадку будь-якого публічного бренду через точний запит у лапках. Спробуй з виключенням зайвих слів.'}
+        materials:[{label:'Wayback Machine',url:'https://web.archive.org/'}],
+        task:{ru:'Найди упоминание любого публичного бренда через точный запрос в кавычках. Попробуй с исключением лишних слов.',en:'Find a mention of any public brand using exact quoted query. Try with exclusion of extra words.',uk:'Знайди згадку будь-якого публічного бренду через точний запит у лапках.'}
       }
     ],
     quiz:[
@@ -550,7 +564,7 @@ const ACADEMY = [
     ]
   },
   {
-    id:'images', icon:'🖼',
+    id:'images', icon:'image',
     title:{ru:'Работа с изображениями',en:'Working with Images',uk:'Робота із зображеннями'},
     desc:{ru:'Метаданные, обратный поиск, геолокация по фото.',en:'Metadata, reverse search, photo geolocation.',uk:'Метадані, зворотний пошук, геолокація за фото.'},
     lessons:[
@@ -560,10 +574,10 @@ const ACADEMY = [
         content:{
           ru:'Каждое фото может содержать скрытые метаданные (EXIF): модель камеры, дата съёмки, настройки и даже GPS-координаты.\n\nИнструменты:\n• ExifTool — эталон для чтения и очистки метаданных\n• Jeffrey\'s Exif Viewer — онлайн просмотр (введи ссылку на фото)\n• Metapicz — удобный онлайн-просмотрщик\n• Forensically — анализ на монтаж (в браузере)\n\nВАЖНО: анализируй только СВОИ фото или с разрешения автора. Координаты в чужих фото — приватные данные.',
           en:'Every photo may contain hidden metadata (EXIF): camera model, date taken, settings and even GPS coordinates.\n\nTools:\n• ExifTool — the standard for reading and cleaning metadata\n• Jeffrey\'s Exif Viewer — online view (enter photo URL)\n• Metapicz — convenient online viewer\n• Forensically — tampering analysis (in browser)\n\nIMPORTANT: analyze only YOUR photos or with author\'s consent. Coordinates in others\' photos are private data.',
-          uk:'Кожне фото може містити приховані метадані (EXIF): модель камери, дата зйомки, налаштування і навіть GPS-координати.\n\nІнструменти:\n• ExifTool — еталон для читання та очищення метаданих\n• Jeffrey\'s Exif Viewer — онлайн перегляд (введи посилання на фото)\n• Metapicz — зручний онлайн-переглядач\n• Forensically — аналіз на монтаж (у браузері)\n\nВАЖЛИВО: аналізуй лише СВОЇ фото або з дозволу автора. Координати в чужих фото — приватні дані.'
+          uk:'Кожне фото може містити приховані метадані (EXIF): модель камери, дата зйомки, налаштування і навіть GPS-координати.\n\nІнструменти:\n• ExifTool — еталон для читання та очищення метаданих\n• Forensically — аналіз на монтаж (у браузері)\n\nВАЖЛИВО: аналізуй лише СВОЇ фото або з дозволу автора.'
         },
         materials:[{label:'ExifTool',url:'https://exiftool.org/'},{label:'Forensically',url:'https://29a.ch/photo-forensics/'}],
-        task:{ru:'Сделай фото на телефон и проверь его метаданные через онлайн-просмотрщик. Есть ли там GPS? Дата?',en:'Take a photo with your phone and check its metadata via online viewer. Is there GPS? Date?',uk:'Зроби фото на телефон і перевір його метадані через онлайн-переглядач. Чи є там GPS? Дата?'}
+        task:{ru:'Сделай фото на телефон и проверь его метаданные через онлайн-просмотрщик. Есть ли там GPS? Дата?',en:'Take a photo with your phone and check its metadata via online viewer. Is there GPS? Date?',uk:'Зроби фото на телефон і перевір його метадані через онлайн-переглядач.'}
       },
       {
         id:'reverse_search',
@@ -571,10 +585,10 @@ const ACADEMY = [
         content:{
           ru:'Обратный поиск находит, где ещё в интернете встречается картинка, и её первоисточник.\n\nСервисы:\n• Google Lens / Google Images — самый популярный\n• Yandex Images — отлично находит по ру-сегменту и лицам/местам\n• TinEye — история распространения кадра\n\nКак использовать: загружаешь картинку или вставляешь ссылку — получаешь список сайтов, где она есть. Это помогает найти первоисточник и проверить подлинность.',
           en:'Reverse search finds where else an image appears on the internet and its original source.\n\nServices:\n• Google Lens / Google Images — most popular\n• Yandex Images — great for ru-segment and faces/places\n• TinEye — frame distribution history\n\nHow to use: upload image or paste URL — get a list of sites where it appears. This helps find the original source and verify authenticity.',
-          uk:'Зворотний пошук знаходить, де ще в інтернеті зустрічається картинка, та її першоджерело.\n\nСервіси:\n• Google Lens / Google Images — найпопулярніший\n• Yandex Images — чудово знаходить по ру-сегменту та обличчях/місцях\n• TinEye — історія поширення кадру\n\nЯк використовувати: завантажуєш картинку або вставляєш посилання — отримуєш список сайтів, де вона є. Це допомагає знайти першоджерело та перевірити автентичність.'
+          uk:'Зворотний пошук знаходить, де ще в інтернеті зустрічається картинка, та її першоджерело.\n\nСервіси:\n• Google Lens / Google Images — найпопулярніший\n• Yandex Images — чудово знаходить по ру-сегменту\n• TinEye — історія поширення кадру'
         },
         materials:[{label:'Google Lens',url:'https://lens.google/'},{label:'Yandex Images',url:'https://yandex.ru/images/'},{label:'TinEye',url:'https://tineye.com/'}],
-        task:{ru:'Возьми любую картинку и прогони через 2-3 сервиса обратного поиска. Сравни результаты.',en:'Take any image and run it through 2-3 reverse search services. Compare results.',uk:'Візьми будь-яку картинку і прожени через 2-3 сервіси зворотного пошуку. Порівняй результати.'}
+        task:{ru:'Возьми любую картинку и прогони через 2-3 сервиса обратного поиска. Сравни результаты.',en:'Take any image and run it through 2-3 reverse search services. Compare results.',uk:'Візьми будь-яку картинку і прожени через 2-3 сервіси зворотного пошуку.'}
       }
     ],
     quiz:[
@@ -583,7 +597,7 @@ const ACADEMY = [
     ]
   },
   {
-    id:'domains', icon:'🌐',
+    id:'domains', icon:'globe',
     title:{ru:'Домены и инфраструктура',en:'Domains and Infrastructure',uk:'Домени та інфраструктура'},
     desc:{ru:'Whois, IP, субдомены, история сайтов.',en:'Whois, IP, subdomains, site history.',uk:'Whois, IP, субдомени, історія сайтів.'},
     lessons:[
@@ -593,10 +607,10 @@ const ACADEMY = [
         content:{
           ru:'Whois — это протокол, который показывает регистрационные данные домена: кто зарегистрировал, когда, регистратор, статус.\n\nИнструменты:\n• who.is — простой веб-интерфейс\n• ICANN Lookup — официальный поиск\n• Команда whois в терминале (если установлена)\n\nЧто можно узнать: дату регистрации, регистратора, иногда контакты (если не скрыты защитой приватности). Это легальные открытые данные.',
           en:'Whois is a protocol that shows domain registration data: who registered, when, registrar, status.\n\nTools:\n• who.is — simple web interface\n• ICANN Lookup — official search\n• whois command in terminal (if installed)\n\nWhat you can learn: registration date, registrar, sometimes contacts (if not hidden by privacy protection). This is legal open data.',
-          uk:'Whois — це протокол, який показує реєстраційні дані домену: хто зареєстрував, коли, реєстратор, статус.\n\nІнструменти:\n• who.is — простий веб-інтерфейс\n• ICANN Lookup — офіційний пошук\n• Команда whois у терміналі (якщо встановлена)\n\nЩо можна дізнатись: дату реєстрації, реєстратора, іноді контакти (якщо не приховані захистом приватності). Це легальні відкриті дані.'
+          uk:'Whois — це протокол, який показує реєстраційні дані домену: хто зареєстрував, коли, реєстратор, статус.\n\nІнструменти:\n• who.is — простий веб-інтерфейс\n• ICANN Lookup — офіційний пошук\n• Команда whois у терміналі (якщо встановлена)'
         },
         materials:[{label:'Who.is',url:'https://who.is/'}],
-        task:{ru:'Проверь через who.is данные любого известного сайта. Посмотри дату регистрации и регистратора.',en:'Check any famous site data via who.is. Look at registration date and registrar.',uk:'Перевір через who.is дані будь-якого відомого сайту. Подивись дату реєстрації та реєстратора.'}
+        task:{ru:'Проверь через who.is данные любого известного сайта. Посмотри дату регистрации и регистратора.',en:'Check any famous site data via who.is. Look at registration date and registrar.',uk:'Перевір через who.is дані будь-якого відомого сайту.'}
       },
       {
         id:'history',
@@ -604,7 +618,7 @@ const ACADEMY = [
         content:{
           ru:'Даже если страница удалена, её копия могла сохраниться в архиве.\n\nИнструменты:\n• Wayback Machine (web.archive.org) — главный веб-архив. Введи адрес сайта — увидишь все сохранённые версии по датам.\n• Archive.today — мгновенные снимки страниц.\n• Google Cache — кэш поисковика (если доступен).\n\nЭто помогает изучить историю сайта, увидеть удалённый контент, проверить, как менялась информация.',
           en:'Even if a page is deleted, its copy may have been saved in an archive.\n\nTools:\n• Wayback Machine (web.archive.org) — the main web archive. Enter site URL — see all saved versions by dates.\n• Archive.today — instant page snapshots.\n• Google Cache — search engine cache (if available).\n\nThis helps study site history, see deleted content, check how information changed.',
-          uk:'Навіть якщо сторінку видалено, її копія могла зберегтися в архіві.\n\nІнструменти:\n• Wayback Machine (web.archive.org) — головний веб-архів. Введи адресу сайту — побачиш всі збережені версії за датами.\n• Archive.today — миттєві знімки сторінок.\n• Google Cache — кеш пошуковика (якщо доступний).\n\nЦе допомагає вивчити історію сайту, побачити видалений контент, перевірити, як змінювалась інформація.'
+          uk:'Навіть якщо сторінку видалено, її копія могла зберегтися в архіві.\n\nІнструменти:\n• Wayback Machine (web.archive.org) — головний веб-архів.\n• Archive.today — миттєві знімки сторінок.\n• Google Cache — кеш пошуковика (якщо доступний).'
         },
         materials:[{label:'Wayback Machine',url:'https://web.archive.org/'},{label:'Archive.today',url:'https://archive.ph/'}],
         task:{ru:'Открой в Wayback Machine любой известный сайт и посмотри, как он выглядел 5-10 лет назад.',en:'Open any famous site in Wayback Machine and see how it looked 5-10 years ago.',uk:'Відкрий у Wayback Machine будь-який відомий сайт і подивись, як він виглядав 5-10 років тому.'}
@@ -616,53 +630,190 @@ const ACADEMY = [
     ]
   },
   {
-    id:'dossier', icon:'📋',
-    title:{ru:'Составление досье',en:'Building a Dossier',uk:'Складання досьє'},
-    desc:{ru:'Как структурировать найденное и делать выводы.',en:'How to structure findings and draw conclusions.',uk:'Як структурувати знайдене та робити висновки.'},
+    id:'social', icon:'users',
+    title:{ru:'Соцсети и профили',en:'Social Media and Profiles',uk:'Соцмережі та профілі'},
+    desc:{ru:'Поиск людей, анализ профилей, связи между аккаунтами.',en:'Finding people, profile analysis, account connections.',uk:'Пошук людей, аналіз профілів, звʼязки між акаунтами.'},
+    lessons:[
+      {
+        id:'profile_search',
+        title:{ru:'Поиск профилей',en:'Profile Search',uk:'Пошук профілів'},
+        content:{
+          ru:'Соцсети — богатый источник открытой информации, но работать с ними нужно этично.\n\nЧто можно искать легально:\n• Публичные профили по нику (через Sherlock, Maigret, WhatsMyName)\n• Открытые посты и комментарии через поиск площадки\n• Упоминания имени через поисковики с оператором site:\n• Группы и сообщества по интересам\n\nНЕЛЬЗЯ:\n• Обходить приватные настройки профилей\n• Создавать фейковые аккаунты для доступа к закрытым данным\n• Собирать данные людей без их согласия',
+          en:'Social media is a rich source of open info, but work with it ethically.\n\nWhat you can legally search:\n• Public profiles by nickname (via Sherlock, Maigret, WhatsMyName)\n• Open posts and comments via platform search\n• Name mentions via search engines with site: operator\n• Groups and communities by interests\n\nDO NOT:\n• Bypass private profile settings\n• Create fake accounts to access private data\n• Collect people\'s data without their consent',
+          uk:'Соцмережі — багате джерело відкритої інформації, але працювати з ними потрібно етично.\n\nЩо можна шукати легально:\n• Публічні профілі за ніком (через Sherlock, Maigret, WhatsMyName)\n• Відкриті пости та коментарі через пошук майданчика\n• Згадки імені через пошуковики з оператором site:\n• Групи та спільноти за інтересами\n\nНЕ МОЖНА:\n• Обходити приватні налаштування профілів\n• Створювати фейкові акаунти для доступу до закритих даних'
+        },
+        materials:[{label:'WhatsMyName',url:'https://whatsmyname.app/'},{label:'Sherlock',url:'https://github.com/sherlock-project/sherlock'}],
+        task:{ru:'Найди публичный профиль любой известной компании или бренда в 2-3 соцсетях через поиск.',en:'Find public profile of any famous company or brand on 2-3 social platforms via search.',uk:'Знайди публічний профіль будь-якої відомої компанії у 2-3 соцмережах через пошук.'}
+      },
+      {
+        id:'profile_analysis',
+        title:{ru:'Анализ профиля',en:'Profile Analysis',uk:'Аналіз профілю'},
+        content:{
+          ru:'Из открытого профиля можно узнать много, не нарушая приватность:\n\n1. Дата регистрации и активность — когда создан аккаунт, как часто постит.\n2. Подписки и подписчики — круг интересов и связей.\n3. Контент — темы, язык, география (по фото и упоминаниям).\n4. Связи с другими площадками — один ник, похожие фото, перекрёстные упоминания.\n5. Архивные копии — что было в профиле раньше (через web.archive.org).\n\nВсё это — открытые данные, которые владелец сам сделал публичными.',
+          en:'From a public profile you can learn a lot without violating privacy:\n\n1. Registration date and activity — when account was created, posting frequency.\n2. Following and followers — circle of interests and connections.\n3. Content — topics, language, geography (from photos and mentions).\n4. Connections to other platforms — same nickname, similar photos, cross-mentions.\n5. Archived copies — what was in the profile before (via web.archive.org).\n\nAll this is open data that the owner made public themselves.',
+          uk:'З відкритого профілю можна дізнатися багато, не порушуючи приватність:\n\n1. Дата реєстрації та активність — коли створено акаунт, як часто постить.\n2. Підписки та підписники — коло інтересів та звʼязків.\n3. Контент — теми, мова, географія (за фото та згадками).\n4. Звʼязки з іншими майданчиками — один нік, схожі фото, перехресні згадки.\n5. Архівні копії — що було в профілі раніше (через web.archive.org).'
+        },
+        materials:[{label:'Wayback Machine',url:'https://web.archive.org/'}],
+        task:{ru:'Выбери публичный профиль известного человека. Определи: дату регистрации, основные темы, язык контента. Запиши наблюдения на Доске.',en:'Choose a public profile of a famous person. Determine: registration date, main topics, content language. Write observations on the Board.',uk:'Вибери публічний профіль відомої людини. Визнач: дату реєстрації, основні теми, мову контенту.'}
+      }
+    ],
+    quiz:[
+      {q:{ru:'Можно ли обходить приватные настройки профилей?',en:'Can you bypass private profile settings?',uk:'Чи можна обходити приватні налаштування профілів?'},options:{ru:['Да, если интересно','Нет, это нарушение приватности','Только для публичных личностей'],en:['Yes, if interesting','No, this is privacy violation','Only for public figures'],uk:['Так, якщо цікаво','Ні, це порушення приватності','Лише для публічних осіб']},correct:1},
+      {q:{ru:'Что можно узнать из открытого профиля легально?',en:'What can you legally learn from a public profile?',uk:'Що можна дізнатися з відкритого профілю легально?'},options:{ru:['Пароль','Дату регистрации и публичный контент','Адрес проживания'],en:['Password','Registration date and public content','Home address'],uk:['Пароль','Дату реєстрації та публічний контент','Адресу проживання']},correct:1}
+    ]
+  },
+  {
+    id:'email', icon:'mail',
+    title:{ru:'Почта и утечки',en:'Email and Breaches',uk:'Пошта та витоки'},
+    desc:{ru:'Проверка адресов, анализ утечек, репутация.',en:'Address verification, breach analysis, reputation.',uk:'Перевірка адрес, аналіз витоків, репутація.'},
+    lessons:[
+      {
+        id:'email_check',
+        title:{ru:'Проверка почты на утечки',en:'Email Breach Check',uk:'Перевірка пошти на витоки'},
+        content:{
+          ru:'Утечки данных — когда база сервиса попадает в открытый доступ. Твоя почта могла оказаться в них.\n\nИнструменты:\n• Have I Been Pwned — главный сервис проверки почты на утечки. Вводишь почту — видишь, в каких утечках она засветилась.\n• Firefox Monitor — аналог от Mozilla.\n\nЧто делать, если нашёл утечку:\n1. Сменить пароль на этом сервисе.\n2. Включить двухфакторную аутентификацию.\n3. Проверить, не использовался ли тот же пароль на других сайтах.\n4. Быть осторожным с фишингом — после утечки могут приходить поддельные письма.',
+          en:'Data breaches — when a service database becomes public. Your email could be in them.\n\nTools:\n• Have I Been Pwned — main service for email breach check. Enter email — see which breaches it appeared in.\n• Firefox Monitor — Mozilla\'s analog.\n\nWhat to do if you find a breach:\n1. Change password on that service.\n2. Enable two-factor authentication.\n3. Check if the same password was used on other sites.\n4. Beware of phishing — after a breach, fake emails may come.',
+          uk:'Витоки даних — коли база сервісу потрапляє у відкритий доступ. Твоя пошта могла опинитися в них.\n\nІнструменти:\n• Have I Been Pwned — головний сервіс перевірки пошти на витоки.\n• Firefox Monitor — аналог від Mozilla.\n\nЩо робити, якщо знайшов витік:\n1. Змінити пароль на цьому сервісі.\n2. Увімкнути двофакторну автентифікацію.\n3. Перевірити, чи не використовувався той самий пароль на інших сайтах.'
+        },
+        materials:[{label:'Have I Been Pwned',url:'https://haveibeenpwned.com/'}],
+        task:{ru:'Проверь свою основную почту на Have I Been Pwned. Если есть утечки — запиши, в каких сервисах.',en:'Check your main email on Have I Been Pwned. If there are breaches — note which services.',uk:'Перевір свою основну пошту на Have I Been Pwned. Якщо є витоки — запиши, в яких сервісах.'}
+      },
+      {
+        id:'email_reputation',
+        title:{ru:'Репутация и верификация адреса',en:'Address Reputation and Verification',uk:'Репутація та верифікація адреси'},
+        content:{
+          ru:'Иногда нужно проверить, существует ли адрес и насколько он подозрителен (для защиты от фишинга).\n\nИнструменты:\n• EmailRep — репутация адреса: возраст, активность, подозрительность.\n• Hunter Verifier — проверка существования деловых адресов.\n• Поиск упоминаний адреса через дорки в кавычках.\n\nПризнаки подозрительного адреса:\n• Создан недавно и сразу рассылает письма.\n• Домен похож на известный, но с опечаткой (g00gle.com вместо google.com).\n• Адрес упоминается в негативном контексте.\n\nПроверяй ТАК свою почту и полученные письма для защиты от фишинга.',
+          en:'Sometimes you need to check if an address exists and how suspicious it is (for phishing protection).\n\nTools:\n• EmailRep — address reputation: age, activity, suspiciousness.\n• Hunter Verifier — verification of business addresses.\n• Search address mentions via dorks in quotes.\n\nSigns of suspicious address:\n• Created recently and immediately sends emails.\n• Domain looks like famous one but with typo (g00gle.com instead of google.com).\n• Address mentioned in negative context.\n\nCheck YOUR email and received emails for phishing protection.',
+          uk:'Іноді потрібно перевірити, чи існує адреса і наскільки вона підозріла (для захисту від фішингу).\n\nІнструменти:\n• EmailRep — репутація адреси: вік, активність, підозрілість.\n• Hunter Verifier — перевірка існування ділових адрес.\n• Пошук згадок адреси через дорки в лапках.\n\nОзнаки підозрілої адреси:\n• Створена нещодавно і одразу розсилає листи.\n• Домен схожий на відомий, але з одрукою (g00gle.com замість google.com).'
+        },
+        materials:[{label:'EmailRep',url:'https://emailrep.io/'},{label:'Hunter Verifier',url:'https://hunter.io/email-verifier'}],
+        task:{ru:'Проверь репутацию любого публичного делового адреса через EmailRep. Какие параметры показывает сервис?',en:'Check reputation of any public business address via EmailRep. What parameters does the service show?',uk:'Перевір репутацію будь-якої публічної ділової адреси через EmailRep.'}
+      }
+    ],
+    quiz:[
+      {q:{ru:'Какой сервис проверяет почту на утечки?',en:'Which service checks email for breaches?',uk:'Який сервіс перевіряє пошту на витоки?'},options:{ru:['Have I Been Pwned','TinEye','Whois'],en:['Have I Been Pwned','TinEye','Whois'],uk:['Have I Been Pwned','TinEye','Whois']},correct:0},
+      {q:{ru:'Что делать, если нашёл свою почту в утечке?',en:'What to do if you find your email in a breach?',uk:'Що робити, якщо знайшов свою пошту у витоку?'},options:{ru:['Ничего','Сменить пароль и включить 2FA','Опубликовать в соцсетях'],en:['Nothing','Change password and enable 2FA','Post on social media'],uk:['Нічого','Змінити пароль та увімкнути 2FA','Опублікувати в соцмережах']},correct:1}
+    ]
+  },
+  {
+    id:'phone', icon:'phone',
+    title:{ru:'Телефон и номера',en:'Phone and Numbers',uk:'Телефон та номери'},
+    desc:{ru:'Разведка по номерам телефонов из открытых источников.',en:'Phone number reconnaissance from open sources.',uk:'Розвідка за номерами телефонів з відкритих джерел.'},
+    lessons:[
+      {
+        id:'phone_search',
+        title:{ru:'Поиск упоминаний номера',en:'Phone Number Mention Search',uk:'Пошук згадок номера'},
+        content:{
+          ru:'Номер телефона можно искать в открытых источниках легально.\n\nМетоды:\n1. Точный поиск в кавычках: "+79001234567" или "89001234567" — искать все варианты написания.\n2. Поиск с оператором: "+7 900 123-45-67" — с пробелами и дефисами.\n3. site:популярный_сайт — поиск упоминаний на конкретных площадках.\n4. Поиск в мессенджерах: если номер привязан к публичному профилю.\n5. Проверка оператора и региона по коду (это открытые технические данные).\n\nВАЖНО: ищи только СВОЙ номер или с согласия владельца. Не собирай данные о людях без разрешения.',
+          en:'Phone number can be searched in open sources legally.\n\nMethods:\n1. Exact search in quotes: "+1234567890" — try all formatting variants.\n2. Search with operators: with spaces and dashes.\n3. site:popular_site — search mentions on specific platforms.\n4. Search in messengers: if number is linked to public profile.\n5. Check operator and region by code (this is open technical data).\n\nIMPORTANT: search only YOUR number or with owner\'s consent. Do not collect data about people without permission.',
+          uk:'Номер телефону можна шукати у відкритих джерелах легально.\n\nМетоди:\n1. Точний пошук у лапках: "+380..." — шукати всі варіанти написання.\n2. Пошук з оператором: з пробілами та дефісами.\n3. site:популярний_сайт — пошук згадок на конкретних майданчиках.\n4. Пошук у месенджерах: якщо номер привʼязаний до публічного профілю.\n5. Перевірка оператора та регіону за кодом (це відкриті технічні дані).\n\nВАЖЛИВО: шукай лише СВІЙ номер або з дозволу власника.'
+        },
+        materials:[{label:{ru:'Практика в Google',en:'Practice in Google'},url:'https://www.google.com/'}],
+        task:{ru:'Проверь свой номер телефона через точный поиск в кавычках. Есть ли он где-то в открытых источниках?',en:'Check your phone number via exact quoted search. Does it appear anywhere in open sources?',uk:'Перевір свій номер телефону через точний пошук у лапках. Чи є він десь у відкритих джерелах?'}
+      },
+      {
+        id:'phone_metadata',
+        title:{ru:'Технические данные номера',en:'Phone Technical Data',uk:'Технічні дані номера'},
+        content:{
+          ru:'По номеру можно узнать технические данные из открытых источников:\n\n1. Страна — по коду страны (+7 Россия, +1 США, +380 Украина и т.д.).\n2. Оператор — по коду оператора внутри страны.\n3. Регион — для стационарных номеров по коду города.\n4. Тип номера — мобильный или стационарный.\n5. Формат — проверка валидности номера.\n\nЭто легальные технические данные из открытых справочников нумерации.\n\nИнструменты:\n• NumVerify — проверка формата и оператора.\n• Открытые справочники телефонных кодов.\n• Google Dork для поиска упоминаний.\n\nЭти данные НЕ показывают владельца. Только техническую информацию.',
+          en:'From a number you can learn technical data from open sources:\n\n1. Country — by country code (+7 Russia, +1 USA, +380 Ukraine etc.).\n2. Operator — by operator code within country.\n3. Region — for landline numbers by city code.\n4. Number type — mobile or landline.\n5. Format — number validity check.\n\nThis is legal technical data from open numbering directories.\n\nTools:\n• NumVerify — format and operator check.\n• Open phone code directories.\n• Google Dork for mention search.\n\nThis data does NOT show the owner. Only technical information.',
+          uk:'За номером можна дізнатися технічні дані з відкритих джерел:\n\n1. Країна — за кодом країни (+380 Україна, +7 Росія, +1 США тощо).\n2. Оператор — за кодом оператора всередині країни.\n3. Регіон — для стаціонарних номерів за кодом міста.\n4. Тип номера — мобільний чи стаціонарний.\n5. Формат — перевірка валідності номера.\n\nЦе легальні технічні дані з відкритих довідників нумерації.'
+        },
+        materials:[{label:'NumVerify',url:'https://numverify.com/'}],
+        task:{ru:'Определи по коду страну и оператора для 3 разных номеров (можно вымышленных форматов). Используй открытые справочники кодов.',en:'Determine country and operator by code for 3 different numbers (can be fictional formats). Use open code directories.',uk:'Визнач за кодом країну та оператора для 3 різних номерів. Використовуй відкриті довідники кодів.'}
+      }
+    ],
+    quiz:[
+      {q:{ru:'Что можно легально узнать по номеру телефона?',en:'What can you legally learn from a phone number?',uk:'Що можна легально дізнатися за номером телефону?'},options:{ru:['Имя владельца','Страну, оператора, тип номера','Домашний адрес'],en:['Owner name','Country, operator, number type','Home address'],uk:['Імʼя власника','Країну, оператора, тип номера','Домашню адресу']},correct:1},
+      {q:{ru:'Можно ли искать чужой номер без согласия?',en:'Can you search someone else\'s number without consent?',uk:'Чи можна шукати чужий номер без згоди?'},options:{ru:['Да, если интересно','Нет, только свой или с согласия','Только публичные личности'],en:['Yes, if interesting','No, only yours or with consent','Only public figures'],uk:['Так, якщо цікаво','Ні, лише свій або з дозволу','Лише публічні особи']},correct:1}
+    ]
+  },
+  {
+    id:'geolocation', icon:'map',
+    title:{ru:'Геолокация и карты',en:'Geolocation and Maps',uk:'Геолокація та карти'},
+    desc:{ru:'Определение мест по фото, работа с картами, координаты.',en:'Location identification from photos, maps, coordinates.',uk:'Визначення місць за фото, робота з картами, координати.'},
+    lessons:[
+      {
+        id:'geo_photo',
+        title:{ru:'Геолокация по фото',en:'Photo Geolocation',uk:'Геолокація за фото'},
+        content:{
+          ru:'По фотографии можно определить место съёмки — это называется геолокация.\n\nМетоды:\n1. EXIF-данные: если в фото есть GPS-координаты — они точно указывают место. Проверяй через ExifTool или онлайн-просмотрщики.\n2. Визуальные признаки: архитектура, растительность, вывески, язык текста на фото, номера машин, тип дорог.\n3. Обратный поиск: загрузи фото в Google Lens или Yandex Images — могут найтись похожие места.\n4. Карты: сравнивай найденные ориентиры с Google Maps, OpenStreetMap, панорамами улиц.\n5. Солнце и тени: по направлению теней можно примерно определить сторону света и время.\n\nВАЖНО: геолокация чужих фото без согласия — нарушение приватности. Тренируйся на своих фото или публичных местах.',
+          en:'From a photo you can determine the location — this is called geolocation.\n\nMethods:\n1. EXIF data: if photo has GPS coordinates — they precisely indicate location. Check via ExifTool or online viewers.\n2. Visual clues: architecture, vegetation, signs, text language, license plates, road types.\n3. Reverse search: upload photo to Google Lens or Yandex Images — similar places may be found.\n4. Maps: compare found landmarks with Google Maps, OpenStreetMap, street panoramas.\n5. Sun and shadows: by shadow direction you can roughly determine cardinal direction and time.\n\nIMPORTANT: geolocating others\' photos without consent is privacy violation. Practice on your photos or public places.',
+          uk:'За фотографією можна визначити місце зйомки — це називається геолокація.\n\nМетоди:\n1. EXIF-дані: якщо у фото є GPS-координати — вони точно вказують місце.\n2. Візуальні ознаки: архітектура, рослинність, вивіски, мова тексту на фото, номери машин, тип доріг.\n3. Зворотний пошук: завантаж фото в Google Lens або Yandex Images — можуть знайтися схожі місця.\n4. Карти: порівнюй знайдені орієнтири з Google Maps, OpenStreetMap, панорамами вулиць.\n5. Сонце і тіні: за напрямком тіней можна приблизно визначити сторону світу і час.'
+        },
+        materials:[{label:'Google Lens',url:'https://lens.google/'},{label:'Google Maps',url:'https://www.google.com/maps'},{label:'OpenStreetMap',url:'https://www.openstreetmap.org/'}],
+        task:{ru:'Возьми своё фото с улицы. Попробуй определить место по визуальным признакам и проверить через карты. Запиши процесс.',en:'Take your street photo. Try to determine location by visual clues and verify via maps. Write down the process.',uk:'Візьми своє фото з вулиці. Спробуй визначити місце за візуальними ознаками і перевірити через карти.'}
+      },
+      {
+        id:'maps_recon',
+        title:{ru:'Работа с картами и панорамами',en:'Working with Maps and Panoramas',uk:'Робота з картами та панорамами'},
+        content:{
+          ru:'Карты — мощный инструмент открытой разведки.\n\nЧто можно делать легально:\n1. Google Maps / Yandex Maps — поиск мест, просмотр панорам улиц, спутниковых снимков.\n2. OpenStreetMap — открытая карта с детальными данными, редактируется сообществом.\n3. Wikimapia — карта с пользовательскими описаниями мест.\n4. История спутниковых снимков — как менялась местность со временем.\n5. Измерение расстояний и координат.\n\nКак использовать для проверки информации:\n• Сверяй фото с панорамами улиц.\n• Проверяй адреса и названия мест.\n• Изучай инфраструктуру вокруг публичных объектов.\n• Смотри историю изменений местности.\n\nВсё это — открытые публичные данные карт.',
+          en:'Maps are a powerful open reconnaissance tool.\n\nWhat you can do legally:\n1. Google Maps / Yandex Maps — search places, view street panoramas, satellite imagery.\n2. OpenStreetMap — open map with detailed data, edited by community.\n3. Wikimapia — map with user descriptions of places.\n4. Satellite imagery history — how terrain changed over time.\n5. Measuring distances and coordinates.\n\nHow to use for information verification:\n• Compare photos with street panoramas.\n• Verify addresses and place names.\n• Study infrastructure around public objects.\n• View terrain change history.\n\nAll this is open public map data.',
+          uk:'Карти — потужний інструмент відкритої розвідки.\n\nЩо можна робити легально:\n1. Google Maps / Yandex Maps — пошук місць, перегляд панорам вулиць, супутникових знімків.\n2. OpenStreetMap — відкрита карта з детальними даними, редагується спільнотою.\n3. Wikimapia — карта з користувацькими описами місць.\n4. Історія супутникових знімків — як змінювалась місцевість з часом.\n5. Вимірювання відстаней та координат.'
+        },
+        materials:[{label:'Google Maps',url:'https://www.google.com/maps'},{label:'OpenStreetMap',url:'https://www.openstreetmap.org/'},{label:'Wikimapia',url:'https://wikimapia.org/'}],
+        task:{ru:'Найди на картах любое известное здание в твоём городе. Изучи его панораму и спутниковый снимок. Запиши, что видно.',en:'Find any famous building in your city on maps. Study its panorama and satellite image. Note what you see.',uk:'Знайди на картах будь-яку відому будівлю у твоєму місті. Вивчи її панораму та супутниковий знімок.'}
+      }
+    ],
+    quiz:[
+      {q:{ru:'Что помогает определить место по фото?',en:'What helps determine location from a photo?',uk:'Що допомагає визначити місце за фото?'},options:{ru:['EXIF-данные и визуальные признаки','Только размер файла','Цвет рамки'],en:['EXIF data and visual clues','Only file size','Frame color'],uk:['EXIF-дані та візуальні ознаки','Лише розмір файлу','Колір рамки']},correct:0},
+      {q:{ru:'Можно ли геолоцировать чужие фото без согласия?',en:'Can you geolocate others\' photos without consent?',uk:'Чи можна геолокувати чужі фото без згоди?'},options:{ru:['Да','Нет, это нарушение приватности','Только известные места'],en:['Yes','No, this is privacy violation','Only famous places'],uk:['Так','Ні, це порушення приватності','Лише відомі місця']},correct:1}
+    ]
+  },
+  {
+    id:'dossier', icon:'folder',
+    title:{ru:'Составление досье и этика',en:'Building Dossier and Ethics',uk:'Складання досьє та етика'},
+    desc:{ru:'Структурирование данных, граф связей, финальные принципы.',en:'Data structuring, link graph, final principles.',uk:'Структурування даних, граф звʼязків, фінальні принципи.'},
     lessons:[
       {
         id:'structuring',
         title:{ru:'Структурирование информации',en:'Structuring Information',uk:'Структурування інформації'},
         content:{
-          ru:'Найденные данные нужно структурировать, иначе они превратятся в хаос.\n\nПринципы:\n1. Собирай факты, а не домыслы. Каждый вывод должен опираться на источник.\n2. Используй граф связей: сущности как узлы, связи как стрелки.\n3. Помечай источники и даты.\n4. Разделяй подтверждённое и предположения.\n5. Храни заметки и промежуточные результаты.\n\nНаш сервис даёт тебе Граф для связей и Доску для заметок.',
-          en:'Found data must be structured, otherwise it turns into chaos.\n\nPrinciples:\n1. Collect facts, not speculation. Every conclusion must be backed by a source.\n2. Use a link graph: entities as nodes, links as arrows.\n3. Mark sources and dates.\n4. Separate confirmed info from assumptions.\n5. Keep notes and intermediate results.\n\nOur service gives you a Graph for links and a Board for notes.',
-          uk:'Знайдені дані потрібно структурувати, інакше вони перетворяться на хаос.\n\nПринципи:\n1. Збирай факти, а не домисли. Кожен висновок має спиратися на джерело.\n2. Використовуй граф звʼязків: сутності як вузли, звʼязки як стрілки.\n3. Позначай джерела та дати.\n4. Розділяй підтверджене та припущення.\n5. Зберігай нотатки та проміжні результати.\n\nНаш сервіс дає тобі Граф для звʼязків та Дошку для нотаток.'
+          ru:'Найденные данные нужно структурировать, иначе они превратятся в хаос.\n\nПринципы:\n1. Собирай факты, а не домыслы. Каждый вывод должен опираться на источник.\n2. Используй граф связей: сущности как узлы, связи как стрелки.\n3. Помечай источники и даты.\n4. Разделяй подтверждённое и предположения.\n5. Храни заметки и промежуточные результаты.\n6. Регулярно перепроверяй данные — информация может меняться.\n\nНаш сервис даёт тебе Граф для связей и Доску для заметок. Используй их в связке: граф для структуры, доска для свободных мыслей.',
+          en:'Found data must be structured, otherwise it turns into chaos.\n\nPrinciples:\n1. Collect facts, not speculation. Every conclusion must be backed by a source.\n2. Use a link graph: entities as nodes, links as arrows.\n3. Mark sources and dates.\n4. Separate confirmed info from assumptions.\n5. Keep notes and intermediate results.\n6. Regularly re-verify data — information can change.\n\nOur service gives you a Graph for links and a Board for notes. Use them together: graph for structure, board for free thoughts.',
+          uk:'Знайдені дані потрібно структурувати, інакше вони перетворяться на хаос.\n\nПринципи:\n1. Збирай факти, а не домисли. Кожен висновок має спиратися на джерело.\n2. Використовуй граф звʼязків: сутності як вузли, звʼязки як стрілки.\n3. Позначай джерела та дати.\n4. Розділяй підтверджене та припущення.\n5. Зберігай нотатки та проміжні результати.\n6. Регулярно перевіряй дані — інформація може змінюватися.'
         },
-        materials:[{label:{ru:'Наш граф',en:'Our Graph'},url:'#graph'}],
-        task:{ru:'Создай в Графе 3-4 узла на любую тему и соедини их, подписав тип каждой связи.',en:'Create 3-4 nodes in the Graph on any topic and connect them, labeling each link type.',uk:'Створи у Графі 3-4 вузли на будь-яку тему і зʼєднай їх, підписавши тип кожного звʼязку.'}
+        materials:[],
+        task:{ru:'Создай в Графе 4-5 узлов на любую тему и соедини их, подписав тип каждой связи. Добавь заметки на Доску.',en:'Create 4-5 nodes in the Graph on any topic and connect them, labeling each link type. Add notes to the Board.',uk:'Створи у Графі 4-5 вузлів на будь-яку тему і зʼєднай їх, підписавши тип кожного звʼязку.'}
       },
       {
         id:'ethics_final',
         title:{ru:'Этика и закон (финал)',en:'Ethics and Law (Final)',uk:'Етика і закон (фінал)'},
         content:{
-          ru:'Ты дошёл до конца обучения. Помни главное:\n\n1. Закон: работай только с открытыми источниками. Не нарушай приватность.\n2. Согласие: не собирай данные о людях без их разрешения.\n3. Ответственность: информация — это сила, используй её во благо.\n4. Проверка: всегда проверяй найденное, не верь одному источнику.\n5. Безопасность: защищай и свои данные тоже.\n\nРазведка по открытым источникам — это навык. Используй его этично и легально.',
-          en:'You reached the end of the training. Remember the main things:\n\n1. Law: work only with open sources. Do not violate privacy.\n2. Consent: do not collect data about people without their permission.\n3. Responsibility: information is power, use it for good.\n4. Verification: always verify findings, do not trust a single source.\n5. Security: protect your own data too.\n\nOpen source intelligence is a skill. Use it ethically and legally.',
-          uk:'Ти дійшов до кінця навчання. Памʼятай головне:\n\n1. Закон: працюй лише з відкритими джерелами. Не порушуй приватність.\n2. Згода: не збирай дані про людей без їхнього дозволу.\n3. Відповідальність: інформація — це сила, використовуй її на благо.\n4. Перевірка: завжди перевіряй знайдене, не вір одному джерелу.\n5. Безпека: захищай і свої дані теж.\n\nРозвідка з відкритих джерел — це навичка. Використовуй її етично і легально.'
+          ru:'Ты дошёл до конца обучения. Помни главное:\n\n1. Закон: работай только с открытыми источниками. Не нарушай приватность.\n2. Согласие: не собирай данные о людях без их разрешения.\n3. Ответственность: информация — это сила, используй её во благо.\n4. Проверка: всегда проверяй найденное, не верь одному источнику.\n5. Безопасность: защищай и свои данные тоже.\n6. Цифровая гигиена: регулярно проверяй свои утечки и цифровой след.\n7. Критическое мышление: не все открытые данные достоверны.\n8. Документирование: фиксируй источники и методы для воспроизводимости.\n\nРазведка по открытым источникам — это навык. Используй его этично и легально. Поздравляем с завершением курса!',
+          en:'You reached the end of the training. Remember the main things:\n\n1. Law: work only with open sources. Do not violate privacy.\n2. Consent: do not collect data about people without their permission.\n3. Responsibility: information is power, use it for good.\n4. Verification: always verify findings, do not trust a single source.\n5. Security: protect your own data too.\n6. Digital hygiene: regularly check your leaks and digital footprint.\n7. Critical thinking: not all open data is reliable.\n8. Documentation: record sources and methods for reproducibility.\n\nOpen source intelligence is a skill. Use it ethically and legally. Congratulations on completing the course!',
+          uk:'Ти дійшов до кінця навчання. Памʼятай головне:\n\n1. Закон: працюй лише з відкритими джерелами. Не порушуй приватність.\n2. Згода: не збирай дані про людей без їхнього дозволу.\n3. Відповідальність: інформація — це сила, використовуй її на благо.\n4. Перевірка: завжди перевіряй знайдене, не вір одному джерелу.\n5. Безпека: захищай і свої дані теж.\n6. Цифрова гігієна: регулярно перевіряй свої витоки та цифровий слід.\n7. Критичне мислення: не всі відкриті дані достовірні.\n8. Документування: фіксуй джерела та методи для відтворюваності.\n\nРозвідка з відкритих джерел — це навичка. Використовуй її етично і легально.'
         },
         materials:[],
-        task:{ru:'Напиши на Доске 3 главных принципа этичного OSINT своими словами.',en:'Write on the Board 3 main principles of ethical OSINT in your own words.',uk:'Напиши на Дошці 3 головні принципи етичного OSINT своїми словами.'}
+        task:{ru:'Напиши на Доске 5 главных принципов этичного OSINT своими словами. Это твой личный кодекс.',en:'Write on the Board 5 main principles of ethical OSINT in your own words. This is your personal code.',uk:'Напиши на Дошці 5 головних принципів етичного OSINT своїми словами. Це твій особистий кодекс.'}
       }
     ],
     quiz:[
       {q:{ru:'Что должно быть у каждого вывода?',en:'What should every conclusion have?',uk:'Що має бути у кожного висновку?'},options:{ru:['Красивое оформление','Источник','Дата публикации'],en:['Nice formatting','A source','Publication date'],uk:['Гарне оформлення','Джерело','Дата публікації']},correct:1},
-      {q:{ru:'Можно ли собирать данные о людях без согласия?',en:'Can you collect data about people without consent?',uk:'Чи можна збирати дані про людей без згоди?'},options:{ru:['Да, если они в интернете','Нет','Только публичные личности'],en:['Yes, if they are on the internet','No','Only public figures'],uk:['Так, якщо вони в інтернеті','Ні','Лише публічні особи']},correct:1}
+      {q:{ru:'Можно ли собирать данные о людях без согласия?',en:'Can you collect data about people without consent?',uk:'Чи можна збирати дані про людей без згоди?'},options:{ru:['Да, если они в интернете','Нет','Только публичные личности'],en:['Yes, if they are on the internet','No','Only public figures'],uk:['Так, якщо вони в інтернеті','Ні','Лише публічні особи']},correct:1},
+      {q:{ru:'Почему важно проверять данные из нескольких источников?',en:'Why is it important to verify data from multiple sources?',uk:'Чому важливо перевіряти дані з кількох джерел?'},options:{ru:['Это быстрее','Один источник может быть недостоверным','Так красивее'],en:['It is faster','One source may be unreliable','It looks nicer'],uk:['Це швидше','Одне джерело може бути недостовірним','Так гарніше']},correct:1}
     ]
   }
 ];
 
-/* ═══════════ ТРЕНАЖЁР ДОРКОВ ═══════════ */
+/* ═══════════ ТРЕНАЖЁР ДОРКОВ (12 задач) ═══════════ */
 const DORK_TRAINER = [
   {id:'t1',task:{ru:'Найди все страницы внутри сайта github.com',en:'Find all pages within github.com site',uk:'Знайди всі сторінки всередині сайту github.com'},answer:'site:github.com',hint:{ru:'Используй оператор site: и домен',en:'Use site: operator and domain',uk:'Використовуй оператор site: і домен'}},
   {id:'t2',task:{ru:'Найди все PDF-файлы в интернете',en:'Find all PDF files on the internet',uk:'Знайди всі PDF-файли в інтернеті'},answer:'filetype:pdf',hint:{ru:'Используй filetype: и расширение',en:'Use filetype: and extension',uk:'Використовуй filetype: і розширення'}},
   {id:'t3',task:{ru:'Найди точную фразу "открытые данные"',en:'Find exact phrase "open data"',uk:'Знайди точну фразу "відкриті дані"'},answer:'"открытые данные"',alt:['"open data"','"відкриті дані"'],hint:{ru:'Точная фраза берётся в кавычки',en:'Exact phrase goes in quotes',uk:'Точна фраза береться в лапки'}},
   {id:'t4',task:{ru:'Найди страницы со словом "ягуар", но исключи автомобили',en:'Find pages with word "jaguar" but exclude cars',uk:'Знайди сторінки зі словом "ягуар", але виключи автомобілі'},answer:'ягуар -автомобиль',alt:['jaguar -car','ягуар -машина','ягуар -авто'],hint:{ru:'Для исключения используй минус перед словом',en:'Use minus before word to exclude',uk:'Для виключення використовуй мінус перед словом'}},
-  {id:'t5',task:{ru:'Найди страницы, где в заголовке есть слово "фотоальбом"',en:'Find pages with "photoalbum" in title',uk:'Знайди сторінки, де в заголовку є слово "фотоальбом"'},answer:'intitle:фотоальбом',alt:['intitle:photoalbum','intitle:фотоальбом'],hint:{ru:'Используй intitle: для поиска в заголовке',en:'Use intitle: to search in title',uk:'Використовуй intitle: для пошуку в заголовку'}},
+  {id:'t5',task:{ru:'Найди страницы, где в заголовке есть слово "фотоальбом"',en:'Find pages with "photoalbum" in title',uk:'Знайди сторінки, де в заголовку є слово "фотоальбом"'},answer:'intitle:фотоальбом',alt:['intitle:photoalbum'],hint:{ru:'Используй intitle: для поиска в заголовке',en:'Use intitle: to search in title',uk:'Використовуй intitle: для пошуку в заголовку'}},
   {id:'t6',task:{ru:'Найди страницы с ником "cooluser" ИЛИ "cooluser2000"',en:'Find pages with nickname "cooluser" OR "cooluser2000"',uk:'Знайди сторінки з ніком "cooluser" АБО "cooluser2000"'},answer:'cooluser | cooluser2000',hint:{ru:'Используй оператор | между вариантами',en:'Use | operator between variants',uk:'Використовуй оператор | між варіантами'}},
   {id:'t7',task:{ru:'Найди все страницы с адресом, содержащим слово "blog"',en:'Find all pages with URL containing word "blog"',uk:'Знайди всі сторінки з адресою, що містить слово "blog"'},answer:'inurl:blog',hint:{ru:'Используй inurl: для поиска в адресе',en:'Use inurl: to search in URL',uk:'Використовуй inurl: для пошуку в адресі'}},
-  {id:'t8',task:{ru:'Найди точную фразу "лучший фильм", где второе слово неизвестно',en:'Find exact phrase "best movie" where second word is unknown',uk:'Знайди точну фразу "кращий фільм", де друге слово невідоме'},answer:'"лучший * фильм"',alt:['"best * movie"','"кращий * фільм"'],hint:{ru:'Звёздочка * подставляет неизвестное слово в кавычках',en:'Asterisk * substitutes unknown word inside quotes',uk:'Зірочка * підставляє невідоме слово в лапках'}}
+  {id:'t8',task:{ru:'Найди точную фразу "лучший фильм", где второе слово неизвестно',en:'Find exact phrase "best movie" where second word is unknown',uk:'Знайди точну фразу "кращий фільм", де друге слово невідоме'},answer:'"лучший * фильм"',alt:['"best * movie"','"кращий * фільм"'],hint:{ru:'Звёздочка * подставляет неизвестное слово в кавычках',en:'Asterisk * substitutes unknown word inside quotes',uk:'Зірочка * підставляє невідоме слово в лапках'}},
+  {id:'t9',task:{ru:'Найди документы Word (.doc) на сайте университета',en:'Find Word documents (.doc) on a university site',uk:'Знайди документи Word (.doc) на сайті університету'},answer:'filetype:doc site:университет',alt:['filetype:doc site:university','filetype:doc site:edu'],hint:{ru:'Комбинируй filetype: и site:',en:'Combine filetype: and site:',uk:'Комбінуй filetype: і site:'}},
+  {id:'t10',task:{ru:'Найди страницы с текстом "публичный отчёт" внутри текста',en:'Find pages with text "public report" in page text',uk:'Знайди сторінки з текстом "публічний звіт" всередині тексту'},answer:'intext:"публичный отчёт"',alt:['intext:"public report"','intext:"публічний звіт"'],hint:{ru:'Используй intext: для поиска в тексте',en:'Use intext: to search in text',uk:'Використовуй intext: для пошуку в тексті'}},
+  {id:'t11',task:{ru:'Найди точный ник "mysecretuser" только на сайте reddit.com',en:'Find exact nickname "mysecretuser" only on reddit.com site',uk:'Знайди точний нік "mysecretuser" тільки на сайті reddit.com'},answer:'"mysecretuser" site:reddit.com',hint:{ru:'Комбинируй кавычки и site:',en:'Combine quotes and site:',uk:'Комбінуй лапки і site:'}},
+  {id:'t12',task:{ru:'Найди файлы презентаций (.ppt или .pptx) с темой "кибербезопасность"',en:'Find presentation files (.ppt or .pptx) with topic "cybersecurity"',uk:'Знайди файли презентацій (.ppt або .pptx) з темою "кібербезпека"'},answer:'filetype:ppt кибербезопасность',alt:['filetype:pptx кибербезопасность','filetype:ppt cybersecurity','filetype:pptx cybersecurity','filetype:ppt кібербезпека'],hint:{ru:'Используй filetype: с нужным расширением и ключевое слово',en:'Use filetype: with needed extension and keyword',uk:'Використовуй filetype: з потрібним розширенням і ключове слово'}}
 ];
 
-/* ═══════════ ГЛОССАРИЙ ═══════════ */
+/* ═══════════ ГЛОССАРИЙ (18 терминов) ═══════════ */
 const GLOSSARY = [
   {term:'OSINT',def:{ru:'Open Source Intelligence — разведка по открытым источникам. Сбор и анализ информации из публично доступных источников.',en:'Open Source Intelligence — collecting and analyzing info from publicly available sources.'}},
   {term:{ru:'Дорк',en:'Dork'},def:{ru:'Специальный оператор поискового запроса для уточнения поиска (site:, filetype:, intitle: и т.д.).',en:'A special search query operator for refining search (site:, filetype:, intitle:, etc.).'}},
@@ -675,7 +826,13 @@ const GLOSSARY = [
   {term:{ru:'Субдомен',en:'Subdomain'},def:{ru:'Дочерний домен относительно основного. Например, blog.example.com — субдомен домена example.com.',en:'A child domain relative to the main one. E.g., blog.example.com is a subdomain of example.com.'}},
   {term:{ru:'Геолокация по фото',en:'Photo Geolocation'},def:{ru:'Определение места съёмки фотографии по метаданным (GPS) или визуальным признакам.',en:'Determining photo location from metadata (GPS) or visual clues.'}},
   {term:{ru:'Утечка данных',en:'Data Breach'},def:{ru:'Компрометация базы данных, в результате которой информация попадает в открытый доступ.',en:'Database compromise resulting in information becoming publicly available.'}},
-  {term:{ru:'Пассивная разведка',en:'Passive Reconnaissance'},def:{ru:'Сбор информации без прямого взаимодействия с целью, только через открытые источники.',en:'Collecting info without direct interaction with the target, only via open sources.'}}
+  {term:{ru:'Пассивная разведка',en:'Passive Reconnaissance'},def:{ru:'Сбор информации без прямого взаимодействия с целью, только через открытые источники.',en:'Collecting info without direct interaction with the target, only via open sources.'}},
+  {term:{ru:'Активная разведка',en:'Active Reconnaissance'},def:{ru:'Сбор информации с прямым взаимодействием с целью. Требует осторожности и законности.',en:'Collecting info with direct interaction with the target. Requires caution and legality.'}},
+  {term:{ru:'Социальная инженерия',en:'Social Engineering'},def:{ru:'Метод получения информации через психологическое воздействие на людей, а не технические средства. Основа защиты — осведомлённость.',en:'Method of obtaining info through psychological manipulation rather than technical means. Defense basis — awareness.'}},
+  {term:{ru:'Двухфакторная аутентификация',en:'Two-Factor Authentication'},def:{ru:'Метод защиты аккаунта, при котором кроме пароля нужен второй фактор (код из СМС, приложения). Всегда включай её.',en:'Account protection method where besides password a second factor is needed (SMS code, app code). Always enable it.'}},
+  {term:{ru:'Фишинг',en:'Phishing'},def:{ru:'Мошенничество с целью получения доступа к данным через поддельные письма и сайты. Будь внимателен к ссылкам.',en:'Fraud aimed at getting access to data via fake emails and sites. Be careful with links.'}},
+  {term:{ru:'Граф связей',en:'Link Graph'},def:{ru:'Визуальное представление сущностей (узлов) и связей между ними. Используется для анализа отношений и структур.',en:'Visual representation of entities (nodes) and links between them. Used for analyzing relationships and structures.'}},
+  {term:{ru:'Кэш поисковика',en:'Search Engine Cache'},def:{ru:'Сохранённая поисковиком копия страницы. Позволяет увидеть страницу, даже если оригинал удалён или недоступен.',en:'A page copy saved by search engine. Allows viewing a page even if original is deleted or unavailable.'}}
 ];
 
 /* ═══════════ УТИЛИТЫ ═══════════ */
@@ -725,37 +882,26 @@ $('langSelect').addEventListener('change',e=>{currentLang=e.target.value;LS.set(
 /* ═══════════ ПРОГРЕСС И УРОВНИ ═══════════ */
 function calcProgress(){
   let totalLessons=0,doneLessons=0,totalTasks=0,doneTasks=0,totalQuizzes=ACADEMY.length,doneQuizzes=0;
-  ACADEMY.forEach(mod=>{
-    mod.lessons.forEach(l=>{
-      totalLessons++;if(progress.lessons[l.id])doneLessons++;
-      totalTasks++;if(progress.tasks[l.id])doneTasks++;
-    });
-  });
+  ACADEMY.forEach(mod=>{mod.lessons.forEach(l=>{totalLessons++;if(progress.lessons[l.id])doneLessons++;totalTasks++;if(progress.tasks[l.id])doneTasks++;});});
   ACADEMY.forEach(mod=>{if(progress.quizzes[mod.id])doneQuizzes++;});
   const total=totalLessons+totalTasks+totalQuizzes;
   const done=doneLessons+doneTasks+doneQuizzes;
   const pct=total>0?Math.round(done/total*100):0;
   return{totalLessons,doneLessons,totalTasks,doneTasks,totalQuizzes,doneQuizzes,pct};
 }
-function getRank(pct){
-  if(pct>=75)return t('rank_expert');
-  if(pct>=50)return t('rank_analyst');
-  if(pct>=25)return t('rank_explorer');
-  return t('rank_novice');
-}
+function getRank(pct){if(pct>=75)return t('rank_expert');if(pct>=50)return t('rank_analyst');if(pct>=25)return t('rank_explorer');return t('rank_novice');}
 function renderProgress(){
   const p=calcProgress();
   $('progressLevel').textContent=t('progress_level')+': '+p.pct+'%';
   $('progressRank').textContent='★ '+getRank(p.pct);
   $('progressBar').style.width=p.pct+'%';
   $('progressStats').innerHTML=`<span><strong>${p.doneLessons}</strong>/${p.totalLessons} ${t('lessons_done')}</span><span><strong>${p.doneTasks}</strong>/${p.totalTasks} ${t('tasks_done')}</span><span><strong>${p.doneQuizzes}</strong>/${p.totalQuizzes} ${t('quizzes_passed')}</span>`;
-  // Карта навыков
   $('skillMap').innerHTML=ACADEMY.map(mod=>{
     const modLessons=mod.lessons.length;
     const modDone=mod.lessons.filter(l=>progress.lessons[l.id]).length;
     const modPct=Math.round(modDone/modLessons*100);
     const done=modPct===100?' done':'';
-    return `<div class="skill-node${done}"><div class="skill-icon">${mod.icon}</div><div class="skill-name">${escapeHtml(L(mod.title,currentLang))}</div><div class="skill-bar"><div class="skill-fill" style="width:${modPct}%"></div></div></div>`;
+    return `<div class="skill-node${done}"><div class="skill-icon">${MODULE_ICONS[mod.icon]||MODULE_ICONS.book}</div><div class="skill-name">${escapeHtml(L(mod.title,currentLang))}</div><div class="skill-bar"><div class="skill-fill" style="width:${modPct}%"></div></div></div>`;
   }).join('');
 }
 
@@ -793,7 +939,7 @@ function renderAcademy(){
     }).join('');
     return `<div class="module-card" data-module="${mod.id}">
       <div class="module-head">
-        <div class="module-icon">${mod.icon}</div>
+        <div class="module-icon">${MODULE_ICONS[mod.icon]||MODULE_ICONS.book}</div>
         <div class="module-info"><div class="module-title">${mi+1}. ${escapeHtml(L(mod.title,currentLang))}</div><div class="module-desc">${escapeHtml(L(mod.desc,currentLang))}</div></div>
         <div class="module-status ${statusCls}">${status}</div>
       </div>
@@ -808,7 +954,6 @@ function renderAcademy(){
   }).join('');
 }
 
-// Раскрытие модулей
 $('modulesContainer').addEventListener('click',e=>{
   const head=e.target.closest('.module-head');
   if(head){head.parentElement.classList.toggle('open');return;}
@@ -826,22 +971,11 @@ function submitQuizHandler(modId){
   const mod=ACADEMY.find(m=>m.id===modId);
   if(!mod)return;
   let correct=0;
-  mod.quiz.forEach((q,qi)=>{
-    const qid=mod.id+'_q'+qi;
-    const selected=selectedQuizAnswers[qid];
-    if(selected===q.correct)correct++;
-  });
+  mod.quiz.forEach((q,qi)=>{const qid=mod.id+'_q'+qi;const selected=selectedQuizAnswers[qid];if(selected===q.correct)correct++;});
   const passed=correct===mod.quiz.length;
   const resultEl=$('quizResult_'+modId);
-  if(passed){
-    progress.quizzes[modId]=true;
-    LS.set('osint_progress',progress);
-    resultEl.innerHTML=`<div class="quiz-result pass">✓ ${t('quiz_passed')} (${correct}/${mod.quiz.length})</div>`;
-    renderProgress();
-    log('quiz passed: '+modId);
-  }else{
-    resultEl.innerHTML=`<div class="quiz-result fail">✗ ${t('quiz_failed')} (${correct}/${mod.quiz.length})</div>`;
-  }
+  if(passed){progress.quizzes[modId]=true;LS.set('osint_progress',progress);resultEl.innerHTML=`<div class="quiz-result pass">✓ ${t('quiz_passed')} (${correct}/${mod.quiz.length})</div>`;renderProgress();log('quiz passed: '+modId);}
+  else{resultEl.innerHTML=`<div class="quiz-result fail">✗ ${t('quiz_failed')} (${correct}/${mod.quiz.length})</div>`;}
 }
 
 /* ═══════════ ТРЕНАЖЁР ═══════════ */
@@ -858,7 +992,7 @@ function renderTrainer(){
         <button type="button" data-check="${task.id}">${t('btn_check')}</button>
       </div>
       <div class="trainer-hint" data-hint="${task.id}">
-        <span>💡 ${t('btn_show_hint')}</span>
+        <span>${t('hint_label')}</span>
         <div class="trainer-hint-text">${escapeHtml(L(task.hint,currentLang))}</div>
       </div>
       <div class="trainer-feedback" id="trainerFeedback_${task.id}"></div>
@@ -880,17 +1014,8 @@ $('trainerContainer').addEventListener('click',e=>{
     const isCorrect=userAnswer===correctAnswer||alts.includes(userAnswer);
     const feedback=$('trainerFeedback_'+taskId);
     feedback.classList.add('show');
-    if(isCorrect){
-      feedback.className='trainer-feedback show ok';
-      feedback.textContent='✓ '+(currentLang==='ru'?'Правильно! Отличная работа.':'Correct! Great job.');
-      trainerState[taskId]=true;
-      LS.set('osint_trainer',trainerState);
-      setTimeout(renderTrainer,800);
-      log('trainer: task '+taskId+' done');
-    }else{
-      feedback.className='trainer-feedback show fail';
-      feedback.textContent='✗ '+(currentLang==='ru'?'Не совсем. Попробуй ещё раз или посмотри подсказку.':'Not quite. Try again or check the hint.')+' '+t('correct_answer')+': '+task.answer;
-    }
+    if(isCorrect){feedback.className='trainer-feedback show ok';feedback.textContent='✓ '+(currentLang==='ru'?'Правильно! Отличная работа.':'Correct! Great job.');trainerState[taskId]=true;LS.set('osint_trainer',trainerState);setTimeout(renderTrainer,800);log('trainer: task '+taskId+' done');}
+    else{feedback.className='trainer-feedback show fail';feedback.textContent='✗ '+(currentLang==='ru'?'Не совсем. Попробуй ещё раз или посмотри подсказку.':'Not quite. Try again or check the hint.')+' '+t('correct_answer')+': '+task.answer;}
     return;
   }
 });
@@ -918,21 +1043,16 @@ function renderBoard(){
 $('noteAddBtn').addEventListener('click',()=>{const text=$('noteInput').value.trim();if(!text)return;boardNotes.unshift({text,date:new Date().toLocaleString('ru-RU')});LS.set('osint_notes',boardNotes);$('noteInput').value='';renderBoard();showToast('note added');});
 $('boardContainer').addEventListener('click',e=>{const btn=e.target.closest('.note-remove');if(!btn)return;boardNotes.splice(parseInt(btn.dataset.idx),1);LS.set('osint_notes',boardNotes);renderBoard();});
 
-/* ═══════════ GRAPH ENGINE (упрощённый) ═══════════ */
+/* ═══════════ GRAPH ENGINE ═══════════ */
 const graph=(()=>{
   const STORAGE_KEY='osint_graph_v1';
   const WORLD_SIZE=6000,WORLD_CENTER=WORLD_SIZE/2;
-  let state={nodes:[],edges:[]};
-  let nextId=1;
-  let view={x:0,y:0,scale:1};
+  let state={nodes:[],edges:[]};let nextId=1;let view={x:0,y:0,scale:1};
   const MIN_SCALE=0.2,MAX_SCALE=3;
   let selectedNode=null,connectMode=false,pendingConnect=null;
-  let dragging=null,dragOffset={x:0,y:0};
-  let panning=false,panStart={x:0,y:0,viewX:0,viewY:0};
-  let clickStart={x:0,y:0,time:0,moved:false};
-  const lastTapPos={x:null,y:null};
+  let dragging=null,dragOffset={x:0,y:0};let panning=false,panStart={x:0,y:0,viewX:0,viewY:0};
+  let clickStart={x:0,y:0,time:0,moved:false};const lastTapPos={x:null,y:null};
   let touchState={ids:[],dist:0,center:{x:0,y:0},startScale:1,startView:{x:0,y:0}};
-
   function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({state,nextId,view}));}catch{}}
   function load(){let hasSavedView=false;try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const data=JSON.parse(raw);state=data.state||{nodes:[],edges:[]};nextId=data.nextId||(state.nodes.length+1);if(data.view&&typeof data.view.x==='number'){view={...view,...data.view};hasSavedView=true;}}}catch{state={nodes:[],edges:[]};}if(!hasSavedView){fitToView();}else{applyTransform();}render();}
   function applyTransform(){$('graphWorld').style.transform=`translate(${view.x}px,${view.y}px) scale(${view.scale})`;$('zoomLabel').textContent=Math.round(view.scale*100)+'%';}
@@ -946,7 +1066,7 @@ const graph=(()=>{
   function addEdge(from,to){if(from===to)return;const exists=state.edges.some(e=>(e.from===from&&e.to===to)||(e.from===to&&e.to===from));if(exists)return;state.edges.push({from,to});save();render();log('graph: edge '+from+' → '+to);}
   function clearGraph(){state={nodes:[],edges:[]};nextId=1;selectedNode=null;pendingConnect=null;save();render();log('graph: cleared');}
   function render(){$('graphWorld').querySelectorAll('.graph-node').forEach(n=>n.remove());$('graphEmpty').classList.toggle('hidden',state.nodes.length>0);state.nodes.forEach(node=>{const div=document.createElement('div');div.className='graph-node'+(selectedNode===node.id?' selected':'');div.dataset.id=node.id;div.style.left=node.x+'px';div.style.top=node.y+'px';div.innerHTML=`<div class="node-remove" title="delete">×</div><div class="node-icon">${ICONS[node.type]||ICONS.note}</div><div class="node-type">${escapeHtml(L(NODE_TYPES.find(t=>t.id===node.type)?.label,currentLang)||'')}</div><div class="node-label">${escapeHtml(node.label)}</div>`;$('graphWorld').appendChild(div);div.querySelector('.node-remove').addEventListener('click',ev=>{ev.stopPropagation();ev.preventDefault();removeNode(node.id);});div.querySelector('.node-remove').addEventListener('touchstart',ev=>{ev.stopPropagation();ev.preventDefault();},{passive:false});div.addEventListener('mousedown',ev=>startNodeDrag(ev,node,div));div.addEventListener('touchstart',ev=>startNodeDrag(ev,node,div),{passive:false});div.addEventListener('dblclick',ev=>{ev.stopPropagation();removeNode(node.id);});});renderEdges();}
-  function renderEdges(){$('graphSvg').querySelectorAll('.graph-edge,.edge-label').forEach(n=>n.remove());state.edges.forEach(edge=>{const a=state.nodes.find(n=>n.id===edge.from);const b=state.nodes.find(n=>n.id===edge.to);if(!a||!b)return;const nodeA=$('graphWorld').querySelector(`[data-id="${a.id}"]`);const nodeB=$('graphWorld').querySelector(`[data-id="${b.id}"]`);if(!nodeA||!nodeB)return;const x1=a.x+nodeA.offsetWidth/2;const y1=a.y+nodeA.offsetHeight/2;const x2=b.x+nodeB.offsetWidth/2;const y2=b.y+nodeB.offsetHeight/2;const dx=x2-x1;const dy=y2-y1;const len=Math.hypot(dx,dy);if(len<20)return;const ux=dx/len;const uy=dy/len;const offsetA=Math.max(nodeA.offsetWidth/2,nodeA.offsetHeight/2)+4;const offsetB=Math.max(nodeB.offsetWidth/2,nodeB.offsetHeight/2)+10;const sx1=x1+ux*offsetA;const sy1=y1+uy*offsetA;const sx2=x2-ux*offsetB;const sy2=y2-uy*offsetB;const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',sx1);line.setAttribute('y1',sy1);line.setAttribute('x2',sx2);line.setAttribute('y2',sy2);line.setAttribute('class','graph-edge');line.setAttribute('marker-end','url(#arrowhead)');$('graphSvg').appendChild(line);});}
+  function renderEdges(){$('graphSvg').querySelectorAll('.graph-edge').forEach(n=>n.remove());state.edges.forEach(edge=>{const a=state.nodes.find(n=>n.id===edge.from);const b=state.nodes.find(n=>n.id===edge.to);if(!a||!b)return;const nodeA=$('graphWorld').querySelector(`[data-id="${a.id}"]`);const nodeB=$('graphWorld').querySelector(`[data-id="${b.id}"]`);if(!nodeA||!nodeB)return;const x1=a.x+nodeA.offsetWidth/2;const y1=a.y+nodeA.offsetHeight/2;const x2=b.x+nodeB.offsetWidth/2;const y2=b.y+nodeB.offsetHeight/2;const dx=x2-x1;const dy=y2-y1;const len=Math.hypot(dx,dy);if(len<20)return;const ux=dx/len;const uy=dy/len;const offsetA=Math.max(nodeA.offsetWidth/2,nodeA.offsetHeight/2)+4;const offsetB=Math.max(nodeB.offsetWidth/2,nodeB.offsetHeight/2)+10;const sx1=x1+ux*offsetA;const sy1=y1+uy*offsetA;const sx2=x2-ux*offsetB;const sy2=y2-uy*offsetB;const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',sx1);line.setAttribute('y1',sy1);line.setAttribute('x2',sx2);line.setAttribute('y2',sy2);line.setAttribute('class','graph-edge');line.setAttribute('marker-end','url(#arrowhead)');$('graphSvg').appendChild(line);});}
   function startNodeDrag(ev,node,div){if(connectMode){ev.stopPropagation();ev.preventDefault();handleNodeClick(node.id);return;}if(ev.target.closest('.node-remove'))return;const pt=ev.touches?ev.touches[0]:ev;dragging=node;const worldPoint=screenToWorld(pt.clientX,pt.clientY);dragOffset.x=worldPoint.x-node.x;dragOffset.y=worldPoint.y-node.y;div.classList.add('dragging');clickStart={x:pt.clientX,y:pt.clientY,time:Date.now(),moved:false};ev.stopPropagation();ev.preventDefault();}
   function onMove(ev){if(dragging){const pt=ev.touches?ev.touches[0]:ev;const worldPoint=screenToWorld(pt.clientX,pt.clientY);dragging.x=worldPoint.x-dragOffset.x;dragging.y=worldPoint.y-dragOffset.y;const div=$('graphWorld').querySelector(`[data-id="${dragging.id}"]`);if(div){div.style.left=dragging.x+'px';div.style.top=dragging.y+'px';}renderEdges();if(!clickStart.moved){const dx=pt.clientX-clickStart.x;const dy=pt.clientY-clickStart.y;if(Math.hypot(dx,dy)>4)clickStart.moved=true;}ev.preventDefault();return;}if(panning){const pt=ev.touches?ev.touches[0]:ev;view.x=panStart.viewX+(pt.clientX-panStart.x);view.y=panStart.viewY+(pt.clientY-panStart.y);applyTransform();ev.preventDefault();}}
   function onEnd(ev){if(dragging){const div=$('graphWorld').querySelector(`[data-id="${dragging.id}"]`);if(div)div.classList.remove('dragging');if(!clickStart.moved&&Date.now()-clickStart.time<400){handleNodeClick(dragging.id);}else if(clickStart.moved){save();}dragging=null;}if(panning){panning=false;$('graphViewport').classList.remove('panning');save();}}
