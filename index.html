@@ -251,7 +251,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       <div class="terminal-body">
         <div class="brand">
           <h1>OSINT ACADEMY</h1>
-          <p>strict learning // v3.3 // monochrome</p>
+          <p>strict learning // v3.4 // fixed</p>
         </div>
         <div class="boot">
           [ ok ] open-source learning<br>
@@ -259,7 +259,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
           [ ok ] auth: cloud (supabase)<br>
           [ ok ] 10 modules / 20 lessons<br>
           [ ok ] strict answer verification<br>
-          [ ok ] progress only for correct answers<br>
+          [ ok ] quiz state preserved<br>
           [ -- ] login from any device
         </div>
         <div class="tabs">
@@ -413,23 +413,17 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 <div class="toast" id="toast">done</div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════
-   SUPABASE + AUTH INIT (защищено от ошибок, выполняется первым)
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══════════ SUPABASE ═══════════ */
 const SUPABASE_URL='https://ltjxlwcuoxhoerngseym.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0anhsd2N1b3hob2VybmdzZXltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxOTUzODQsImV4cCI6MjEwODc3MTM4NH0.twVAE5geFigiCMHtHUXA0HZH1uTntAJynPEOR3L6_LI';
-
 let supabaseClient=null;
-try{
-  supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-}catch(e){
-  console.error('Supabase init failed:',e);
-}
+try{supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY)}catch(e){console.error('Supabase init failed:',e)}
 
+/* ═══════════ HELPERS ═══════════ */
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const LS={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
-function toast(text){const el=$('toast');if(!el)return;el.textContent=text;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1600);}
+function toast(text){const el=$('toast');if(!el)return;el.textContent=text;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1600)}
 async function copyText(text){try{await navigator.clipboard.writeText(text);toast('copied')}catch{const a=document.createElement('textarea');a.value=text;a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();try{document.execCommand('copy');toast('copied')}catch{}a.remove()}}
 function log(text){const box=$('consoleBox');if(!box)return;const l=document.createElement('div');l.textContent=`[${new Date().toLocaleTimeString('ru-RU')}] ${text}`;box.appendChild(l);while(box.children.length>7)box.removeChild(box.firstChild)}
 function openTool(url){try{const w=window.open(url,'_blank','noopener,noreferrer');if(w)return}catch{}try{const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';document.body.appendChild(a);a.click();a.remove()}catch{}setTimeout(()=>{if(!document.hidden)window.location.href=url},350)}
@@ -445,19 +439,17 @@ hy:{nav_academy:'ԱԿԱԴԵՄԻԱ',nav_trainer:'ՄԱՐԶԻՉ',nav_graph:'ԳՐԱ�
 ko:{nav_academy:'아카데미',nav_trainer:'트레이너',nav_graph:'그래프',nav_glossary:'용어집',nav_board:'보드',btn_logout:'로그아웃',tab_login:'로그인',tab_register:'회원가입',lbl_email:'이메일',lbl_password:'비밀번호',lbl_password2:'비밀번호 확인',lbl_callsign:'콜사인',btn_login:'로그인',btn_register:'계정 생성',auth_note:'클라우드 인증. 세션 7일.',academy_title:'학습 모듈',trainer_title:'DORK 트레이너',trainer_desc:'올바른 검색 쿼리를 작성하세요.',graph_title:'링크 시각화',graph_empty:'+ 노드 를 눌러 추가하세요.',glossary_title:'용어집',board_title:'노트 보드',btn_add_node:'+ 노드',btn_connect:'연결',btn_clear:'지우기',modal_add_node:'노드 추가',lbl_node_type:'유형',lbl_node_label:'라벨',btn_cancel:'취소',btn_add:'추가',modal_confirm:'확인',confirm_text:'그래프를 삭제할까요?',btn_yes_delete:'예, 삭제',progress_level:'레벨',lessons_done:'레슨 완료',tasks_done:'작업 완료',quizzes_passed:'테스트 통과',rank_novice:'초보자',rank_explorer:'탐험가',rank_analyst:'분석가',rank_expert:'전문가',status_done:'완료',status_progress:'진행 중',status_locked:'시작 안 함',lesson_task:'실습 과제',btn_mark_done:'완료 표시',btn_done:'완료',btn_start_lesson:'레슨 완료',btn_check:'확인',btn_show_hint:'힌트 [?]',quiz_title:'모듈 테스트',quiz_submit:'테스트 제출',quiz_passed:'테스트 통과!',quiz_failed:'오류가 있습니다.',question:'질문',correct_answer:'정답',share_label:'친구와 공유:',graph_hint:'손가락: 1개 — 이동, 2개 — 줌.',hint_label:'[?] 힌트',task_wrong:'답이 틀렸습니다.',task_correct:'정답! 과제 완료.',answer_placeholder:'당신의 답...',complete_task_first:'먼저 과제를 완료하세요',answer_all_first:'모든 질문에 답하세요',retake_hint:'수정 후 다시 제출하세요.'}
 };
 let currentLang='ru';
-function t(key){return(UI[currentLang]&&UI[currentLang][key])||UI.en[key]||UI.ru[key]||key;}
-function applyI18n(){document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n)});const sl=$('shareLabel');if(sl)sl.textContent=t('share_label');const gh=$('graphHint');if(gh)gh.textContent=t('graph_hint');}
+function t(key){return(UI[currentLang]&&UI[currentLang][key])||UI.en[key]||UI.ru[key]||key}
+function applyI18n(){document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n)});const sl=$('shareLabel');if(sl)sl.textContent=t('share_label');const gh=$('graphHint');if(gh)gh.textContent=t('graph_hint')}
 
 /* ═══════════ STATE ═══════════ */
 let currentUser=null,clockInterval=null,currentView='academy',activeTheme='depth';
 let boardNotes=[],progress={lessons:{},tasks:{},quizzes:{}},selectedQuizAnswers={},selectedType=null;
+let openModules=new Set(); // ИСПРАВЛЕНИЕ: храним открытые модули
 
-/* ═══════════════════════════════════════════════════════════════
-   AUTH HANDLERS (регистрируются сразу, до данных академии)
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══════════ AUTH HANDLERS (регистрируются сразу) ═══════════ */
 function setAuthMsg(txt,type){const el=$('authMessage');if(el){el.textContent=txt;el.className='auth-message'+(type?' '+type:'')}}
 
-// Переключение табов вход/регистрация
 document.addEventListener('DOMContentLoaded',()=>{
   try{
     document.querySelectorAll('.tab').forEach(tab=>{
@@ -471,90 +463,52 @@ document.addEventListener('DOMContentLoaded',()=>{
         setAuthMsg('');
       });
     });
-
-    // Вход
     const lf=$('loginForm');
-    if(lf){
-      lf.addEventListener('submit',async e=>{
-        e.preventDefault();
-        const em=$('loginEmail').value.trim();
-        const pw=$('loginPass').value;
-        if(!em||!pw)return setAuthMsg('! fill all fields','error');
-        if(!supabaseClient)return setAuthMsg('! connection error','error');
-        const btn=$('loginBtn');
-        btn.disabled=true;btn.textContent='...';
-        try{
-          const{data,error}=await supabaseClient.auth.signInWithPassword({email:em,password:pw});
-          if(error)throw error;
-          const nickname=data.user.user_metadata?.nickname||data.user.email;
-          startSession(nickname);
-        }catch(err){
-          setAuthMsg('! '+err.message,'error');
-        }finally{
-          btn.disabled=false;btn.textContent=t('btn_login');
-        }
-      });
-    }
-
-    // Регистрация
+    if(lf){lf.addEventListener('submit',async e=>{
+      e.preventDefault();
+      const em=$('loginEmail').value.trim(),pw=$('loginPass').value;
+      if(!em||!pw)return setAuthMsg('! fill all fields','error');
+      if(!supabaseClient)return setAuthMsg('! connection error','error');
+      const btn=$('loginBtn');btn.disabled=true;btn.textContent='...';
+      try{
+        const{data,error}=await supabaseClient.auth.signInWithPassword({email:em,password:pw});
+        if(error)throw error;
+        startSession(data.user.user_metadata?.nickname||data.user.email);
+      }catch(err){setAuthMsg('! '+err.message,'error')}
+      finally{btn.disabled=false;btn.textContent=t('btn_login')}
+    })}
     const rf=$('registerForm');
-    if(rf){
-      rf.addEventListener('submit',async e=>{
-        e.preventDefault();
-        const nick=$('regNick').value.trim();
-        const em=$('regEmail').value.trim();
-        const pw=$('regPass').value;
-        const pw2=$('regPass2').value;
-        if(nick.length<3)return setAuthMsg('! callsign min 3 chars','error');
-        if(!em)return setAuthMsg('! enter e-mail','error');
-        if(pw.length<6)return setAuthMsg('! password min 6 chars','error');
-        if(pw!==pw2)return setAuthMsg('! passwords do not match','error');
-        if(!supabaseClient)return setAuthMsg('! connection error','error');
-        const btn=$('regBtn');
-        btn.disabled=true;btn.textContent='...';
-        try{
-          const{data,error}=await supabaseClient.auth.signUp({
-            email:em,password:pw,
-            options:{data:{nickname:nick}}
-          });
-          if(error)throw error;
-          if(data.session){
-            const nickname=data.user.user_metadata?.nickname||data.user.email;
-            startSession(nickname);
-          }else{
-            setAuthMsg('check email to confirm','success');
-          }
-        }catch(err){
-          setAuthMsg('! '+err.message,'error');
-        }finally{
-          btn.disabled=false;btn.textContent=t('btn_register');
-        }
-      });
-    }
-
-    // Выход
+    if(rf){rf.addEventListener('submit',async e=>{
+      e.preventDefault();
+      const nick=$('regNick').value.trim(),em=$('regEmail').value.trim(),pw=$('regPass').value,pw2=$('regPass2').value;
+      if(nick.length<3)return setAuthMsg('! callsign min 3 chars','error');
+      if(!em)return setAuthMsg('! enter e-mail','error');
+      if(pw.length<6)return setAuthMsg('! password min 6 chars','error');
+      if(pw!==pw2)return setAuthMsg('! passwords do not match','error');
+      if(!supabaseClient)return setAuthMsg('! connection error','error');
+      const btn=$('regBtn');btn.disabled=true;btn.textContent='...';
+      try{
+        const{data,error}=await supabaseClient.auth.signUp({email:em,password:pw,options:{data:{nickname:nick}}});
+        if(error)throw error;
+        if(data.session)startSession(data.user.user_metadata?.nickname||data.user.email);
+        else setAuthMsg('check email to confirm','success');
+      }catch(err){setAuthMsg('! '+err.message,'error')}
+      finally{btn.disabled=false;btn.textContent=t('btn_register')}
+    })}
     const lo=$('logoutBtn');
-    if(lo){
-      lo.addEventListener('click',async()=>{
-        try{if(supabaseClient)await supabaseClient.auth.signOut()}catch{}
-        currentUser=null;
-        if(clockInterval)clearInterval(clockInterval);
-        const app=$('appScreen'),auth=$('authScreen');
-        if(app)app.classList.add('hidden');
-        if(auth)auth.classList.remove('hidden');
-        if(lf)lf.reset();
-        if(rf)rf.reset();
-        const cb=$('consoleBox');if(cb)cb.innerHTML='';
-        setAuthMsg('');
-      });
-    }
-
-    // Инициализация при загрузке
+    if(lo){lo.addEventListener('click',async()=>{
+      try{if(supabaseClient)await supabaseClient.auth.signOut()}catch{}
+      currentUser=null;
+      if(clockInterval)clearInterval(clockInterval);
+      const app=$('appScreen'),auth=$('authScreen');
+      if(app)app.classList.add('hidden');
+      if(auth)auth.classList.remove('hidden');
+      if(lf)lf.reset();if(rf)rf.reset();
+      const cb=$('consoleBox');if(cb)cb.innerHTML='';
+      setAuthMsg('');
+    })}
     initApp();
-  }catch(err){
-    console.error('Init error:',err);
-    setAuthMsg('! init error: '+err.message,'error');
-  }
+  }catch(err){console.error('Init error:',err);setAuthMsg('! init error: '+err.message,'error')}
 });
 
 function startSession(name){
@@ -565,18 +519,12 @@ function startSession(name){
   const uc=$('userChip');if(uc)uc.textContent='\u25CF '+name;
   startClock();
   log('session: '+name);
-  try{renderAcademy();renderTrainer();renderGlossary();renderBoard();graph.load();}catch(err){console.error('Render error:',err);log('render error: '+err.message)}
+  try{renderAcademy();renderTrainer();renderGlossary();renderBoard();graph.load()}catch(err){console.error('Render error:',err);log('render error: '+err.message)}
 }
-
-function startClock(){
-  const tick=()=>{const c=$('clock');if(c)c.textContent=new Date().toLocaleTimeString('ru-RU')};
-  tick();
-  if(clockInterval)clearInterval(clockInterval);
-  clockInterval=setInterval(tick,1000);
-}
+function startClock(){const tick=()=>{const c=$('clock');if(c)c.textContent=new Date().toLocaleTimeString('ru-RU')};tick();if(clockInterval)clearInterval(clockInterval);clockInterval=setInterval(tick,1000)}
 
 /* ═══════════ THEMES ═══════════ */
-function applyTheme(id){document.body.className=id==='depth'?'':'theme-'+id;activeTheme=id;LS.set('osint_theme',id);const tb=$('themeBtn');if(tb)tb.textContent=id==='depth'?'\u25D0':(id==='terminal'?'\u25A4':'\u25CB');}
+function applyTheme(id){document.body.className=id==='depth'?'':'theme-'+id;activeTheme=id;LS.set('osint_theme',id);const tb=$('themeBtn');if(tb)tb.textContent=id==='depth'?'\u25D0':(id==='terminal'?'\u25A4':'\u25CB')}
 
 /* ═══════════ MONOCHROME MODULE ICONS ═══════════ */
 const MI={
@@ -598,71 +546,71 @@ const L=(obj,lang)=>{if(!obj)return'';if(typeof obj==='string')return obj;return
 /* ═══════════ ACADEMY DATA ═══════════ */
 const ACADEMY=[
 {id:'basics',icon:'book',title:{ru:'Основы разведки',en:'OSINT Fundamentals',uk:'Основи розвідки'},desc:{ru:'Что такое OSINT, этика, безопасность, закон.',en:'What OSINT is, ethics, security, law.',uk:'Що таке OSINT, етика, безпека, закон.'},lessons:[
-{id:'what_is_osint',title:{ru:'Что такое OSINT',en:'What is OSINT',uk:'Що таке OSINT'},content:{ru:'Разведка по открытым источникам (OSINT) — сбор и анализ информации из публично доступных источников. НЕ взлом, НЕ кража данных, НЕ слежка.\n\nЛегальные источники: поисковики, соцсети (публичные профили), архивы сайтов, открытые реестры, новости, форумы.\n\nГлавное правило: работай только с тем, что доступно всем.',en:'Open Source Intelligence (OSINT) — collecting and analyzing info from publicly available sources. NOT hacking, NOT data theft, NOT surveillance.\n\nLegal sources: search engines, social media (public profiles), web archives, public registries, news, forums.\n\nGolden rule: work only with what is already public.',uk:'Розвідка з відкритих джерел (OSINT) — збір та аналіз інформації з публічно доступних джерел. НЕ злом, НЕ крадіжка, НЕ стеження.\n\nЛегальні джерела: пошуковики, соцмережі, архіви сайтів, відкриті реєстри, новини, форуми.\n\nГоловне правило: працюй лише з тим, що доступне всім.'},materials:[{label:'OSINT Framework',url:'https://osintframework.com/'},{label:'Bellingcat Guides',url:'https://www.bellingcat.com/resources/how-tos/'}],task:{ru:'Сформулируй своими словами: чем OSINT отличается от взлома?',en:'In your own words: how does OSINT differ from hacking?',uk:'Сформулюй своїми словами: чим OSINT відрізняється від зламу?'},taskKeywords:['открыт','публичн','легальн','без взлома','не взлам','закон','соглас','доступн','open','public','legal','without hacking','consent','відкрит','публічн','легальн','закон','згода']},
-{id:'safety',title:{ru:'Безопасность и анонимность',en:'Safety and Anonymity',uk:'Безпека та анонімність'},content:{ru:'Прежде чем искать других — защити себя.\n\n1. Цифровой след: всё, что публикуешь, остаётся.\n2. Приватность: закрой лишнее в настройках соцсетей.\n3. Пароли: не используй один пароль везде.\n4. Анонимность: не заходи на подозрительные сайты с основного аккаунта.',en:'Before investigating others — protect yourself.\n\n1. Digital footprint: everything you publish stays.\n2. Privacy: close unnecessary things in settings.\n3. Passwords: do not use one password everywhere.\n4. Anonymity: do not visit suspicious sites from main account.',uk:'Перш ніж шукати інших — захисти себе.\n\n1. Цифровий слід: все, що публікуєш, залишається.\n2. Приватність: закрий зайве в налаштуваннях.\n3. Паролі: не використовуй один пароль скрізь.\n4. Анонімність: не заходь на підозрілі сайти з основного акаунта.'},materials:[{label:'Have I Been Pwned',url:'https://haveibeenpwned.com/'}],task:{ru:'Перечисли минимум 2 способа защитить свои данные в интернете.',en:'List at least 2 ways to protect your data online.',uk:'Перелічи мінімум 2 способи захистити свої дані.'},taskKeywords:['парол','утечк','приватн','настройк','двухфактор','2fa','след','цифровой','безопасн','защит','анонимн','password','leak','privacy','setting','two-factor','security','protect','anonym','пароль','витік','приватність','безпека','захист']}],
+{id:'what_is_osint',title:{ru:'Что такое OSINT',en:'What is OSINT',uk:'Що таке OSINT'},content:{ru:'Разведка по открытым источникам (OSINT) — сбор и анализ информации из публично доступных источников. НЕ взлом, НЕ кража данных, НЕ слежка.\n\nЛегальные источники: поисковики, соцсети (публичные профили), архивы сайтов, открытые реестры, новости, форумы.\n\nГлавное правило: работай только с тем, что доступно всем.',en:'Open Source Intelligence (OSINT) — collecting and analyzing info from publicly available sources. NOT hacking, NOT data theft, NOT surveillance.\n\nLegal sources: search engines, social media (public profiles), web archives, public registries, news, forums.\n\nGolden rule: work only with what is already public.',uk:'Розвідка з відкритих джерел (OSINT) — збір та аналіз інформації з публічно доступних джерел. НЕ злом, НЕ крадіжка, НЕ стеження.'},materials:[{label:'OSINT Framework',url:'https://osintframework.com/'},{label:'Bellingcat Guides',url:'https://www.bellingcat.com/resources/how-tos/'}],task:{ru:'Сформулируй своими словами: чем OSINT отличается от взлома?',en:'In your own words: how does OSINT differ from hacking?',uk:'Сформулюй своїми словами: чим OSINT відрізняється від зламу?'},taskKeywords:['открыт','публичн','легальн','без взлома','не взлам','закон','соглас','доступн','open','public','legal','without hacking','consent','відкрит','публічн','легальн','закон','згода']},
+{id:'safety',title:{ru:'Безопасность и анонимность',en:'Safety and Anonymity',uk:'Безпека та анонімність'},content:{ru:'Прежде чем искать других — защити себя.\n\n1. Цифровой след: всё, что публикуешь, остаётся.\n2. Приватность: закрой лишнее в настройках соцсетей.\n3. Пароли: не используй один пароль везде.\n4. Анонимность: не заходи на подозрительные сайты с основного аккаунта.',en:'Before investigating others — protect yourself.\n\n1. Digital footprint: everything you publish stays.\n2. Privacy: close unnecessary things in settings.\n3. Passwords: do not use one password everywhere.\n4. Anonymity: do not visit suspicious sites from main account.',uk:'Перш ніж шукати інших — захисти себе.'},materials:[{label:'Have I Been Pwned',url:'https://haveibeenpwned.com/'}],task:{ru:'Перечисли минимум 2 способа защитить свои данные в интернете.',en:'List at least 2 ways to protect your data online.',uk:'Перелічи мінімум 2 способи захистити свої дані.'},taskKeywords:['парол','утечк','приватн','настройк','двухфактор','2fa','след','цифровой','безопасн','защит','анонимн','password','leak','privacy','setting','two-factor','security','protect','anonym','пароль','витік','приватність','безпека','захист']}],
 quiz:[
 {q:{ru:'Что такое OSINT?',en:'What is OSINT?',uk:'Що таке OSINT?'},options:{ru:['Разведка по открытым источникам','Взлом систем','Слежка'],en:['Open Source Intelligence','System hacking','Surveillance'],uk:['Розвідка з відкритих джерел','Злом систем','Стеження']},correct:0},
 {q:{ru:'Можно ли использовать украденные базы данных в OSINT?',en:'Can you use stolen databases in OSINT?',uk:'Чи можна використовувати вкрадені бази в OSINT?'},options:{ru:['Да','Нет, только открытые легальные источники','Только для своих данных'],en:['Yes','No, only open legal sources','Only for your data'],uk:['Так','Ні, лише відкриті легальні джерела','Лише для своїх даних']},correct:1},
 {q:{ru:'Что нужно сделать ПЕРЕД началом исследования?',en:'What should you do BEFORE starting research?',uk:'Що потрібно зробити ПЕРЕД початком дослідження?'},options:{ru:['Ничего','Защитить свои данные','Создать фейковый аккаунт'],en:['Nothing','Protect your data','Create fake account'],uk:['Нічого','Захистити свої дані','Створити фейковий акаунт']},correct:1}]},
 {id:'dorks',icon:'search',title:{ru:'Поисковые операторы (дорки)',en:'Search Operators (Dorks)',uk:'Пошукові оператори (дорки)'},desc:{ru:'Специальные операторы поиска для точного нахождения информации.',en:'Special search operators for precise information finding.',uk:'Спеціальні оператори пошуку.'},lessons:[
-{id:'basic_operators',title:{ru:'Базовые операторы',en:'Basic Operators',uk:'Базові оператори'},content:{ru:'Поисковые операторы уточняют запрос.\n\n• site:домен — поиск внутри сайта\n• filetype:тип — поиск файлов\n• intitle:фраза — поиск по заголовку\n• intext:фраза — поиск по тексту\n• inurl:слово — поиск по адресу',en:'Search operators refine queries.\n\n• site:domain — search within site\n• filetype:type — search files\n• intitle:phrase — search in title\n• intext:phrase — search in text\n• inurl:word — search in URL',uk:'Пошукові оператори уточнюють запит.\n\n• site:домен — пошук всередині сайту\n• filetype:тип — пошук файлів\n• intitle:фраза — пошук за заголовком'},materials:[{label:{ru:'Гид по операторам',en:'Operators Guide'},url:'https://ahrefs.com/blog/google-advanced-search/'}],task:{ru:'Напиши запрос для поиска всех страниц внутри wikipedia.org и запрос для поиска PDF-файлов.',en:'Write a query to find all pages within wikipedia.org and a query to find PDF files.',uk:'Напиши запит для пошуку всіх сторінок всередині wikipedia.org і запит для пошуку PDF-файлів.'},taskKeywords:['site:','filetype:']},
-{id:'advanced_operators',title:{ru:'Продвинутые операторы',en:'Advanced Operators',uk:'Продвинуті оператори'},content:{ru:'• "фраза" — точное совпадение\n• -слово — исключить слово\n• A | B — или то, или другое\n• * — подстановка неизвестного слова\n• cache:домен — кэш страницы',en:'• "phrase" — exact match\n• -word — exclude word\n• A | B — either/or\n• * — wildcard\n• cache:domain — cached page',uk:'• "фраза" — точний збіг\n• -слово — виключити слово\n• A | B — або те, або інше'},materials:[{label:'Google',url:'https://www.google.com/'}],task:{ru:'Составь запрос с точной фразой в кавычках и исключи одно слово через минус.',en:'Compose a query with exact phrase in quotes and exclude one word with minus.',uk:'Склади запит з точною фразою в лапках і виключи одне слово через мінус.'},taskKeywords:['"','-']}],
+{id:'basic_operators',title:{ru:'Базовые операторы',en:'Basic Operators',uk:'Базові оператори'},content:{ru:'Поисковые операторы уточняют запрос.\n\n• site:домен — поиск внутри сайта\n• filetype:тип — поиск файлов\n• intitle:фраза — поиск по заголовку\n• intext:фраза — поиск по тексту\n• inurl:слово — поиск по адресу',en:'Search operators refine queries.\n\n• site:domain — search within site\n• filetype:type — search files\n• intitle:phrase — search in title\n• intext:phrase — search in text\n• inurl:word — search in URL',uk:'Пошукові оператори уточнюють запит.'},materials:[{label:{ru:'Гид по операторам',en:'Operators Guide'},url:'https://ahrefs.com/blog/google-advanced-search/'}],task:{ru:'Напиши запрос для поиска всех страниц внутри wikipedia.org и запрос для поиска PDF-файлов.',en:'Write a query to find all pages within wikipedia.org and a query to find PDF files.',uk:'Напиши запит для пошуку всіх сторінок всередині wikipedia.org і запит для пошуку PDF-файлів.'},taskKeywords:['site:','filetype:']},
+{id:'advanced_operators',title:{ru:'Продвинутые операторы',en:'Advanced Operators',uk:'Продвинуті оператори'},content:{ru:'• "фраза" — точное совпадение\n• -слово — исключить слово\n• A | B — или то, или другое\n• * — подстановка неизвестного слова\n• cache:домен — кэш страницы',en:'• "phrase" — exact match\n• -word — exclude word\n• A | B — either/or\n• * — wildcard\n• cache:domain — cached page',uk:'• "фраза" — точний збіг'},materials:[{label:'Google',url:'https://www.google.com/'}],task:{ru:'Составь запрос с точной фразой в кавычках и исключи одно слово через минус.',en:'Compose a query with exact phrase in quotes and exclude one word with minus.',uk:'Склади запит з точною фразою в лапках і виключи одне слово через мінус.'},taskKeywords:['"','-']}],
 quiz:[
 {q:{ru:'Какой оператор ищет только внутри сайта?',en:'Which operator searches only within a site?',uk:'Який оператор шукає лише всередині сайту?'},options:{ru:['site:','filetype:','intitle:'],en:['site:','filetype:','intitle:'],uk:['site:','filetype:','intitle:']},correct:0},
 {q:{ru:'Как искать точную фразу?',en:'How to search for exact phrase?',uk:'Як шукати точну фразу?'},options:{ru:['Без кавычек','В кавычках "..."','Через звёздочку *'],en:['Without quotes','In quotes "..."','With wildcard *'],uk:['Без лапок','У лапках "..."','Через зірочку *']},correct:1},
 {q:{ru:'Что делает оператор - ?',en:'What does the - operator do?',uk:'Що робить оператор - ?'},options:{ru:['Ищет минус','Исключает слово','Уменьшает результаты'],en:['Searches minus','Excludes word','Reduces results'],uk:['Шукає мінус','Виключає слово','Зменшує результати']},correct:1}]},
 {id:'digital_footprint',icon:'footprint',title:{ru:'Цифровой след',en:'Digital Footprint',uk:'Цифровий слід'},desc:{ru:'Поиск упоминаний, профилей, никнеймов.',en:'Finding mentions, profiles, nicknames.',uk:'Пошук згадок, профілів, нікнеймів.'},lessons:[
 {id:'nicknames',title:{ru:'Поиск по никнейму',en:'Searching by Nickname',uk:'Пошук за нікнеймом'},content:{ru:'Один ник часто используется на многих площадках.\n\nИнструменты:\n• Sherlock — поиск ника на 400+ сайтах (Python)\n• Maigret — поиск на 3000+ сайтах (Python)\n• WhatsMyName — веб-версия',en:'One nickname is often used on many platforms.\n\nTools:\n• Sherlock — 400+ sites (Python)\n• Maigret — 3000+ sites (Python)\n• WhatsMyName — web version',uk:'Один нік часто використовується на багатьох майданчиках.'},materials:[{label:'WhatsMyName',url:'https://whatsmyname.app/'},{label:'Sherlock',url:'https://github.com/sherlock-project/sherlock'}],task:{ru:'Напиши, какой инструмент ищет ник на 3000+ сайтах и почему это полезно.',en:'Write which tool searches nicknames on 3000+ sites and why it is useful.',uk:'Напиши, який інструмент шукає нік на 3000+ сайтах.'},taskKeywords:['maigret','sherlock','3000','ник','площадк','аккаунт','профил','поиск','nick','platform','account','profile','search','нік','майданчик','акаунт','пошук']},
-{id:'mentions',title:{ru:'Поиск упоминаний',en:'Finding Mentions',uk:'Пошук згадок'},content:{ru:'Чтобы найти упоминания:\n1. Точная фраза в кавычках\n2. Варианты через ИЛИ\n3. Поиск по площадкам: site:\n4. Архивные копии через web.archive.org',en:'To find mentions:\n1. Exact phrase in quotes\n2. Variants with OR\n3. Search platforms: site:\n4. Archived copies via web.archive.org',uk:'Щоб знайти згадки:\n1. Точна фраза в лапках'},materials:[{label:'Wayback Machine',url:'https://web.archive.org/'}],task:{ru:'Напиши запрос для поиска точного упоминания фразы "мой проект" только на сайте github.com.',en:'Write a query to find exact mention of "my project" only on github.com.',uk:'Напиши запит для пошуку точної згадки фрази "мій проєкт" тільки на сайті github.com.'},taskKeywords:['"','site:','github']}],
+{id:'mentions',title:{ru:'Поиск упоминаний',en:'Finding Mentions',uk:'Пошук згадок'},content:{ru:'Чтобы найти упоминания:\n1. Точная фраза в кавычках\n2. Варианты через ИЛИ\n3. Поиск по площадкам: site:\n4. Архивные копии через web.archive.org',en:'To find mentions:\n1. Exact phrase in quotes\n2. Variants with OR\n3. Search platforms: site:\n4. Archived copies via web.archive.org',uk:'Щоб знайти згадки:'},materials:[{label:'Wayback Machine',url:'https://web.archive.org/'}],task:{ru:'Напиши запрос для поиска точного упоминания фразы "мой проект" только на сайте github.com.',en:'Write a query to find exact mention of "my project" only on github.com.',uk:'Напиши запит для пошуку точної згадки фрази "мій проєкт" тільки на сайті github.com.'},taskKeywords:['"','site:','github']}],
 quiz:[
 {q:{ru:'Какой инструмент ищет ник на 3000+ сайтах?',en:'Which tool searches nicknames on 3000+ sites?',uk:'Який інструмент шукає нік на 3000+ сайтах?'},options:{ru:['TinEye','Maigret','ExifTool'],en:['TinEye','Maigret','ExifTool'],uk:['TinEye','Maigret','ExifTool']},correct:1},
 {q:{ru:'Как искать упоминание точной фразы?',en:'How to search for exact phrase mention?',uk:'Як шукати згадку точної фрази?'},options:{ru:['Без кавычек','В кавычках','Через минус'],en:['Without quotes','In quotes','With minus'],uk:['Без лапок','У лапках','Через мінус']},correct:1}]},
 {id:'images',icon:'image',title:{ru:'Работа с изображениями',en:'Working with Images',uk:'Робота із зображеннями'},desc:{ru:'Метаданные, обратный поиск, геолокация по фото.',en:'Metadata, reverse search, photo geolocation.',uk:'Метадані, зворотний пошук, геолокація.'},lessons:[
-{id:'exif',title:{ru:'Метаданные изображений (EXIF)',en:'Image Metadata (EXIF)',uk:'Метадані зображень (EXIF)'},content:{ru:'Каждое фото может содержать EXIF: модель камеры, дата съёмки, настройки, GPS-координаты.\n\nИнструменты:\n• ExifTool\n• Jeffrey\'s Exif Viewer\n• Forensically',en:'Every photo may contain EXIF: camera model, date, settings, GPS coordinates.\n\nTools:\n• ExifTool\n• Jeffrey\'s Exif Viewer\n• Forensically',uk:'Кожне фото може містити EXIF.'},materials:[{label:'ExifTool',url:'https://exiftool.org/'},{label:'Forensically',url:'https://29a.ch/photo-forensics/'}],task:{ru:'Перечисли минимум 3 типа данных, которые могут содержаться в EXIF фото.',en:'List at least 3 types of data in photo EXIF.',uk:'Перелічи мінімум 3 типи даних в EXIF фото.'},taskKeywords:['камер','дат','координат','гео','время','настройк','модел','camera','date','coordinate','geo','time','setting','model','зйомк','час','модель']},
-{id:'reverse_search',title:{ru:'Обратный поиск изображений',en:'Reverse Image Search',uk:'Зворотний пошук зображень'},content:{ru:'Обратный поиск находит, где ещё встречается картинка.\n\nСервисы:\n• Google Lens / Google Images\n• Yandex Images\n• TinEye',en:'Reverse search finds where else an image appears.\n\nServices:\n• Google Lens / Google Images\n• Yandex Images\n• TinEye',uk:'Зворотний пошук знаходить, де ще зустрічається картинка.'},materials:[{label:'Google Lens',url:'https://lens.google/'},{label:'TinEye',url:'https://tineye.com/'}],task:{ru:'Напиши, какие 3 сервиса обратного поиска ты знаешь.',en:'Write which 3 reverse search services you know.',uk:'Напиши, які 3 сервіси зворотного пошуку ти знаєш.'},taskKeywords:['google','yandex','tineye','lens','обратн','поиск','картинк','изображен','первоисточник','reverse','search','image','original','source','зворотн','пошук','першоджерело']}],
+{id:'exif',title:{ru:'Метаданные изображений (EXIF)',en:'Image Metadata (EXIF)',uk:'Метадані зображень (EXIF)'},content:{ru:'Каждое фото может содержать EXIF: модель камеры, дата съёмки, настройки, GPS-координаты.\n\nИнструменты:\n• ExifTool\n• Jeffrey\'s Exif Viewer\n• Forensically',en:'Every photo may contain EXIF: camera model, date, settings, GPS coordinates.',uk:'Кожне фото може містити EXIF.'},materials:[{label:'ExifTool',url:'https://exiftool.org/'},{label:'Forensically',url:'https://29a.ch/photo-forensics/'}],task:{ru:'Перечисли минимум 3 типа данных, которые могут содержаться в EXIF фото.',en:'List at least 3 types of data in photo EXIF.',uk:'Перелічи мінімум 3 типи даних в EXIF фото.'},taskKeywords:['камер','дат','координат','гео','время','настройк','модел','camera','date','coordinate','geo','time','setting','model','зйомк','час','модель']},
+{id:'reverse_search',title:{ru:'Обратный поиск изображений',en:'Reverse Image Search',uk:'Зворотний пошук зображень'},content:{ru:'Обратный поиск находит, где ещё встречается картинка.\n\nСервисы:\n• Google Lens / Google Images\n• Yandex Images\n• TinEye',en:'Reverse search finds where else an image appears.',uk:'Зворотний пошук знаходить, де ще зустрічається картинка.'},materials:[{label:'Google Lens',url:'https://lens.google/'},{label:'TinEye',url:'https://tineye.com/'}],task:{ru:'Напиши, какие 3 сервиса обратного поиска ты знаешь.',en:'Write which 3 reverse search services you know.',uk:'Напиши, які 3 сервіси зворотного пошуку ти знаєш.'},taskKeywords:['google','yandex','tineye','lens','обратн','поиск','картинк','изображен','первоисточник','reverse','search','image','original','source','зворотн','пошук','першоджерело']}],
 quiz:[
 {q:{ru:'Что может содержать EXIF?',en:'What can EXIF contain?',uk:'Що може містити EXIF?'},options:{ru:['Только размер файла','Дату, камеру, GPS','Пароль от камеры'],en:['Only file size','Date, camera, GPS','Camera password'],uk:['Лише розмір файлу','Дату, камеру, GPS','Пароль від камери']},correct:1},
 {q:{ru:'Какой сервис показывает историю распространения картинки?',en:'Which service shows image distribution history?',uk:'Який сервіс показує історію поширення картинки?'},options:{ru:['ExifTool','TinEye','Whois'],en:['ExifTool','TinEye','Whois'],uk:['ExifTool','TinEye','Whois']},correct:1}]},
 {id:'domains',icon:'globe',title:{ru:'Домены и инфраструктура',en:'Domains and Infrastructure',uk:'Домени та інфраструктура'},desc:{ru:'Whois, IP, субдомены, история сайтов.',en:'Whois, IP, subdomains, site history.',uk:'Whois, IP, субдомени, історія сайтів.'},lessons:[
-{id:'whois',title:{ru:'Whois и данные домена',en:'Whois and Domain Data',uk:'Whois і дані домену'},content:{ru:'Whois показывает регистрационные данные домена.\n\nИнструменты:\n• who.is\n• ICANN Lookup\n• Команда whois в терминале',en:'Whois shows domain registration data.\n\nTools:\n• who.is\n• ICANN Lookup\n• whois command',uk:'Whois показує реєстраційні дані домену.'},materials:[{label:'Who.is',url:'https://who.is/'}],task:{ru:'Напиши, какие минимум 3 данных о домене можно узнать через Whois.',en:'Write at least 3 pieces of domain data you can learn via Whois.',uk:'Напиши, які мінімум 3 дані про домен можна дізнатися через Whois.'},taskKeywords:['регистра','дат','регистратор','владел','статус','домен','контакт','registration','date','registrar','owner','status','domain','contact','реєстра','дата','реєстратор','власник']},
-{id:'history',title:{ru:'История сайтов и архивы',en:'Site History and Archives',uk:'Історія сайтів та архіви'},content:{ru:'Даже если страница удалена, копия могла сохраниться в архиве.\n\nИнструменты:\n• Wayback Machine\n• Archive.today\n• Google Cache',en:'Even if page is deleted, copy may be archived.\n\nTools:\n• Wayback Machine\n• Archive.today\n• Google Cache',uk:'Навіть якщо сторінку видалено, копія могла зберегтися.'},materials:[{label:'Wayback Machine',url:'https://web.archive.org/'},{label:'Archive.today',url:'https://archive.ph/'}],task:{ru:'Какой сервис позволяет посмотреть сохранённые копии сайта за разные даты?',en:'Which service lets you view saved copies of a site for different dates?',uk:'Який сервіс дозволяє подивитися збережені копії сайту?'},taskKeywords:['wayback','archive','web.archive','архив','копи','версии','історія','збережен','копії','версії','снимки','знімки','архів']}]
-,quiz:[
+{id:'whois',title:{ru:'Whois и данные домена',en:'Whois and Domain Data',uk:'Whois і дані домену'},content:{ru:'Whois показывает регистрационные данные домена.\n\nИнструменты:\n• who.is\n• ICANN Lookup\n• Команда whois в терминале',en:'Whois shows domain registration data.',uk:'Whois показує реєстраційні дані домену.'},materials:[{label:'Who.is',url:'https://who.is/'}],task:{ru:'Напиши, какие минимум 3 данных о домене можно узнать через Whois.',en:'Write at least 3 pieces of domain data you can learn via Whois.',uk:'Напиши, які мінімум 3 дані про домен можна дізнатися через Whois.'},taskKeywords:['регистра','дат','регистратор','владел','статус','домен','контакт','registration','date','registrar','owner','status','domain','contact','реєстра','дата','реєстратор','власник']},
+{id:'history',title:{ru:'История сайтов и архивы',en:'Site History and Archives',uk:'Історія сайтів та архіви'},content:{ru:'Даже если страница удалена, копия могла сохраниться в архиве.\n\nИнструменты:\n• Wayback Machine\n• Archive.today\n• Google Cache',en:'Even if page is deleted, copy may be archived.',uk:'Навіть якщо сторінку видалено, копія могла зберегтися.'},materials:[{label:'Wayback Machine',url:'https://web.archive.org/'},{label:'Archive.today',url:'https://archive.ph/'}],task:{ru:'Какой сервис позволяет посмотреть сохранённые копии сайта за разные даты?',en:'Which service lets you view saved copies of a site for different dates?',uk:'Який сервіс дозволяє подивитися збережені копії сайту?'},taskKeywords:['wayback','archive','web.archive','архив','копи','версии','історія','збережен','копії','версії','снимки','знімки','архів']}],
+quiz:[
 {q:{ru:'Что показывает Whois?',en:'What does Whois show?',uk:'Що показує Whois?'},options:{ru:['Пароль домена','Регистрационные данные домена','Содержимое сайта'],en:['Domain password','Domain registration data','Site content'],uk:['Пароль домену','Реєстраційні дані домену','Вміст сайту']},correct:1},
 {q:{ru:'Где посмотреть удалённую страницу?',en:'Where to view a deleted page?',uk:'Де подивитись видалену сторінку?'},options:{ru:['В Wayback Machine','В настройках браузера','Нигде'],en:['In Wayback Machine','In browser settings','Nowhere'],uk:['У Wayback Machine','У налаштуваннях браузера','Ніде']},correct:0}]},
 {id:'social',icon:'users',title:{ru:'Соцсети и профили',en:'Social Media and Profiles',uk:'Соцмережі та профілі'},desc:{ru:'Поиск людей, анализ профилей.',en:'Finding people, profile analysis.',uk:'Пошук людей, аналіз профілів.'},lessons:[
-{id:'profile_search',title:{ru:'Поиск профилей',en:'Profile Search',uk:'Пошук профілів'},content:{ru:'Что можно искать легально:\n• Публичные профили по нику\n• Открытые посты и комментарии\n• Упоминания имени через site:\n\nНЕЛЬЗЯ:\n• Обходить приватные настройки\n• Создавать фейковые аккаунты',en:'Legal:\n• Public profiles by nickname\n• Open posts and comments\n• Name mentions via site:\n\nDO NOT:\n• Bypass private settings\n• Create fake accounts',uk:'Легально:\n• Публічні профілі за ніком\n• Відкриті пости'},materials:[{label:'WhatsMyName',url:'https://whatsmyname.app/'},{label:'Sherlock',url:'https://github.com/sherlock-project/sherlock'}],task:{ru:'Перечисли минимум 2 вещи, которые НЕЛЬЗЯ делать при поиске профилей.',en:'List at least 2 things you MUST NOT do when searching profiles.',uk:'Перелічи мінімум 2 речі, які НЕ МОЖНА робити.'},taskKeywords:['нельзя','не можна','приватн','фейков','обходить','без согласия','без дозволу','закрыт','закрит','парол','взлом','bypass','fake','without consent','private','closed','hacking']},
-{id:'profile_analysis',title:{ru:'Анализ профиля',en:'Profile Analysis',uk:'Аналіз профілю'},content:{ru:'Из открытого профиля можно узнать:\n1. Дата регистрации и активность\n2. Подписки и подписчики\n3. Контент — темы, язык, география\n4. Связи с другими площадками',en:'From a public profile:\n1. Registration date and activity\n2. Following and followers\n3. Content — topics, language, geography\n4. Connections to other platforms',uk:'З відкритого профілю можна дізнатися багато.'},materials:[{label:'Wayback Machine',url:'https://web.archive.org/'}],task:{ru:'Перечисли минимум 4 типа открытой информации из публичного профиля.',en:'List at least 4 types of open info from a public profile.',uk:'Перелічи мінімум 4 типи відкритої інформації.'},taskKeywords:['дат','регистра','активн','подписк','контент','тем','язык','географ','связ','ник','фото','архив','date','registration','activity','follow','content','topic','language','geograph','connect','nick','photo','archive','реєстра','мова','звʼязок']}]
-,quiz:[
+{id:'profile_search',title:{ru:'Поиск профилей',en:'Profile Search',uk:'Пошук профілів'},content:{ru:'Что можно искать легально:\n• Публичные профили по нику\n• Открытые посты и комментарии\n• Упоминания имени через site:\n\nНЕЛЬЗЯ:\n• Обходить приватные настройки\n• Создавать фейковые аккаунты',en:'Legal:\n• Public profiles by nickname\n• Open posts and comments\n• Name mentions via site:\n\nDO NOT:\n• Bypass private settings\n• Create fake accounts',uk:'Легально:\n• Публічні профілі за ніком'},materials:[{label:'WhatsMyName',url:'https://whatsmyname.app/'},{label:'Sherlock',url:'https://github.com/sherlock-project/sherlock'}],task:{ru:'Перечисли минимум 2 вещи, которые НЕЛЬЗЯ делать при поиске профилей.',en:'List at least 2 things you MUST NOT do when searching profiles.',uk:'Перелічи мінімум 2 речі, які НЕ МОЖНА робити.'},taskKeywords:['нельзя','не можна','приватн','фейков','обходить','без согласия','без дозволу','закрыт','закрит','парол','взлом','bypass','fake','without consent','private','closed','hacking']},
+{id:'profile_analysis',title:{ru:'Анализ профиля',en:'Profile Analysis',uk:'Аналіз профілю'},content:{ru:'Из открытого профиля можно узнать:\n1. Дата регистрации и активность\n2. Подписки и подписчики\n3. Контент — темы, язык, география',en:'From a public profile:\n1. Registration date and activity\n2. Following and followers\n3. Content — topics, language, geography',uk:'З відкритого профілю можна дізнатися багато.'},materials:[{label:'Wayback Machine',url:'https://web.archive.org/'}],task:{ru:'Перечисли минимум 4 типа открытой информации из публичного профиля.',en:'List at least 4 types of open info from a public profile.',uk:'Перелічи мінімум 4 типи відкритої інформації.'},taskKeywords:['дат','регистра','активн','подписк','контент','тем','язык','географ','связ','ник','фото','архив','date','registration','activity','follow','content','topic','language','geograph','connect','nick','photo','archive','реєстра','мова','звʼязок']}],
+quiz:[
 {q:{ru:'Можно ли обходить приватные настройки профилей?',en:'Can you bypass private profile settings?',uk:'Чи можна обходити приватні налаштування?'},options:{ru:['Да','Нет, это нарушение приватности','Только для публичных личностей'],en:['Yes','No, privacy violation','Only public figures'],uk:['Так','Ні, порушення приватності','Лише публічних осіб']},correct:1},
 {q:{ru:'Что можно узнать из открытого профиля легально?',en:'What can you legally learn from a public profile?',uk:'Що можна дізнатися легально?'},options:{ru:['Пароль','Дату регистрации и публичный контент','Адрес проживания'],en:['Password','Registration date and public content','Home address'],uk:['Пароль','Дату реєстрації та публічний контент','Адресу проживання']},correct:1}]},
 {id:'email',icon:'mail',title:{ru:'Почта и утечки',en:'Email and Breaches',uk:'Пошта та витоки'},desc:{ru:'Проверка адресов, анализ утечек, репутация.',en:'Address verification, breach analysis, reputation.',uk:'Перевірка адрес, аналіз витоків.'},lessons:[
-{id:'email_check',title:{ru:'Проверка почты на утечки',en:'Email Breach Check',uk:'Перевірка пошти на витоки'},content:{ru:'Инструменты:\n• Have I Been Pwned\n• Firefox Monitor\n\nЧто делать при утечке:\n1. Сменить пароль\n2. Включить 2FA',en:'Tools:\n• Have I Been Pwned\n• Firefox Monitor\n\nWhat to do:\n1. Change password\n2. Enable 2FA',uk:'Інструменти:\n• Have I Been Pwned\n• Firefox Monitor'},materials:[{label:'Have I Been Pwned',url:'https://haveibeenpwned.com/'}],task:{ru:'Перечисли минимум 3 действия при обнаружении утечки.',en:'List at least 3 actions when breach found.',uk:'Перелічи мінімум 3 дії при виявленні витоку.'},taskKeywords:['парол','смен','двухфактор','2fa','аутентификац','фишинг','провер','change','two-factor','authentication','phishing','check','enable','змінити','двофактор','автентифікац','фішинг','перевір']},
-{id:'email_reputation',title:{ru:'Репутация и верификация адреса',en:'Address Reputation and Verification',uk:'Репутація та верифікація адреси'},content:{ru:'Инструменты:\n• EmailRep — репутация адреса\n• Hunter Verifier — проверка деловых адресов',en:'Tools:\n• EmailRep — address reputation\n• Hunter Verifier — business address check',uk:'Інструменти:\n• EmailRep\n• Hunter Verifier'},materials:[{label:'EmailRep',url:'https://emailrep.io/'},{label:'Hunter',url:'https://hunter.io/email-verifier'}],task:{ru:'Напиши минимум 2 признака подозрительного почтового адреса.',en:'Write at least 2 signs of a suspicious email address.',uk:'Напиши мінімум 2 ознаки підозрілої адреси.'},taskKeywords:['недавно','создан','опечатк','домен','похож','подозрител','рассыла','негативн','recent','created','typo','domain','similar','suspicious','sends','negative','нещодавно','створен','одрук','схож','підозріл','розсила']}]
-,quiz:[
+{id:'email_check',title:{ru:'Проверка почты на утечки',en:'Email Breach Check',uk:'Перевірка пошти на витоки'},content:{ru:'Инструменты:\n• Have I Been Pwned\n• Firefox Monitor\n\nЧто делать при утечке:\n1. Сменить пароль\n2. Включить 2FA',en:'Tools:\n• Have I Been Pwned\n• Firefox Monitor\n\nWhat to do:\n1. Change password\n2. Enable 2FA',uk:'Інструменти:\n• Have I Been Pwned'},materials:[{label:'Have I Been Pwned',url:'https://haveibeenpwned.com/'}],task:{ru:'Перечисли минимум 3 действия при обнаружении утечки.',en:'List at least 3 actions when breach found.',uk:'Перелічи мінімум 3 дії при виявленні витоку.'},taskKeywords:['парол','смен','двухфактор','2fa','аутентификац','фишинг','провер','change','two-factor','authentication','phishing','check','enable','змінити','двофактор','автентифікац','фішинг','перевір']},
+{id:'email_reputation',title:{ru:'Репутация и верификация адреса',en:'Address Reputation and Verification',uk:'Репутація та верифікація адреси'},content:{ru:'Инструменты:\n• EmailRep — репутация адреса\n• Hunter Verifier — проверка деловых адресов',en:'Tools:\n• EmailRep — address reputation\n• Hunter Verifier — business address check',uk:'Інструменти:'},materials:[{label:'EmailRep',url:'https://emailrep.io/'},{label:'Hunter',url:'https://hunter.io/email-verifier'}],task:{ru:'Напиши минимум 2 признака подозрительного почтового адреса.',en:'Write at least 2 signs of a suspicious email address.',uk:'Напиши мінімум 2 ознаки підозрілої адреси.'},taskKeywords:['недавно','создан','опечатк','домен','похож','подозрител','рассыла','негативн','recent','created','typo','domain','similar','suspicious','sends','negative','нещодавно','створен','одрук','схож','підозріл','розсила']}],
+quiz:[
 {q:{ru:'Какой сервис проверяет почту на утечки?',en:'Which service checks email for breaches?',uk:'Який сервіс перевіряє пошту на витоки?'},options:{ru:['Have I Been Pwned','TinEye','Whois'],en:['Have I Been Pwned','TinEye','Whois'],uk:['Have I Been Pwned','TinEye','Whois']},correct:0},
 {q:{ru:'Что делать при утечке?',en:'What to do on breach?',uk:'Що робити при витоку?'},options:{ru:['Ничего','Сменить пароль и включить 2FA','Опубликовать в соцсетях'],en:['Nothing','Change password and enable 2FA','Post on social media'],uk:['Нічого','Змінити пароль та увімкнути 2FA','Опублікувати']},correct:1}]},
 {id:'phone',icon:'phone',title:{ru:'Телефон и номера',en:'Phone and Numbers',uk:'Телефон та номери'},desc:{ru:'Разведка по номерам из открытых источников.',en:'Phone number reconnaissance from open sources.',uk:'Розвідка за номерами з відкритих джерел.'},lessons:[
-{id:'phone_search',title:{ru:'Поиск упоминаний номера',en:'Phone Number Mention Search',uk:'Пошук згадок номера'},content:{ru:'Методы:\n1. Точный поиск в кавычках\n2. Разные форматы написания\n3. site:площадка',en:'Methods:\n1. Exact search in quotes\n2. Different formatting\n3. site:platform',uk:'Методи:\n1. Точний пошук у лапках'},materials:[{label:'Google',url:'https://www.google.com/'}],task:{ru:'Напиши запрос для точного поиска номера +79001234567 в кавычках.',en:'Write a query for exact search of +79001234567 in quotes.',uk:'Напиши запит для точного пошуку номера +380901234567 у лапках.'},taskKeywords:['"','кавычк','лапки','точн','номер','запрос','+7','+380','поиск','пошук','запит','quotes','exact','number','query','search']},
-{id:'phone_metadata',title:{ru:'Технические данные номера',en:'Phone Technical Data',uk:'Технічні дані номера'},content:{ru:'По номеру можно узнать:\n1. Страна\n2. Оператор\n3. Регион\n4. Тип номера\n5. Формат',en:'From a number:\n1. Country\n2. Operator\n3. Region\n4. Number type\n5. Format',uk:'За номером можна дізнатися технічні дані.'},materials:[{label:'NumVerify',url:'https://numverify.com/'}],task:{ru:'Перечисли минимум 3 типа технических данных по номеру.',en:'List at least 3 types of technical data from a number.',uk:'Перелічи мінімум 3 типи технічних даних.'},taskKeywords:['стран','оператор','регион','тип','формат','код','мобильн','стационар','country','operator','region','type','format','code','mobile','landline','країн','регіон','мобільн','стаціонар']}]
-,quiz:[
+{id:'phone_search',title:{ru:'Поиск упоминаний номера',en:'Phone Number Mention Search',uk:'Пошук згадок номера'},content:{ru:'Методы:\n1. Точный поиск в кавычках\n2. Разные форматы написания\n3. site:площадка',en:'Methods:\n1. Exact search in quotes\n2. Different formatting\n3. site:platform',uk:'Методи:'},materials:[{label:'Google',url:'https://www.google.com/'}],task:{ru:'Напиши запрос для точного поиска номера +79001234567 в кавычках.',en:'Write a query for exact search of +79001234567 in quotes.',uk:'Напиши запит для точного пошуку номера +380901234567 у лапках.'},taskKeywords:['"','кавычк','лапки','точн','номер','запрос','+7','+380','поиск','пошук','запит','quotes','exact','number','query','search']},
+{id:'phone_metadata',title:{ru:'Технические данные номера',en:'Phone Technical Data',uk:'Технічні дані номера'},content:{ru:'По номеру можно узнать:\n1. Страна\n2. Оператор\n3. Регион',en:'From a number:\n1. Country\n2. Operator\n3. Region',uk:'За номером можна дізнатися технічні дані.'},materials:[{label:'NumVerify',url:'https://numverify.com/'}],task:{ru:'Перечисли минимум 3 типа технических данных по номеру.',en:'List at least 3 types of technical data from a number.',uk:'Перелічи мінімум 3 типи технічних даних.'},taskKeywords:['стран','оператор','регион','тип','формат','код','мобильн','стационар','country','operator','region','type','format','code','mobile','landline','країн','регіон','мобільн','стаціонар']}],
+quiz:[
 {q:{ru:'Что можно легально узнать по номеру?',en:'What can you legally learn from a number?',uk:'Що можна легально дізнатися за номером?'},options:{ru:['Имя владельца','Страну, оператора, тип','Домашний адрес'],en:['Owner name','Country, operator, type','Home address'],uk:['Імʼя власника','Країну, оператора, тип','Домашню адресу']},correct:1},
 {q:{ru:'Можно ли искать чужой номер без согласия?',en:'Can you search someone else\'s number without consent?',uk:'Чи можна шукати чужий номер без згоди?'},options:{ru:['Да','Нет, только свой или с согласия','Только публичные личности'],en:['Yes','No, only yours or with consent','Only public figures'],uk:['Так','Ні, лише свій або з дозволу','Лише публічні особи']},correct:1}]},
 {id:'geolocation',icon:'map',title:{ru:'Геолокация и карты',en:'Geolocation and Maps',uk:'Геолокація та карти'},desc:{ru:'Определение мест по фото, работа с картами.',en:'Location identification from photos, maps.',uk:'Визначення місць за фото, робота з картами.'},lessons:[
-{id:'geo_photo',title:{ru:'Геолокация по фото',en:'Photo Geolocation',uk:'Геолокація за фото'},content:{ru:'Методы:\n1. EXIF-данные: GPS-координаты\n2. Визуальные признаки\n3. Обратный поиск\n4. Карты и панорамы',en:'Methods:\n1. EXIF data: GPS coordinates\n2. Visual clues\n3. Reverse search\n4. Maps and panoramas',uk:'Методи:\n1. EXIF-дані\n2. Візуальні ознаки'},materials:[{label:'Google Lens',url:'https://lens.google/'},{label:'Google Maps',url:'https://www.google.com/maps'}],task:{ru:'Перечисли минимум 4 метода определения места по фотографии.',en:'List at least 4 methods of determining location from a photo.',uk:'Перелічи мінімум 4 методи визначення місця за фото.'},taskKeywords:['exif','gps','координат','визуальн','архитектур','растительн','вывеск','карт','панорам','обратн','поиск','солнц','тен','coordinate','visual','architecture','vegetation','sign','map','panorama','reverse','search','sun','shadow','візуальн','архітектур','рослинн','вивіск','зворотн','сонц','тін']},
-{id:'maps_recon',title:{ru:'Работа с картами и панорамами',en:'Working with Maps and Panoramas',uk:'Робота з картами та панорамами'},content:{ru:'Инструменты:\n1. Google Maps / Yandex Maps\n2. OpenStreetMap\n3. Wikimapia',en:'Tools:\n1. Google Maps / Yandex Maps\n2. OpenStreetMap\n3. Wikimapia',uk:'Інструменти:\n1. Google Maps / Yandex Maps\n2. OpenStreetMap'},materials:[{label:'Google Maps',url:'https://www.google.com/maps'},{label:'OpenStreetMap',url:'https://www.openstreetmap.org/'}],task:{ru:'Напиши, какие 3 картографических сервиса ты знаешь.',en:'Write which 3 mapping services you know.',uk:'Напиши, які 3 картографічні сервіси ти знаєш.'},taskKeywords:['google','yandex','openstreet','wikimapia','карт','панорам','спутник','место','адрес','здани','map','panorama','satellite','place','address','building','карта','панорама','супутник','місце']}]
-,quiz:[
+{id:'geo_photo',title:{ru:'Геолокация по фото',en:'Photo Geolocation',uk:'Геолокація за фото'},content:{ru:'Методы:\n1. EXIF-данные: GPS-координаты\n2. Визуальные признаки\n3. Обратный поиск\n4. Карты и панорамы',en:'Methods:\n1. EXIF data: GPS coordinates\n2. Visual clues\n3. Reverse search\n4. Maps and panoramas',uk:'Методи:'},materials:[{label:'Google Lens',url:'https://lens.google/'},{label:'Google Maps',url:'https://www.google.com/maps'}],task:{ru:'Перечисли минимум 4 метода определения места по фотографии.',en:'List at least 4 methods of determining location from a photo.',uk:'Перелічи мінімум 4 методи визначення місця за фото.'},taskKeywords:['exif','gps','координат','визуальн','архитектур','растительн','вывеск','карт','панорам','обратн','поиск','солнц','тен','coordinate','visual','architecture','vegetation','sign','map','panorama','reverse','search','sun','shadow','візуальн','архітектур','рослинн','вивіск','зворотн','сонц','тін']},
+{id:'maps_recon',title:{ru:'Работа с картами и панорамами',en:'Working with Maps and Panoramas',uk:'Робота з картами та панорамами'},content:{ru:'Инструменты:\n1. Google Maps / Yandex Maps\n2. OpenStreetMap\n3. Wikimapia',en:'Tools:\n1. Google Maps / Yandex Maps\n2. OpenStreetMap\n3. Wikimapia',uk:'Інструменти:'},materials:[{label:'Google Maps',url:'https://www.google.com/maps'},{label:'OpenStreetMap',url:'https://www.openstreetmap.org/'}],task:{ru:'Напиши, какие 3 картографических сервиса ты знаешь.',en:'Write which 3 mapping services you know.',uk:'Напиши, які 3 картографічні сервіси ти знаєш.'},taskKeywords:['google','yandex','openstreet','wikimapia','карт','панорам','спутник','место','адрес','здани','map','panorama','satellite','place','address','building','карта','панорама','супутник','місце']}],
+quiz:[
 {q:{ru:'Что помогает определить место по фото?',en:'What helps determine location from a photo?',uk:'Що допомагає визначити місце за фото?'},options:{ru:['EXIF и визуальные признаки','Только размер файла','Цвет рамки'],en:['EXIF and visual clues','Only file size','Frame color'],uk:['EXIF та візуальні ознаки','Лише розмір файлу','Колір рамки']},correct:0},
 {q:{ru:'Можно ли геолоцировать чужие фото без согласия?',en:'Can you geolocate others\' photos without consent?',uk:'Чи можна геолокувати чужі фото без згоди?'},options:{ru:['Да','Нет, нарушение приватности','Только известные места'],en:['Yes','No, privacy violation','Only famous places'],uk:['Так','Ні, порушення приватності','Лише відомі місця']},correct:1}]},
 {id:'dossier',icon:'folder',title:{ru:'Составление досье и этика',en:'Building Dossier and Ethics',uk:'Складання досьє та етика'},desc:{ru:'Структурирование данных, граф связей, этика.',en:'Data structuring, link graph, ethics.',uk:'Структурування даних, граф звʼязків, етика.'},lessons:[
-{id:'structuring',title:{ru:'Структурирование информации',en:'Structuring Information',uk:'Структурування інформації'},content:{ru:'Принципы:\n1. Собирай факты, а не домыслы\n2. Используй граф связей\n3. Помечай источники и даты',en:'Principles:\n1. Collect facts, not speculation\n2. Use link graph\n3. Mark sources and dates',uk:'Принципи:\n1. Збирай факти'},materials:[],task:{ru:'Перечисли минимум 3 принципа структурирования информации.',en:'List at least 3 principles of structuring information.',uk:'Перелічи мінімум 3 принципи структурування.'},taskKeywords:['факт','источник','граф','узел','связ','заметк','структур','дат','подтвержд','fact','source','graph','node','link','note','structure','date','confirm','джерело','вузол','звʼязок','нотатк','структура']},
-{id:'ethics_final',title:{ru:'Этика и закон (финал)',en:'Ethics and Law (Final)',uk:'Етика і закон (фінал)'},content:{ru:'Помни главное:\n1. Закон: только открытые источники\n2. Согласие: не собирай данные без разрешения\n3. Ответственность: используй во благо\n4. Проверка: не верь одному источнику',en:'Remember:\n1. Law: only open sources\n2. Consent: no data without permission\n3. Responsibility: use for good\n4. Verification: don\'t trust single source',uk:'Памʼятай головне:\n1. Закон\n2. Згода'},materials:[],task:{ru:'Напиши 5 главных принципов этичного OSINT своими словами.',en:'Write 5 main principles of ethical OSINT in your own words.',uk:'Напиши 5 головних принципів етичного OSINT.'},taskKeywords:['принцип','этик','закон','соглас','ответствен','перепровер','безопасн','цифровой','гигиен','критическ','документир','ethic','law','consent','responsibility','verify','security','digital','hygiene','critical','documentation','етика','закон','згода','відповідальн','перевірка','безпека','гігієн']}]
-,quiz:[
+{id:'structuring',title:{ru:'Структурирование информации',en:'Structuring Information',uk:'Структурування інформації'},content:{ru:'Принципы:\n1. Собирай факты, а не домыслы\n2. Используй граф связей',en:'Principles:\n1. Collect facts, not speculation\n2. Use link graph',uk:'Принципи:'},materials:[],task:{ru:'Перечисли минимум 3 принципа структурирования информации.',en:'List at least 3 principles of structuring information.',uk:'Перелічи мінімум 3 принципи структурування.'},taskKeywords:['факт','источник','граф','узел','связ','заметк','структур','дат','подтвержд','fact','source','graph','node','link','note','structure','date','confirm','джерело','вузол','звʼязок','нотатк','структура']},
+{id:'ethics_final',title:{ru:'Этика и закон (финал)',en:'Ethics and Law (Final)',uk:'Етика і закон (фінал)'},content:{ru:'Помни главное:\n1. Закон: только открытые источники',en:'Remember:\n1. Law: only open sources',uk:'Памʼятай головне:'},materials:[],task:{ru:'Напиши 5 главных принципов этичного OSINT своими словами.',en:'Write 5 main principles of ethical OSINT in your own words.',uk:'Напиши 5 головних принципів етичного OSINT.'},taskKeywords:['принцип','этик','закон','соглас','ответствен','перепровер','безопасн','цифровой','гигиен','критическ','документир','ethic','law','consent','responsibility','verify','security','digital','hygiene','critical','documentation','етика','закон','згода','відповідальн','перевірка','безпека','гігієн']}],
+quiz:[
 {q:{ru:'Что должно быть у каждого вывода?',en:'What should every conclusion have?',uk:'Що має бути у кожного висновку?'},options:{ru:['Красивое оформление','Источник','Дата публикации'],en:['Nice formatting','A source','Publication date'],uk:['Гарне оформлення','Джерело','Дата публікації']},correct:1},
 {q:{ru:'Можно ли собирать данные о людях без согласия?',en:'Can you collect data about people without consent?',uk:'Чи можна збирати дані про людей без згоди?'},options:{ru:['Да','Нет','Только публичные личности'],en:['Yes','No','Only public figures'],uk:['Так','Ні','Лише публічні особи']},correct:1},
 {q:{ru:'Почему важно проверять данные из нескольких источников?',en:'Why verify data from multiple sources?',uk:'Чому важливо перевіряти дані з кількох джерел?'},options:{ru:['Это быстрее','Один источник может быть недостоверным','Так красивее'],en:['It is faster','One source may be unreliable','It looks nicer'],uk:['Це швидше','Одне джерело може бути недостовірним','Так гарніше']},correct:1}]}
 ];
 
-/* ═══════════ DORK TRAINER (12 tasks) ═══════════ */
+/* ═══════════ DORK TRAINER ═══════════ */
 const DORK_TRAINER=[
 {id:'t1',task:{ru:'Найди все страницы внутри сайта github.com',en:'Find all pages within github.com',uk:'Знайди всі сторінки всередині github.com'},answer:'site:github.com',hint:{ru:'Используй site: и домен',en:'Use site: and domain',uk:'Використовуй site: і домен'}},
 {id:'t2',task:{ru:'Найди все PDF-файлы в интернете',en:'Find all PDF files',uk:'Знайди всі PDF-файли'},answer:'filetype:pdf',hint:{ru:'Используй filetype: и расширение',en:'Use filetype: and extension',uk:'Використовуй filetype: і розширення'}},
@@ -678,7 +626,7 @@ const DORK_TRAINER=[
 {id:'t12',task:{ru:'Найди файлы презентаций (.ppt) с темой "кибербезопасность"',en:'Find presentations (.ppt) with topic "cybersecurity"',uk:'Знайди файли презентацій (.ppt) з темою "кібербезпека"'},answer:'filetype:ppt кибербезопасность',alt:['filetype:pptx кибербезопасность','filetype:ppt cybersecurity','filetype:pptx cybersecurity','filetype:ppt кібербезпека'],hint:{ru:'filetype: + ключевое слово',en:'filetype: + keyword',uk:'filetype: + ключове слово'}}
 ];
 
-/* ═══════════ GLOSSARY (18 terms) ═══════════ */
+/* ═══════════ GLOSSARY ═══════════ */
 const GLOSSARY=[
 {term:'OSINT',def:{ru:'Open Source Intelligence — разведка по открытым источникам.',en:'Open Source Intelligence — collecting info from publicly available sources.'}},
 {term:{ru:'Дорк',en:'Dork'},def:{ru:'Специальный оператор поискового запроса (site:, filetype:, intitle:).',en:'Special search query operator (site:, filetype:, intitle:).'}},
@@ -708,8 +656,30 @@ function renderProgress(){const p=calcProgress();const pl=$('progressLevel'),pr=
 /* ═══════════ TASK CHECK ═══════════ */
 function checkTaskAnswer(lessonId,answer){const trimmed=answer.trim().toLowerCase();if(!trimmed)return false;let lesson=null;for(const m of ACADEMY){for(const l of m.lessons){if(l.id===lessonId){lesson=l;break}}if(lesson)break}if(!lesson)return false;const kw=lesson.taskKeywords;if(kw&&kw.length>0)return kw.some(k=>trimmed.includes(k.toLowerCase()));return trimmed.length>=30}
 
-/* ═══════════ ACADEMY RENDER ═══════════ */
-function renderAcademy(){try{renderProgress();$('modulesContainer').innerHTML=ACADEMY.map((mod,mi)=>{const ml=mod.lessons.length,md=mod.lessons.filter(l=>progress.lessons[l.id]).length,qd=progress.quizzes[mod.id]?1:0;let st='locked',sc='locked';if(md===ml&&qd){st=t('status_done');sc='done'}else if(md>0||qd){st=t('status_progress');sc='progress'}else{st=t('status_locked')}const lessonsHtml=mod.lessons.map((l,li)=>{const ld=progress.lessons[l.id],td=progress.tasks[l.id];const matHtml=(l.materials||[]).map(m=>`<a href="${esc(m.url)}" target="_blank" rel="noopener">${esc(L(m.label,currentLang))} \u2197</a>`).join('');const taskBlock=l.task?`<div class="lesson-task"><div class="lesson-task-label">${t('lesson_task')}</div><div class="lesson-task-text">${esc(L(l.task,currentLang))}</div>${td?`<div class="lesson-actions" style="margin-top:10px"><button class="lesson-btn done" type="button" disabled>${t('btn_done')}</button></div>`:`<div class="trainer-input" style="margin-top:10px"><input id="taskInput_${l.id}" placeholder="${t('answer_placeholder')}" autocomplete="off"><button type="button" data-checktask="${l.id}">${t('btn_check')}</button></div><div class="trainer-feedback" id="taskFeedback_${l.id}"></div>`}</div>`:'';const completeBlock=!ld?`<div class="lesson-actions" style="margin-top:8px"><button class="lesson-btn primary" data-lesson="${l.id}" type="button"${!td&&l.task?' disabled title="'+t('complete_task_first')+'"':''}>${t('btn_start_lesson')}</button></div>`:'';return`<div class="lesson-item"><div class="lesson-head"><div class="lesson-title">${mi+1}.${li+1}. ${esc(L(l.title,currentLang))}</div>${ld?'<span class="lesson-badge done">\u2713</span>':''}</div><div class="lesson-content">${esc(L(l.content,currentLang))}</div>${matHtml?`<div class="lesson-materials">${matHtml}</div>`:''}${taskBlock}${completeBlock}</div>`}).join('');const quizHtml=mod.quiz.map((q,qi)=>{const qid=mod.id+'_q'+qi,sel=selectedQuizAnswers[qid],qs=progress['quizSubmitted_'+mod.id];const optHtml=L(q.options,currentLang).map((o,oi)=>{let c='quiz-opt';if(sel===oi)c+=' selected';if(qs){if(oi===q.correct)c+=' correct';else if(sel===oi)c+=' wrong'}return`<button class="${c}" data-quiz="${mod.id}" data-q="${qi}" data-opt="${oi}" type="button"${qs?' disabled':''}>${esc(o)}</button>`}).join('');const fb=qs&&sel!==q.correct?`<div style="color:#aaa;font-size:11px;margin-top:6px">${t('correct_answer')}: ${esc(L(q.options,currentLang)[q.correct])}</div>`:'';return`<div class="quiz-block"><div class="quiz-question">${t('question')} ${qi+1}: ${esc(L(q.q,currentLang))}</div><div class="quiz-options">${optHtml}</div>${fb}</div>`}).join('');const qs=progress['quizSubmitted_'+mod.id];const qa=!qs?`<div class="quiz-actions" style="margin-top:12px"><button class="lesson-btn primary" data-submitquiz="${mod.id}" type="button">${t('quiz_submit')}</button></div>`:'';return`<div class="module-card" data-module="${mod.id}"><div class="module-head"><div class="module-icon">${MI[mod.icon]||MI.book}</div><div class="module-info"><div class="module-title">${mi+1}. ${esc(L(mod.title,currentLang))}</div><div class="module-desc">${esc(L(mod.desc,currentLang))}</div></div><div class="module-status ${sc}">${st}</div></div><div class="module-body">${lessonsHtml}<div class="quiz-title" style="margin-top:16px">${t('quiz_title')}</div>${quizHtml}${qa}<div id="quizResult_${mod.id}"></div></div></div>`}).join('')}catch(err){console.error('renderAcademy error:',err)}}
+/* ═══════════ ACADEMY RENDER (с сохранением открытых модулей) ═══════════ */
+function renderAcademy(){try{renderProgress();$('modulesContainer').innerHTML=ACADEMY.map((mod,mi)=>{
+  const ml=mod.lessons.length,md=mod.lessons.filter(l=>progress.lessons[l.id]).length,qd=progress.quizzes[mod.id]?1:0;
+  let st='locked',sc='locked';
+  if(md===ml&&qd){st=t('status_done');sc='done'}else if(md>0||qd){st=t('status_progress');sc='progress'}else{st=t('status_locked')}
+  const lessonsHtml=mod.lessons.map((l,li)=>{
+    const ld=progress.lessons[l.id],td=progress.tasks[l.id];
+    const matHtml=(l.materials||[]).map(m=>`<a href="${esc(m.url)}" target="_blank" rel="noopener">${esc(L(m.label,currentLang))} \u2197</a>`).join('');
+    const taskBlock=l.task?`<div class="lesson-task"><div class="lesson-task-label">${t('lesson_task')}</div><div class="lesson-task-text">${esc(L(l.task,currentLang))}</div>${td?`<div class="lesson-actions" style="margin-top:10px"><button class="lesson-btn done" type="button" disabled>${t('btn_done')}</button></div>`:`<div class="trainer-input" style="margin-top:10px"><input id="taskInput_${l.id}" placeholder="${t('answer_placeholder')}" autocomplete="off"><button type="button" data-checktask="${l.id}">${t('btn_check')}</button></div><div class="trainer-feedback" id="taskFeedback_${l.id}"></div>`}</div>`:'';
+    const completeBlock=!ld?`<div class="lesson-actions" style="margin-top:8px"><button class="lesson-btn primary" data-lesson="${l.id}" type="button"${!td&&l.task?' disabled title="'+t('complete_task_first')+'"':''}>${t('btn_start_lesson')}</button></div>`:'';
+    return`<div class="lesson-item"><div class="lesson-head"><div class="lesson-title">${mi+1}.${li+1}. ${esc(L(l.title,currentLang))}</div>${ld?'<span class="lesson-badge done">\u2713</span>':''}</div><div class="lesson-content">${esc(L(l.content,currentLang))}</div>${matHtml?`<div class="lesson-materials">${matHtml}</div>`:''}${taskBlock}${completeBlock}</div>`
+  }).join('');
+  const quizHtml=mod.quiz.map((q,qi)=>{
+    const qid=mod.id+'_q'+qi,sel=selectedQuizAnswers[qid],qs=progress['quizSubmitted_'+mod.id];
+    const optHtml=L(q.options,currentLang).map((o,oi)=>{let c='quiz-opt';if(sel===oi)c+=' selected';if(qs){if(oi===q.correct)c+=' correct';else if(sel===oi)c+=' wrong'}return`<button class="${c}" data-quiz="${mod.id}" data-q="${qi}" data-opt="${oi}" type="button"${qs?' disabled':''}>${esc(o)}</button>`}).join('');
+    const fb=qs&&sel!==q.correct?`<div style="color:#aaa;font-size:11px;margin-top:6px">${t('correct_answer')}: ${esc(L(q.options,currentLang)[q.correct])}</div>`:'';
+    return`<div class="quiz-block"><div class="quiz-question">${t('question')} ${qi+1}: ${esc(L(q.q,currentLang))}</div><div class="quiz-options">${optHtml}</div>${fb}</div>`
+  }).join('');
+  const qs=progress['quizSubmitted_'+mod.id];
+  const qa=!qs?`<div class="quiz-actions" style="margin-top:12px"><button class="lesson-btn primary" data-submitquiz="${mod.id}" type="button">${t('quiz_submit')}</button></div>`:'';
+  // ИСПРАВЛЕНИЕ: восстанавливаем класс open из openModules
+  const isOpen=openModules.has(mod.id)?' open':'';
+  return`<div class="module-card${isOpen}" data-module="${mod.id}"><div class="module-head"><div class="module-icon">${MI[mod.icon]||MI.book}</div><div class="module-info"><div class="module-title">${mi+1}. ${esc(L(mod.title,currentLang))}</div><div class="module-desc">${esc(L(mod.desc,currentLang))}</div></div><div class="module-status ${sc}">${st}</div></div><div class="module-body">${lessonsHtml}<div class="quiz-title" style="margin-top:16px">${t('quiz_title')}</div>${quizHtml}${qa}<div id="quizResult_${mod.id}"></div></div></div>`
+}).join('')}catch(err){console.error('renderAcademy error:',err)}}
 
 function submitQuizHandler(modId){const mod=ACADEMY.find(m=>m.id===modId);if(!mod)return;const allAns=mod.quiz.every((q,qi)=>selectedQuizAnswers[modId+'_q'+qi]!==undefined);if(!allAns){const r=$('quizResult_'+modId);if(r)r.innerHTML=`<div class="quiz-result fail">\u2717 ${t('answer_all_first')}</div>`;return}let correct=0;mod.quiz.forEach((q,qi)=>{if(selectedQuizAnswers[modId+'_q'+qi]===q.correct)correct++});const passed=correct===mod.quiz.length;const r=$('quizResult_'+modId);progress['quizSubmitted_'+modId]=true;if(passed){progress.quizzes[modId]=true;LS.set('osint_progress',progress);if(r)r.innerHTML=`<div class="quiz-result pass">\u2713 ${t('quiz_passed')} (${correct}/${mod.quiz.length})</div>`;renderProgress();log('quiz passed: '+modId);renderAcademy()}else{LS.set('osint_progress',progress);if(r)r.innerHTML=`<div class="quiz-result fail">\u2717 ${t('quiz_failed')} (${correct}/${mod.quiz.length}) ${t('retake_hint')}</div>`;renderAcademy()}}
 
@@ -773,36 +743,112 @@ function initApp(){
     progress=LS.get('osint_progress',{lessons:{},tasks:{},quizzes:{}});
     applyI18n();
     buildTypeGrid();
-    // Event delegation for modules
+
+    // ИСПРАВЛЕННЫЙ обработчик модулей
     const mc=$('modulesContainer');
     if(mc){mc.addEventListener('click',e=>{
+      // Переключение модуля с сохранением состояния
       const head=e.target.closest('.module-head');
-      if(head){head.parentElement.classList.toggle('open');return}
+      if(head){
+        const card=head.parentElement;
+        const modId=card.dataset.module;
+        card.classList.toggle('open');
+        if(card.classList.contains('open')){openModules.add(modId)}
+        else{openModules.delete(modId)}
+        return;
+      }
+
+      // Проверка практического задания
       const ctBtn=e.target.closest('[data-checktask]');
-      if(ctBtn){const lid=ctBtn.dataset.checktask;const inp=$('taskInput_'+lid);const ans=inp?inp.value:'';const fb=$('taskFeedback_'+lid);if(checkTaskAnswer(lid,ans)){if(fb){fb.className='trainer-feedback show ok';fb.textContent='\u2713 '+t('task_correct')}progress.tasks[lid]=true;LS.set('osint_progress',progress);log('task done: '+lid);setTimeout(renderAcademy,800)}else{if(fb){fb.className='trainer-feedback show fail';fb.textContent='\u2717 '+t('task_wrong')}}return}
+      if(ctBtn){
+        const lid=ctBtn.dataset.checktask;
+        const inp=$('taskInput_'+lid);
+        const ans=inp?inp.value:'';
+        const fb=$('taskFeedback_'+lid);
+        if(checkTaskAnswer(lid,ans)){
+          if(fb){fb.className='trainer-feedback show ok';fb.textContent='\u2713 '+t('task_correct')}
+          progress.tasks[lid]=true;
+          LS.set('osint_progress',progress);
+          log('task done: '+lid);
+          setTimeout(renderAcademy,800);
+        }else{
+          if(fb){fb.className='trainer-feedback show fail';fb.textContent='\u2717 '+t('task_wrong')}
+        }
+        return;
+      }
+
+      // Завершение урока
       const lBtn=e.target.closest('[data-lesson]');
-      if(lBtn){if(lBtn.disabled)return;progress.lessons[lBtn.dataset.lesson]=true;LS.set('osint_progress',progress);renderAcademy();toast('lesson done');return}
+      if(lBtn){
+        if(lBtn.disabled)return;
+        progress.lessons[lBtn.dataset.lesson]=true;
+        LS.set('osint_progress',progress);
+        renderAcademy();
+        toast('lesson done');
+        return;
+      }
+
+      // ИСПРАВЛЕНИЕ: выбор ответа в тесте БЕЗ перерисовки всего
       const qOpt=e.target.closest('.quiz-opt');
-      if(qOpt&&!qOpt.disabled){selectedQuizAnswers[qOpt.dataset.quiz+'_q'+qOpt.dataset.q]=parseInt(qOpt.dataset.opt);renderAcademy();return}
+      if(qOpt&&!qOpt.disabled){
+        const modId=qOpt.dataset.quiz;
+        const qi=qOpt.dataset.q;
+        const oi=parseInt(qOpt.dataset.opt);
+        const qid=modId+'_q'+qi;
+        selectedQuizAnswers[qid]=oi;
+        const quizBlock=qOpt.closest('.quiz-block');
+        if(quizBlock){
+          quizBlock.querySelectorAll('.quiz-opt').forEach(opt=>{
+            opt.classList.remove('selected');
+          });
+          qOpt.classList.add('selected');
+        }
+        return;
+      }
+
+      // Сдача теста
       const sqBtn=e.target.closest('[data-submitquiz]');
       if(sqBtn){submitQuizHandler(sqBtn.dataset.submitquiz);return}
     })}
+
     // Trainer delegation
     const tc=$('trainerContainer');
     if(tc){tc.addEventListener('click',e=>{
       const hint=e.target.closest('.trainer-hint');
       if(hint){hint.classList.toggle('open');return}
       const cb=e.target.closest('[data-check]');
-      if(cb){const tid=cb.dataset.check,tk=DORK_TRAINER.find(x=>x.id===tid);if(!tk)return;const inp=$('ti_'+tid);const ua=inp?inp.value.trim().toLowerCase():'';const ca=tk.answer.toLowerCase(),alts=(tk.alt||[]).map(a=>a.toLowerCase());const ok=ua===ca||alts.includes(ua);const fb=$('tf_'+tid);if(fb){fb.classList.add('show');if(ok){fb.className='trainer-feedback show ok';fb.textContent='\u2713 '+(currentLang==='ru'?'Правильно!':'Correct!');trainerState[tid]=true;LS.set('osint_trainer',trainerState);setTimeout(renderTrainer,800);log('trainer: '+tid+' done')}else{fb.className='trainer-feedback show fail';fb.textContent='\u2717 '+(currentLang==='ru'?'Неверно. Попробуй ещё раз.':'Incorrect. Try again.')+' '+t('correct_answer')+': '+tk.answer}}}
+      if(cb){
+        const tid=cb.dataset.check,tk=DORK_TRAINER.find(x=>x.id===tid);
+        if(!tk)return;
+        const inp=$('ti_'+tid);
+        const ua=inp?inp.value.trim().toLowerCase():'';
+        const ca=tk.answer.toLowerCase(),alts=(tk.alt||[]).map(a=>a.toLowerCase());
+        const ok=ua===ca||alts.includes(ua);
+        const fb=$('tf_'+tid);
+        if(fb){
+          fb.classList.add('show');
+          if(ok){
+            fb.className='trainer-feedback show ok';
+            fb.textContent='\u2713 '+(currentLang==='ru'?'Правильно!':'Correct!');
+            trainerState[tid]=true;
+            LS.set('osint_trainer',trainerState);
+            setTimeout(renderTrainer,800);
+            log('trainer: '+tid+' done');
+          }else{
+            fb.className='trainer-feedback show fail';
+            fb.textContent='\u2717 '+(currentLang==='ru'?'Неверно. Попробуй ещё раз.':'Incorrect. Try again.')+' '+t('correct_answer')+': '+tk.answer;
+          }
+        }
+      }
     })}
-    // Other handlers
+
     const gs=$('glossarySearch');if(gs)gs.addEventListener('input',e=>renderGlossary(e.target.value));
     const na=$('noteAddBtn');if(na)na.addEventListener('click',()=>{const inp=$('noteInput');const tx=inp?inp.value.trim():'';if(!tx)return;boardNotes.unshift({text:tx,date:new Date().toLocaleString('ru-RU')});LS.set('osint_notes',boardNotes);if(inp)inp.value='';renderBoard();toast('note added')});
     const bc=$('boardContainer');if(bc)bc.addEventListener('click',e=>{const b=e.target.closest('.note-remove');if(!b)return;boardNotes.splice(parseInt(b.dataset.idx),1);LS.set('osint_notes',boardNotes);renderBoard()});
     const tg=$('typeGrid');if(tg)tg.addEventListener('click',e=>{const b=e.target.closest('.type-btn');if(!b)return;document.querySelectorAll('.type-btn').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');selectedType=b.dataset.type});
     const an=$('addNodeBtn');if(an)an.addEventListener('click',()=>{graph.resetLastTapPos();openAddNodeModal()});
     const cn=$('cancelNodeBtn');if(cn)cn.addEventListener('click',()=>{const m=$('addNodeModal');if(m)m.close()});
-    const cfn=$('confirmNodeBtn');if(cfn)cfn.addEventListener('click',()=>{if(!selectedType){toast('select type');return}const p=graph.getLastTapPos();const nl=$('nodeLabel');const label=nl?nl.value:'';if(typeof p.x==='number'&&typeof p.y==='number'&&!isNaN(p.x)&&!isNaN(p.y)){graph.addNode(selectedType,label,p.x,p.y);graph.resetLastTapPos()}else{graph.addNode(selectedNode?selectedType:selectedType,label)}const m=$('addNodeModal');if(m)m.close()});
+    const cfn=$('confirmNodeBtn');if(cfn)cfn.addEventListener('click',()=>{if(!selectedType){toast('select type');return}const p=graph.getLastTapPos();const nl=$('nodeLabel');const label=nl?nl.value:'';if(typeof p.x==='number'&&typeof p.y==='number'&&!isNaN(p.x)&&!isNaN(p.y)){graph.addNode(selectedType,label,p.x,p.y);graph.resetLastTapPos()}else{graph.addNode(selectedType,label)}const m=$('addNodeModal');if(m)m.close()});
     const cb=$('connectBtn');if(cb)cb.addEventListener('click',()=>graph.toggleConnect());
     const clb=$('clearBtn');if(clb)clb.addEventListener('click',()=>{const m=$('confirmModal');if(m)m.showModal()});
     const cob=$('confirmOkBtn');if(cob)cob.addEventListener('click',()=>{const m=$('confirmModal');if(m)m.close();graph.clear();toast('cleared')});
@@ -816,10 +862,20 @@ function initApp(){
     const tb=$('themeBtn');if(tb)tb.addEventListener('click',()=>{const th=['depth','terminal','void'];applyTheme(th[(th.indexOf(activeTheme)+1)%th.length])});
     const lsel=$('langSelect');if(lsel)lsel.addEventListener('change',e=>{currentLang=e.target.value;LS.set('osint_lang',currentLang);applyI18n();renderAcademy();renderTrainer();renderGlossary();renderBoard();log('lang: '+currentLang)});
     const csb=$('copyShareBtn');if(csb)csb.addEventListener('click',()=>copyText(window.location.href));
+
     // Navigation
     document.querySelectorAll('.nav-tab').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');currentView=btn.dataset.view;['academy','trainer','graph','glossary','board'].forEach(v=>{const el=$(v+'View');if(el)el.classList.toggle('hidden',currentView!==v)});if(currentView==='graph'){graph.render();graph.fitToView()}})});
+
     // Check session
-    if(supabaseClient){supabaseClient.auth.getSession().then(({data:{session}})=>{if(session){const nickname=session.user.user_metadata?.nickname||session.user.email;startSession(nickname);log('session restored')}}).catch(err=>{console.warn('Session check failed:',err)})}
+    if(supabaseClient){
+      supabaseClient.auth.getSession().then(({data:{session}})=>{
+        if(session){
+          const nickname=session.user.user_metadata?.nickname||session.user.email;
+          startSession(nickname);
+          log('session restored');
+        }
+      }).catch(err=>{console.warn('Session check failed:',err)});
+    }
   }catch(err){
     console.error('initApp error:',err);
     log('init error: '+err.message);
@@ -827,4 +883,4 @@ function initApp(){
 }
 </script>
 </body>
-</html>
+  </html>
